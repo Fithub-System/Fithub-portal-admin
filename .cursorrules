@@ -32,6 +32,7 @@ You are an expert Flutter Developer specializing in multi-platform responsive la
 - Layout: Use adaptive builders to switch dynamically between Tablet, Desktop, and Web viewports.
 
 ## STITCH MCP SERVER GUARDRAIL (CORE DESIGN TRUTH)
+- Set `GOOGLE_STITCH_API_KEY` in your shell environment before launching Cursor (e.g. in `~/.zshrc`). The key must never be committed to the repository.
 - You have direct access to the live Stitch design system via the configured `stitch` MCP server.
 - Whenever building UI components, views, or themes, you MUST query the stitch MCP server using the project context: `https://stitch.withgoogle.com/projects/13435235862240753621`.
 - Extrapolate exact Design Tokens, absolute layout constraints, margins, and the specific 'Electric Lime' (#CCFF00) and 'Deep Charcoal' (#121212) configurations directly via the MCP server metadata.
