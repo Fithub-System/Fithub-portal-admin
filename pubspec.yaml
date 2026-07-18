@@ -52,6 +52,8 @@ dependencies:
   uuid: ^4.6.0
   google_fonts: ^8.2.0
   build_runner: ^2.15.1
+  supabase_flutter: ^2.16.0
+  flutter_secure_storage: ^10.3.1
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +66,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   drift_dev: ^2.34.4
+  mocktail: ^1.0.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

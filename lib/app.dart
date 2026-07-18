@@ -1,71 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fithub_portal_admin/config/router/app_router.dart';
+import 'package:fithub_portal_admin/config/theme/app_theme.dart';
+import 'package:fithub_portal_admin/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:fithub_portal_admin/injection_container.dart';
 
-import 'config/theme/dark_theme.dart';
-import 'config/theme/theme_manager.dart';
-import 'config/auth/auth_manager.dart';
-import 'config/router/app_router.dart';
-import 'config/app_helper/app_constants.dart';
-import 'core/database/app_database.dart';
-import 'core/network/connectivity_service.dart';
-import 'features/connectivity/presentation/cubit/connectivity_cubit.dart';
-import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
-import 'features/dashboard/presentation/pages/dashboard_page.dart';
-import 'features/scan/data/repositories/scan_repository.dart';
-import 'injection_container.dart';
-
-class App extends StatefulWidget {
+/// Root widget for Pulse Gym Admin Portal (fithub_portal_admin).
+class App extends StatelessWidget {
   const App({super.key});
 
   @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  @override
-  void initState() {
-    super.initState();
-    themeManager.addListener(_notifyChange);
-    authManager.addListener(_notifyChange);
-  }
-
-  @override
-  void dispose() {
-    themeManager.removeListener(_notifyChange);
-    authManager.removeListener(_notifyChange);
-    super.dispose();
-  }
-
-  void _notifyChange() {
-    setState(() {});
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final database = getIt<AppDatabase>();
-    final connectivity = getIt<ConnectivityService>();
-    final tenantId = getIt<String>(instanceName: 'tenantId');
-
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => ConnectivityCubit(connectivity)..start(),
-        ),
-        BlocProvider(
-          create: (_) => DashboardCubit(
-            database: database,
-            scanRepository: getIt<ScanRepository>(),
-            tenantId: tenantId,
-          )..load(),
-        ),
-      ],
+    return BlocProvider(
+      create: (_) => AuthBloc(authRepository: InjectionContainer.authRepository)
+        ..add(const AuthStarted()),
       child: MaterialApp(
-        title: AppConstants.appName,
-        theme: kineticDarkTheme,
+        title: 'Gym Connect Portal',
         debugShowCheckedModeBanner: false,
+        theme: AppTheme.dark,
         navigatorKey: AppRouter.navigatorKey,
-        initialRoute: '/',
-        onGenerateRoute: AppRouter.onGenerateRoute,
+        home: AppRouter.authGate(),
       ),
     );
   }

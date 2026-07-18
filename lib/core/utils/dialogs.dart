@@ -19,7 +19,7 @@ class DialogUtils {
     Color positiveButtonColor = Colors.blueAccent,
     Color negativeButtonColor = Colors.redAccent,
   }) {
-    final context = AppRouter.currentContext;
+    final context = AppRouter.navigatorKey.currentContext;
 
     if (context != null) {
       showDialog(
@@ -115,7 +115,7 @@ class DialogUtils {
 
   // Show a loading dialog with a CircularProgressIndicator
   static void showLoadingDialog({String message = 'Loading...'}) {
-    final context = AppRouter.currentContext;
+    final context = AppRouter.navigatorKey.currentContext;
 
     if (context != null) {
       showDialog(
@@ -170,7 +170,7 @@ class DialogUtils {
 
   // Dismiss any active dialog (optional utility)
   static void dismissDialog() {
-    final context = AppRouter.currentContext;
+    final context = AppRouter.navigatorKey.currentContext;
     if (context != null) {
       Navigator.of(context, rootNavigator: true).pop();
     } else {

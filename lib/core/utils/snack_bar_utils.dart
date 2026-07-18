@@ -16,7 +16,7 @@ class SnackBarUtils {
     Color textColor = Colors.white,
     Color actionColor = Colors.blueAccent,
   }) {
-    final context = AppRouter.currentContext;
+    final context = AppRouter.navigatorKey.currentContext;
 
     if (context != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -90,7 +90,7 @@ class SnackBarUtils {
 
   // Dismiss any active SnackBar (optional utility)
   static void dismissSnackBar() {
-    final context = AppRouter.currentContext;
+    final context = AppRouter.navigatorKey.currentContext;
     if (context != null) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
     } else {

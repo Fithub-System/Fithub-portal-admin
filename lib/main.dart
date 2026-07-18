@@ -1,22 +1,19 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:fithub_portal_admin/app.dart';
+import 'package:fithub_portal_admin/core/network/supabase_config.dart';
+import 'package:fithub_portal_admin/injection_container.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'app.dart';
-import 'injection_container.dart';
-
-import 'config/theme/theme_manager.dart';
-import 'config/auth/auth_manager.dart';
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  themeManager = await ThemeManager.loadTheme();
-  
-  // Initialize user manager (generic - can work with any user model)
-  authManager = await AuthManager.loadUser();
-  
-  Future.wait([
-    ServiceLocator().setup(),
-  ]).then((value) {
-    runApp(App());
-  });
+
+  if (SupabaseConfig.isConfigured) {
+    await Supabase.initialize(
+      url: SupabaseConfig.url,
+      publishableKey: SupabaseConfig.anonKey,
+    );
+  }
+
+  await InjectionContainer.init();
+  runApp(const App());
 }
