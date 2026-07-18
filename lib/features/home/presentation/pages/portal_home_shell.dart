@@ -1,12 +1,295 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fithub_portal_admin/config/theme/app_colors.dart';
-import 'package:fithub_portal_admin/features/auth/presentation/bloc/auth_bloc.dart';
 
-/// Post-login Portal home shell (Phase 1.1 — no dashboard feature work).
-class PortalHomeShell extends StatelessWidget {
+import '../../../../config/theme/kinetic_tokens.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
+import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
+import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
+import '../../../dashboard/presentation/widgets/live_occupancy_ring.dart';
+
+/// Adaptive Admin shell: NavigationRail (desktop/tablet) / NavigationBar (mobile).
+class PortalHomeShell extends StatefulWidget {
   const PortalHomeShell({super.key});
+
+  static const double railBreakpoint = 600;
+
+  @override
+  State<PortalHomeShell> createState() => _PortalHomeShellState();
+}
+
+class _PortalHomeShellState extends State<PortalHomeShell> {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ConnectivityCubit, ConnectivityState>(
+      builder: (context, connectivity) {
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final useRail =
+                constraints.maxWidth >= PortalHomeShell.railBreakpoint;
+
+            final body = IndexedStack(
+              index: _selectedIndex,
+              children: const [
+                _DashboardDestination(),
+                _PlaceholderDestination(titleKey: 'nav.scan'),
+                _AccountDestination(),
+              ],
+            );
+
+            if (useRail) {
+              return Scaffold(
+                backgroundColor: KineticTokens.deepCharcoal,
+                body: Column(
+                  children: [
+                    SafeModeBanner(visible: connectivity.isOffline),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          _PortalNavigationRail(
+                            selectedIndex: _selectedIndex,
+                            onDestinationSelected: (i) {
+                              setState(() => _selectedIndex = i);
+                            },
+                          ),
+                          const VerticalDivider(
+                            width: 1,
+                            thickness: 1,
+                            color: KineticTokens.zincGray,
+                          ),
+                          Expanded(child: body),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return Scaffold(
+              backgroundColor: KineticTokens.deepCharcoal,
+              body: Column(
+                children: [
+                  SafeModeBanner(visible: connectivity.isOffline),
+                  Expanded(child: body),
+                ],
+              ),
+              bottomNavigationBar: NavigationBar(
+                selectedIndex: _selectedIndex,
+                onDestinationSelected: (i) {
+                  setState(() => _selectedIndex = i);
+                },
+                backgroundColor: KineticTokens.gunmetalCard,
+                indicatorColor: KineticTokens.electricLime.withValues(
+                  alpha: 0.2,
+                ),
+                destinations: [
+                  NavigationDestination(
+                    icon: const Icon(Icons.dashboard_outlined),
+                    selectedIcon: const Icon(
+                      Icons.dashboard,
+                      color: KineticTokens.electricLime,
+                    ),
+                    label: 'nav.dashboard'.tr(),
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.qr_code_scanner_outlined),
+                    selectedIcon: const Icon(
+                      Icons.qr_code_scanner,
+                      color: KineticTokens.electricLime,
+                    ),
+                    label: 'nav.scan'.tr(),
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.person_outline),
+                    selectedIcon: const Icon(
+                      Icons.person,
+                      color: KineticTokens.electricLime,
+                    ),
+                    label: 'nav.account'.tr(),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _PortalNavigationRail extends StatelessWidget {
+  const _PortalNavigationRail({
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  });
+
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return NavigationRail(
+      selectedIndex: selectedIndex,
+      onDestinationSelected: onDestinationSelected,
+      backgroundColor: KineticTokens.gunmetalCard,
+      indicatorColor: KineticTokens.electricLime.withValues(alpha: 0.2),
+      selectedIconTheme: const IconThemeData(color: KineticTokens.electricLime),
+      unselectedIconTheme: const IconThemeData(color: KineticTokens.zincGray),
+      selectedLabelTextStyle: const TextStyle(
+        color: KineticTokens.electricLime,
+        fontWeight: FontWeight.w600,
+        fontSize: 12,
+      ),
+      unselectedLabelTextStyle: const TextStyle(
+        color: KineticTokens.zincGray,
+        fontSize: 12,
+      ),
+      labelType: NavigationRailLabelType.all,
+      destinations: [
+        NavigationRailDestination(
+          icon: const Icon(Icons.dashboard_outlined),
+          selectedIcon: const Icon(Icons.dashboard),
+          label: Text('nav.dashboard'.tr()),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Icons.qr_code_scanner_outlined),
+          selectedIcon: const Icon(Icons.qr_code_scanner),
+          label: Text('nav.scan'.tr()),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Icons.person_outline),
+          selectedIcon: const Icon(Icons.person),
+          label: Text('nav.account'.tr()),
+        ),
+      ],
+    );
+  }
+}
+
+class _DashboardDestination extends StatelessWidget {
+  const _DashboardDestination();
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return BlocBuilder<ConnectivityCubit, ConnectivityState>(
+      builder: (context, connectivity) {
+        return BlocBuilder<DashboardCubit, DashboardState>(
+          builder: (context, dashboard) {
+            final gymTitle = dashboard.gymName.isEmpty
+                ? 'dashboard.gym_fallback'.tr()
+                : dashboard.gymName;
+
+            return Padding(
+              padding: const EdgeInsetsDirectional.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    gymTitle,
+                    textAlign: TextAlign.start,
+                    style: textTheme.titleLarge?.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: KineticTokens.pureWhite,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    connectivity.isOnline
+                        ? 'dashboard.status.online'.tr()
+                        : 'dashboard.status.offline'.tr(),
+                    textAlign: TextAlign.start,
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontSize: 13,
+                      color: KineticTokens.zincGray,
+                    ),
+                  ),
+                  const Spacer(),
+                  Center(
+                    child: LiveOccupancyRing(
+                      current: dashboard.currentOccupancy,
+                      capacity: dashboard.capacityLimit,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (dashboard.lastScanMessageKey != null)
+                    Text(
+                      _scanMessage(dashboard),
+                      textAlign: TextAlign.start,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontSize: 13,
+                        color: KineticTokens.electricLime,
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _scanMessage(DashboardState dashboard) {
+    if (dashboard.lastScanMessageKey == 'dashboard.scan.approved') {
+      return 'dashboard.scan.approved'.tr(
+        namedArgs: {'name': dashboard.lastScanMemberName ?? ''},
+      );
+    }
+    if (dashboard.lastScanMessageKey == 'dashboard.scan.rejected') {
+      return 'dashboard.scan.rejected'.tr(
+        namedArgs: {'reason': dashboard.lastScanRejectReason ?? ''},
+      );
+    }
+    return dashboard.lastScanMessageKey?.tr() ?? '';
+  }
+}
+
+class _PlaceholderDestination extends StatelessWidget {
+  const _PlaceholderDestination({required this.titleKey});
+
+  final String titleKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsetsDirectional.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              titleKey.tr(),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: KineticTokens.pureWhite,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'nav.coming_soon'.tr(),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 13,
+                color: KineticTokens.zincGray,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AccountDestination extends StatelessWidget {
+  const _AccountDestination();
 
   @override
   Widget build(BuildContext context) {
@@ -19,73 +302,65 @@ class PortalHomeShell extends StatelessWidget {
     final name = profile?.name ?? 'home.shell.admin_fallback'.tr();
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsetsDirectional.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'home.shell.welcome'.tr(namedArgs: {'name': name}),
-                      textAlign: TextAlign.start,
-                      style: textTheme.titleLarge?.copyWith(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.pureWhite,
-                      ),
-                    ),
+              Expanded(
+                child: Text(
+                  'home.shell.welcome'.tr(namedArgs: {'name': name}),
+                  textAlign: TextAlign.start,
+                  style: textTheme.titleLarge?.copyWith(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: KineticTokens.pureWhite,
                   ),
-                  IconButton(
-                    tooltip: 'home.shell.sign_out'.tr(),
-                    onPressed: () => context.read<AuthBloc>().add(
-                          const AuthSignOutRequested(),
-                        ),
-                    icon: const Icon(Icons.logout, color: AppColors.zinc500),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'home.shell.command_center'.tr(),
-                textAlign: TextAlign.start,
-                style: textTheme.labelLarge?.copyWith(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2,
-                  color: AppColors.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'home.shell.role'.tr(
-                  namedArgs: {'role': profile?.role ?? dash},
-                ),
-                textAlign: TextAlign.start,
-                style: textTheme.titleMedium?.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primaryContainer,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'home.shell.tenant'.tr(
-                  namedArgs: {'tenant': profile?.tenantId ?? dash},
-                ),
-                textAlign: TextAlign.start,
-                style: textTheme.bodyMedium?.copyWith(
-                  fontSize: 13,
-                  color: AppColors.zinc500,
-                ),
+              IconButton(
+                tooltip: 'home.shell.sign_out'.tr(),
+                onPressed: () =>
+                    context.read<AuthBloc>().add(const AuthSignOutRequested()),
+                icon: const Icon(Icons.logout, color: KineticTokens.zincGray),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 24),
+          Text(
+            'home.shell.command_center'.tr(),
+            textAlign: TextAlign.start,
+            style: textTheme.labelLarge?.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+              color: KineticTokens.zincGray,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'home.shell.role'.tr(namedArgs: {'role': profile?.role ?? dash}),
+            textAlign: TextAlign.start,
+            style: textTheme.titleMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: KineticTokens.electricLime,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'home.shell.tenant'.tr(
+              namedArgs: {'tenant': profile?.tenantId ?? dash},
+            ),
+            textAlign: TextAlign.start,
+            style: textTheme.bodyMedium?.copyWith(
+              fontSize: 13,
+              color: KineticTokens.zincGray,
+            ),
+          ),
+        ],
       ),
     );
   }

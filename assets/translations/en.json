@@ -44,18 +44,29 @@
       "em_dash": "—"
     }
   },
+  "nav": {
+    "dashboard": "Dashboard",
+    "scan": "Scan",
+    "account": "Account",
+    "coming_soon": "Coming soon in a later phase."
+  },
   "connectivity": {
     "safe_mode": {
       "banner": "Pulse SafeMode: data is saved locally"
     }
   },
   "dashboard": {
+    "gym_fallback": "Pulse Gym",
     "status": {
       "online": "Online — cloud sync active",
       "offline": "Offline — local SafeMode active"
     },
     "occupancy": {
       "live_label": "LIVE OCCUPANCY"
+    },
+    "scan": {
+      "approved": "Approved: {name}",
+      "rejected": "Rejected: {reason}"
     }
   },
   "router": {

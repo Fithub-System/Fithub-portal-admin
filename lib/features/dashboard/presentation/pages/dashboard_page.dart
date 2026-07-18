@@ -8,6 +8,7 @@ import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../cubit/dashboard_cubit.dart';
 import '../widgets/live_occupancy_ring.dart';
 
+/// Standalone dashboard page (also embedded via [PortalHomeShell]).
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
@@ -19,6 +20,10 @@ class DashboardPage extends StatelessWidget {
       builder: (context, connectivity) {
         return BlocBuilder<DashboardCubit, DashboardState>(
           builder: (context, dashboard) {
+            final gymTitle = dashboard.gymName.isEmpty
+                ? 'dashboard.gym_fallback'.tr()
+                : dashboard.gymName;
+
             return Scaffold(
               backgroundColor: KineticTokens.deepCharcoal,
               body: Column(
@@ -26,12 +31,12 @@ class DashboardPage extends StatelessWidget {
                   SafeModeBanner(visible: connectivity.isOffline),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsetsDirectional.all(24),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            dashboard.gymName,
+                            gymTitle,
                             textAlign: TextAlign.start,
                             style: textTheme.titleLarge?.copyWith(
                               fontSize: 20,
@@ -58,9 +63,9 @@ class DashboardPage extends StatelessWidget {
                             ),
                           ),
                           const Spacer(),
-                          if (dashboard.lastScanMessage != null)
+                          if (dashboard.lastScanMessageKey != null)
                             Text(
-                              dashboard.lastScanMessage!,
+                              _scanMessage(dashboard),
                               textAlign: TextAlign.start,
                               style: textTheme.bodyMedium?.copyWith(
                                 fontSize: 13,
@@ -78,5 +83,19 @@ class DashboardPage extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _scanMessage(DashboardState dashboard) {
+    if (dashboard.lastScanMessageKey == 'dashboard.scan.approved') {
+      return 'dashboard.scan.approved'.tr(
+        namedArgs: {'name': dashboard.lastScanMemberName ?? ''},
+      );
+    }
+    if (dashboard.lastScanMessageKey == 'dashboard.scan.rejected') {
+      return 'dashboard.scan.rejected'.tr(
+        namedArgs: {'reason': dashboard.lastScanRejectReason ?? ''},
+      );
+    }
+    return dashboard.lastScanMessageKey?.tr() ?? '';
   }
 }
