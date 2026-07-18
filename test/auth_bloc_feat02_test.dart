@@ -105,7 +105,7 @@ void main() {
       expect(states.last, isA<AuthUnauthenticated>());
       expect(
         (states.last as AuthUnauthenticated).message,
-        contains('Employee profile not found'),
+        'auth.error.employee_profile_missing',
       );
       expect(states.whereType<AuthAuthenticated>(), isEmpty);
       await bloc.close();
@@ -134,7 +134,7 @@ void main() {
       expect(states.last, isA<AuthUnauthenticated>());
       expect(
         (states.last as AuthUnauthenticated).message,
-        contains('Invalid credentials'),
+        'auth.error.invalid_credentials',
       );
       expect(states.whereType<AuthAuthenticated>(), isEmpty);
       await bloc.close();

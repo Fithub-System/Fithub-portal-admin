@@ -1,5 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
 
@@ -21,14 +21,15 @@ class SafeModeBanner extends StatelessWidget {
               height: KineticTokens.safeModeBannerHeight,
               width: double.infinity,
               color: KineticTokens.zincGray,
-              alignment: Alignment.center,
+              alignment: AlignmentDirectional.center,
               child: Text(
-                KineticTokens.safeModeMessage,
-                style: GoogleFonts.lexend(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: KineticTokens.pureWhite,
-                ),
+                KineticTokens.safeModeMessageKey.tr(),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: KineticTokens.pureWhite,
+                    ),
               ),
             )
           : const SizedBox.shrink(key: ValueKey('safe-mode-off')),

@@ -50,7 +50,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } on AuthFailure catch (e) {
       emit(AuthUnauthenticated(message: e.message));
     } catch (_) {
-      emit(const AuthUnauthenticated(message: 'Authentication failed.'));
+      emit(const AuthUnauthenticated(message: 'auth.error.unknown'));
     }
   }
 

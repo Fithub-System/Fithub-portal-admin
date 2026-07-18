@@ -55,15 +55,11 @@ class AuthRepositoryImpl implements AuthRepository {
       return resolveEmployeeProfile();
     } on AuthFailure {
       rethrow;
-    } on AuthException catch (e) {
-      throw InvalidCredentialsFailure(
-        e.message.isNotEmpty
-            ? e.message
-            : 'Invalid credentials. Check email and access key.',
-      );
+    } on AuthException {
+      throw const InvalidCredentialsFailure();
     } catch (e) {
       if (e is AuthFailure) rethrow;
-      throw AuthUnknownFailure(e.toString());
+      throw const AuthUnknownFailure();
     }
   }
 
@@ -71,7 +67,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<EmployeeProfile> resolveEmployeeProfile() async {
     final uid = _supabase.auth.currentUser?.id;
     if (uid == null) {
-      throw const InvalidCredentialsFailure('No active session.');
+      throw const InvalidCredentialsFailure('auth.error.no_session');
     }
 
     // FEAT-02 §4.2 — employees where user_id = auth.uid()

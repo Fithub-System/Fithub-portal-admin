@@ -16,6 +16,6 @@ abstract final class KineticTokens {
   static const double dashboardCardRadius = 16;
   static const double occupancyGlowBlur = 20;
 
-  static const String safeModeMessage =
-      'Pulse SafeMode: البيانات تُحفظ محلياً';
+  /// Translation key — use `'connectivity.safe_mode.banner'.tr()` in UI.
+  static const String safeModeMessageKey = 'connectivity.safe_mode.banner';
 }
