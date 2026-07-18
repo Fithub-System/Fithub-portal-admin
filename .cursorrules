@@ -39,8 +39,9 @@ You are an expert Flutter Developer specializing in multi-platform responsive la
 - DO NOT hallucinate or guess any spacing, padding, or widget structural choices; use the live Stitch spec as the absolute single source of truth.
 
 ## 🔒 MILESTONE-DRIVEN COMPLIANCE AUDIT
-- Before starting ANY work branch, you MUST read the global `@milestone-execution-plan.md` alongside the associated `@FEAT-XX` specification document.
-- Locate your designated Phase block under the active Milestone section. 
+- Before starting ANY work branch, you MUST read `Fithub-documentation/milestone-execution-plan.md` alongside the associated `@FEAT-XX` specification document. Confirm the phase is unlocked for Portal Admin (including Phase 1.4 Sync duties per `@agent-roster.md`).
+- Locate your designated Phase block under the active Milestone section.
 - You are FORBIDDEN from assuming a task is complete simply because the code compiles. You must actively cross-reference every individual checkbox with the feature's Gherkin Acceptance Criteria (AC).
-- Once the code satisfies the criteria, you must write a brief, objective 'Verification Audit' summary directly into the markdown check-line, mark the task as complete `[x]`, and stop execution. 
-- If an architectural blockers prevents you from checking off a milestone item, do not proceed with other features; stop code generation and report the contract conflict immediately.
+- Once the code satisfies the criteria, you must write a brief, objective 'Verification Audit' summary directly into the markdown check-line, mark the task as complete `[x]`, and stop execution.
+- Your `[x]` is **provisional only**. Do NOT claim the phase is done. Do NOT start the next phase. Main BizDev must write `BizDev Audit: PASS` in the milestone plan.
+- If an architectural blocker prevents you from checking off a milestone item, do not proceed with other features; stop code generation and report the contract conflict to Main BizDev (`Fithub-documentation`) immediately.
