@@ -45,3 +45,14 @@ You are an expert Flutter Developer specializing in multi-platform responsive la
 - Once the code satisfies the criteria, you must write a brief, objective 'Verification Audit' summary directly into the markdown check-line, mark the task as complete `[x]`, and stop execution.
 - Your `[x]` is **provisional only**. Do NOT claim the phase is done. Do NOT start the next phase. Main BizDev must write `BizDev Audit: PASS` in the milestone plan.
 - If an architectural blocker prevents you from checking off a milestone item, do not proceed with other features; stop code generation and report the contract conflict to Main BizDev (`Fithub-documentation`) immediately.
+
+## GIT BRANCHING (MANDATORY)
+- Obey `Fithub-documentation/standards/git-branching.md`.
+- Work only on `feature/portal-...` branched from latest `dev`. Never commit features to `main` or directly to `dev`.
+- Open PR into `dev`. Do NOT merge. Wait for Main BizDev `BizDev Audit: PASS` + merge authorization.
+
+## I18N / RTL-LTR (MANDATORY — FEAT-03)
+- Obey `Fithub-documentation/specs/FEAT-03-I18N-RTL-LTR.md`.
+- Use **easy_localization** (`en` LTR/Lexend + `ar` RTL/Cairo). No hardcoded user-facing UI strings.
+- Use directional layout APIs. Supabase must send `Accept-Language: en|ar` and refresh on locale change.
+- Do not start Phase 1.2 merge path until FEAT-03 foundation for Portal has BizDev PASS on `dev`.
