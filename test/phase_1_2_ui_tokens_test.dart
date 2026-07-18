@@ -5,19 +5,25 @@ import 'package:fithub_portal_admin/config/theme/kinetic_tokens.dart';
 import 'package:fithub_portal_admin/features/connectivity/presentation/widgets/safe_mode_banner.dart';
 import 'package:fithub_portal_admin/features/dashboard/presentation/widgets/live_occupancy_ring.dart';
 
+import 'support/localized_pump.dart';
+
 void main() {
   testWidgets('SafeMode banner uses 24px zinc gray bar', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: SafeModeBanner(visible: true),
-        ),
+    await pumpLocalizedApp(
+      tester,
+      const Scaffold(
+        body: SafeModeBanner(visible: true),
       ),
+      waitFor: find.text('Pulse SafeMode: data is saved locally'),
     );
 
-    expect(find.text(KineticTokens.safeModeMessage), findsOneWidget);
+    expect(
+      find.text('Pulse SafeMode: data is saved locally'),
+      findsOneWidget,
+    );
 
-    final bannerSize = tester.getSize(find.byKey(const ValueKey('safe-mode-on')));
+    final bannerSize =
+        tester.getSize(find.byKey(const ValueKey('safe-mode-on')));
     expect(bannerSize.height, KineticTokens.safeModeBannerHeight);
 
     final banner = tester.widget<Container>(
@@ -27,12 +33,12 @@ void main() {
   });
 
   testWidgets('Live occupancy ring renders current and capacity', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: LiveOccupancyRing(current: 42, capacity: 120),
-        ),
+    await pumpLocalizedApp(
+      tester,
+      const Scaffold(
+        body: LiveOccupancyRing(current: 42, capacity: 120),
       ),
+      waitFor: find.text('42'),
     );
 
     expect(find.text('42'), findsOneWidget);

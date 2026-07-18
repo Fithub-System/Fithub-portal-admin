@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
 
@@ -49,7 +49,7 @@ class LiveOccupancyRing extends StatelessWidget {
                 children: [
                   Text(
                     '$current',
-                    style: GoogleFonts.lexend(
+                    style: const TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.w700,
                       color: KineticTokens.electricLime,
@@ -57,7 +57,7 @@ class LiveOccupancyRing extends StatelessWidget {
                   ),
                   Text(
                     '/ $capacity',
-                    style: GoogleFonts.lexend(
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w300,
                       color: KineticTokens.zincGray,
@@ -65,8 +65,8 @@ class LiveOccupancyRing extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'LIVE OCCUPANCY',
-                    style: GoogleFonts.lexend(
+                    'dashboard.occupancy.live_label'.tr(),
+                    style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.2,

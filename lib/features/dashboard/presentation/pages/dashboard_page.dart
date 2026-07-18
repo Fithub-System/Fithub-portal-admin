@@ -1,6 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
@@ -13,6 +13,8 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return BlocBuilder<ConnectivityCubit, ConnectivityState>(
       builder: (context, connectivity) {
         return BlocBuilder<DashboardCubit, DashboardState>(
@@ -30,7 +32,8 @@ class DashboardPage extends StatelessWidget {
                         children: [
                           Text(
                             dashboard.gymName,
-                            style: GoogleFonts.lexend(
+                            textAlign: TextAlign.start,
+                            style: textTheme.titleLarge?.copyWith(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: KineticTokens.pureWhite,
@@ -39,9 +42,10 @@ class DashboardPage extends StatelessWidget {
                           const SizedBox(height: 8),
                           Text(
                             connectivity.isOnline
-                                ? 'Online — cloud sync active'
-                                : 'Offline — local SafeMode active',
-                            style: GoogleFonts.lexend(
+                                ? 'dashboard.status.online'.tr()
+                                : 'dashboard.status.offline'.tr(),
+                            textAlign: TextAlign.start,
+                            style: textTheme.bodyMedium?.copyWith(
                               fontSize: 13,
                               color: KineticTokens.zincGray,
                             ),
@@ -57,7 +61,8 @@ class DashboardPage extends StatelessWidget {
                           if (dashboard.lastScanMessage != null)
                             Text(
                               dashboard.lastScanMessage!,
-                              style: GoogleFonts.lexend(
+                              textAlign: TextAlign.start,
+                              style: textTheme.bodyMedium?.copyWith(
                                 fontSize: 13,
                                 color: KineticTokens.electricLime,
                               ),

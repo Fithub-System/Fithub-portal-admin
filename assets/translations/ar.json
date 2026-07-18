@@ -1,0 +1,80 @@
+{
+  "app": {
+    "title": "بوابة جيم كونيكت"
+  },
+  "auth": {
+    "login": {
+      "brand": "جيم كونيكت",
+      "subtitle": "تسجيل دخول مركز القيادة",
+      "credential_label": "معرّف الاعتماد",
+      "credential_hint": "البريد الإلكتروني أو اسم المستخدم",
+      "credential_required": "معرّف الاعتماد مطلوب",
+      "access_key_label": "مفتاح الوصول",
+      "access_key_required": "مفتاح الوصول مطلوب",
+      "recover_key": "استعادة المفتاح",
+      "recover_key_unavailable": "استعادة المفتاح غير متاحة في هذا الإصدار.",
+      "cta_initialize_session": "بدء الجلسة",
+      "or_social": "أو عبر الحسابات الاجتماعية",
+      "continue_google": "المتابعة مع Google",
+      "continue_apple": "المتابعة مع Apple",
+      "social_out_of_scope": "تسجيل الدخول الاجتماعي خارج نطاق المرحلة 1.1.",
+      "privacy": "بروتوكول الخصوصية",
+      "terms": "شروط الوصول",
+      "copyright": "© 2024 أنظمة كينيتك للأداء. جميع الحقوق محفوظة.",
+      "locale_en": "EN",
+      "locale_ar": "AR"
+    },
+    "error": {
+      "invalid_credentials": "بيانات الاعتماد غير صحيحة. تحقق من البريد ومفتاح الوصول.",
+      "employee_profile_missing": "لم يتم العثور على ملف الموظف. تم رفض الوصول — تواصل مع مسؤول الصالة.",
+      "wrong_app_role": "تم رفض الوصول — بوابة المسؤول مخصصة للمسؤول والاستقبال فقط. حسابات المدرب تستخدم تطبيق المدرب.",
+      "not_configured": "لم يتم إعداد Supabase لهذا البناء.",
+      "unknown": "فشل المصادقة.",
+      "no_session": "لا توجد جلسة نشطة."
+    }
+  },
+  "home": {
+    "shell": {
+      "welcome": "مرحبًا، {name}",
+      "admin_fallback": "المسؤول",
+      "sign_out": "تسجيل الخروج",
+      "command_center": "مركز القيادة",
+      "role": "الدور: {role}",
+      "tenant": "المستأجر: {tenant}",
+      "em_dash": "—"
+    }
+  },
+  "connectivity": {
+    "safe_mode": {
+      "banner": "وضع الأمان Pulse: تُحفظ البيانات محليًا"
+    }
+  },
+  "dashboard": {
+    "status": {
+      "online": "متصل — مزامنة السحابة نشطة",
+      "offline": "غير متصل — وضع الأمان المحلي نشط"
+    },
+    "occupancy": {
+      "live_label": "الإشغال المباشر"
+    }
+  },
+  "router": {
+    "unknown": {
+      "title": "الصفحة غير موجودة",
+      "subtitle": "لقد أخطأت الطريق !!"
+    }
+  },
+  "validation": {
+    "field_empty": "لا يمكن أن يكون الحقل فارغًا",
+    "email_empty": "لا يمكن أن يكون البريد فارغًا",
+    "email_invalid": "عنوان بريد غير صالح",
+    "min_length": "الحد الأدنى للطول هو {min} حرفًا",
+    "max_length": "الحد الأقصى للطول هو {max} حرفًا",
+    "numeric": "يجب أن تكون القيمة رقمًا",
+    "phone_empty": "لا يمكن أن يكون رقم الهاتف فارغًا",
+    "phone_invalid": "رقم هاتف غير صالح",
+    "password_empty": "لا يمكن أن تكون كلمة المرور فارغة",
+    "password_invalid": "يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على حرف ورقم",
+    "passwords_mismatch": "كلمتا المرور غير متطابقتين"
+  }
+}

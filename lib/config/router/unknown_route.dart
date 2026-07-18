@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../app_helper/app_extension.dart';
 
@@ -12,18 +13,16 @@ class UnknownRoute extends StatelessWidget {
       body: SizedBox(
         height: context.height,
         width: context.width,
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.warning,
               size: 150,
             ),
-            Text(
-              'Page Not Found',
-            ),
-            Text('You missed your way !!'),
+            Text('router.unknown.title'.tr()),
+            Text('router.unknown.subtitle'.tr()),
           ],
         ),
       ),

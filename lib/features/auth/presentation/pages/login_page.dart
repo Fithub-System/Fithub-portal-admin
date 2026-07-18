@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:fithub_portal_admin/config/theme/app_colors.dart';
+import 'package:fithub_portal_admin/core/i18n/app_locales.dart';
+import 'package:fithub_portal_admin/core/network/supabase_locale_headers.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/widgets/stitch_auth_snackbar.dart';
 
@@ -39,8 +41,15 @@ class _LoginPageState extends State<LoginPage> {
         );
   }
 
+  Future<void> _setLocale(Locale locale) async {
+    await context.setLocale(locale);
+    SupabaseLocaleHeaders.apply(locale.languageCode);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return BlocListener<AuthBloc, AuthState>(
       listenWhen: (previous, current) =>
           current is AuthUnauthenticated &&
@@ -48,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
           current.message!.isNotEmpty,
       listener: (context, state) {
         if (state is AuthUnauthenticated && state.message != null) {
-          StitchAuthSnackbar.show(context, state.message!);
+          StitchAuthSnackbar.show(context, state.message!.tr());
         }
       },
       child: Scaffold(
@@ -56,6 +65,18 @@ class _LoginPageState extends State<LoginPage> {
         body: Stack(
           children: [
             const _AmbientGlow(),
+            SafeArea(
+              child: Align(
+                alignment: AlignmentDirectional.topEnd,
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(top: 8, end: 16),
+                  child: _LocaleToggle(
+                    locale: context.locale,
+                    onSelect: _setLocale,
+                  ),
+                ),
+              ),
+            ),
             SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -67,9 +88,9 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         children: [
                           Text(
-                            'Gym Connect',
+                            'auth.login.brand'.tr(),
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.lexend(
+                            style: textTheme.displayLarge?.copyWith(
                               fontSize: 48,
                               fontWeight: FontWeight.w900,
                               color: AppColors.primary,
@@ -79,9 +100,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'COMMAND CENTER LOGIN',
+                            'auth.login.subtitle'.tr(),
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.inter(
+                            style: textTheme.labelLarge?.copyWith(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 2.4,
@@ -107,6 +128,76 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LocaleToggle extends StatelessWidget {
+  const _LocaleToggle({
+    required this.locale,
+    required this.onSelect,
+  });
+
+  final Locale locale;
+  final Future<void> Function(Locale locale) onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final isEn = locale.languageCode == 'en';
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _LocaleChip(
+          label: 'auth.login.locale_en'.tr(),
+          selected: isEn,
+          onTap: () => onSelect(AppLocales.en),
+        ),
+        const SizedBox(width: 8),
+        _LocaleChip(
+          label: 'auth.login.locale_ar'.tr(),
+          selected: !isEn,
+          onTap: () => onSelect(AppLocales.ar),
+        ),
+      ],
+    );
+  }
+}
+
+class _LocaleChip extends StatelessWidget {
+  const _LocaleChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: selected
+          ? AppColors.primaryContainer.withValues(alpha: 0.2)
+          : AppColors.surfaceContainer,
+      borderRadius: BorderRadius.circular(6),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(6),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: selected
+                  ? AppColors.primaryContainer
+                  : AppColors.onSurfaceVariant,
+            ),
+          ),
         ),
       ),
     );
@@ -153,6 +244,7 @@ class _LoginCard extends StatelessWidget {
     final loading = context.select(
       (AuthBloc b) => b.state is AuthLoading,
     );
+    final textTheme = Theme.of(context).textTheme;
 
     return Container(
       decoration: BoxDecoration(
@@ -186,8 +278,9 @@ class _LoginCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'CREDENTIAL IDENTIFIER',
-                  style: GoogleFonts.inter(
+                  'auth.login.credential_label'.tr(),
+                  textAlign: TextAlign.start,
+                  style: textTheme.labelLarge?.copyWith(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 2,
@@ -199,17 +292,18 @@ class _LoginCard extends StatelessWidget {
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
-                  style: GoogleFonts.inter(
+                  style: textTheme.bodyLarge?.copyWith(
                     color: AppColors.primary,
                     fontSize: 16,
                   ),
                   decoration: _underlineDecoration(
-                    hint: 'Email or Username',
+                    context,
+                    hint: 'auth.login.credential_hint'.tr(),
                     prefix: Icons.person_outline,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Credential Identifier is required';
+                      return 'auth.login.credential_required'.tr();
                     }
                     return null;
                   },
@@ -219,8 +313,9 @@ class _LoginCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        'ACCESS KEY',
-                        style: GoogleFonts.inter(
+                        'auth.login.access_key_label'.tr(),
+                        textAlign: TextAlign.start,
+                        style: textTheme.labelLarge?.copyWith(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 2,
@@ -231,7 +326,7 @@ class _LoginCard extends StatelessWidget {
                     TextButton(
                       onPressed: () => StitchAuthSnackbar.show(
                         context,
-                        'Recover Key is not available in this release.',
+                        'auth.login.recover_key_unavailable'.tr(),
                       ),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.secondary,
@@ -240,8 +335,8 @@ class _LoginCard extends StatelessWidget {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: Text(
-                        'Recover Key',
-                        style: GoogleFonts.inter(
+                        'auth.login.recover_key'.tr(),
+                        style: textTheme.bodySmall?.copyWith(
                           fontSize: 12,
                           decoration: TextDecoration.underline,
                           decorationColor: AppColors.secondary,
@@ -254,11 +349,12 @@ class _LoginCard extends StatelessWidget {
                 TextFormField(
                   controller: passwordController,
                   obscureText: obscure,
-                  style: GoogleFonts.inter(
+                  style: textTheme.bodyLarge?.copyWith(
                     color: AppColors.primary,
                     fontSize: 16,
                   ),
                   decoration: _underlineDecoration(
+                    context,
                     hint: '••••••••',
                     prefix: Icons.lock_outline,
                     suffix: IconButton(
@@ -274,7 +370,7 @@ class _LoginCard extends StatelessWidget {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Access Key is required';
+                      return 'auth.login.access_key_required'.tr();
                     }
                     return null;
                   },
@@ -307,8 +403,8 @@ class _LoginCard extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'INITIALIZE SESSION',
-                                      style: GoogleFonts.lexend(
+                                      'auth.login.cta_initialize_session'.tr(),
+                                      style: textTheme.titleMedium?.copyWith(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
                                         letterSpacing: 1.2,
@@ -337,8 +433,8 @@ class _LoginCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        'OR VIA SOCIAL LINK',
-                        style: GoogleFonts.inter(
+                        'auth.login.or_social'.tr(),
+                        style: textTheme.labelLarge?.copyWith(
                           fontSize: 11,
                           letterSpacing: 2,
                           color: AppColors.onSurfaceVariant,
@@ -353,19 +449,19 @@ class _LoginCard extends StatelessWidget {
                 const SizedBox(height: 24),
                 _SocialButton(
                   icon: Icons.login,
-                  label: 'Continue with Google',
+                  label: 'auth.login.continue_google'.tr(),
                   onTap: () => StitchAuthSnackbar.show(
                     context,
-                    'Social login is out of scope for Phase 1.1.',
+                    'auth.login.social_out_of_scope'.tr(),
                   ),
                 ),
                 const SizedBox(height: 12),
                 _SocialButton(
                   icon: Icons.devices,
-                  label: 'Continue with Apple',
+                  label: 'auth.login.continue_apple'.tr(),
                   onTap: () => StitchAuthSnackbar.show(
                     context,
-                    'Social login is out of scope for Phase 1.1.',
+                    'auth.login.social_out_of_scope'.tr(),
                   ),
                 ),
               ],
@@ -376,14 +472,17 @@ class _LoginCard extends StatelessWidget {
     );
   }
 
-  InputDecoration _underlineDecoration({
+  InputDecoration _underlineDecoration(
+    BuildContext context, {
     required String hint,
     required IconData prefix,
     Widget? suffix,
   }) {
+    final textTheme = Theme.of(context).textTheme;
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.inter(
+      hintStyle: textTheme.bodyLarge?.copyWith(
+        fontSize: 16,
         color: AppColors.onSurfaceVariant.withValues(alpha: 0.5),
       ),
       prefixIcon: Icon(prefix, color: AppColors.outline, size: 20),
@@ -421,7 +520,10 @@ class _SocialButton extends StatelessWidget {
       icon: Icon(icon, size: 18, color: AppColors.primary),
       label: Text(
         label,
-        style: GoogleFonts.inter(fontSize: 14, color: AppColors.primary),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontSize: 14,
+              color: AppColors.primary,
+            ),
       ),
       style: OutlinedButton.styleFrom(
         backgroundColor: AppColors.surfaceContainer,
@@ -440,29 +542,36 @@ class _FooterLinks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'Privacy Protocol',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: AppColors.onSurfaceVariant,
+            Flexible(
+              child: TextButton(
+                onPressed: () {},
+                child: Text(
+                  'auth.login.privacy'.tr(),
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.bodySmall?.copyWith(
+                    fontSize: 12,
+                    color: AppColors.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(width: 16),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'Terms of Access',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: AppColors.onSurfaceVariant,
+            const SizedBox(width: 8),
+            Flexible(
+              child: TextButton(
+                onPressed: () {},
+                child: Text(
+                  'auth.login.terms'.tr(),
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.bodySmall?.copyWith(
+                    fontSize: 12,
+                    color: AppColors.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
@@ -470,9 +579,9 @@ class _FooterLinks extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          '© 2024 KINETIC PERFORMANCE SYSTEMS. ALL RIGHTS RESERVED.',
+          'auth.login.copyright'.tr(),
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: textTheme.labelSmall?.copyWith(
             fontSize: 10,
             letterSpacing: 1.6,
             color: AppColors.surfaceContainerHighest,

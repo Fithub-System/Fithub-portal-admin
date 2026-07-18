@@ -11,7 +11,7 @@ abstract final class StitchAuthSnackbar {
         SnackBar(
           backgroundColor: AppColors.errorContainer,
           behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          margin: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -22,6 +22,7 @@ abstract final class StitchAuthSnackbar {
               Expanded(
                 child: Text(
                   message,
+                  textAlign: TextAlign.start,
                   style: const TextStyle(
                     color: AppColors.onErrorContainer,
                     fontWeight: FontWeight.w600,

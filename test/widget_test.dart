@@ -1,13 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fithub_portal_admin/config/theme/app_theme.dart';
-import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
+import 'package:fithub_portal_admin/core/i18n/app_locales.dart';
 import 'package:fithub_portal_admin/features/auth/domain/repositories/auth_repository.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/pages/login_page.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'support/localized_pump.dart';
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -17,20 +16,43 @@ void main() {
     final repository = _MockAuthRepository();
     when(() => repository.currentSession).thenReturn(null);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.dark,
-        home: BlocProvider(
-          create: (_) => AuthBloc(authRepository: repository)
-            ..add(const AuthStarted()),
-          child: const LoginPage(),
-        ),
+    await pumpLocalizedApp(
+      tester,
+      BlocProvider(
+        create: (_) => AuthBloc(authRepository: repository)
+          ..add(const AuthStarted()),
+        child: const LoginPage(),
       ),
+      waitFor: find.text('Gym Connect'),
     );
-    await tester.pump();
 
     expect(find.text('Gym Connect'), findsOneWidget);
     expect(find.text('COMMAND CENTER LOGIN'), findsOneWidget);
     expect(find.text('INITIALIZE SESSION'), findsOneWidget);
+    expect(find.text('EN'), findsOneWidget);
+    expect(find.text('AR'), findsOneWidget);
+  });
+
+  testWidgets('Arabic start locale renders translated login without crash',
+      (tester) async {
+    final repository = _MockAuthRepository();
+    when(() => repository.currentSession).thenReturn(null);
+
+    await pumpLocalizedApp(
+      tester,
+      BlocProvider(
+        create: (_) => AuthBloc(authRepository: repository)
+          ..add(const AuthStarted()),
+        child: const LoginPage(),
+      ),
+      locale: AppLocales.ar,
+      waitFor: find.text('جيم كونيكت'),
+    );
+
+    expect(find.text('جيم كونيكت'), findsOneWidget);
+    expect(find.text('بدء الجلسة'), findsOneWidget);
+    expect(find.text('EN'), findsOneWidget);
+    expect(find.text('AR'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

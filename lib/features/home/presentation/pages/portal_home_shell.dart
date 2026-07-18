@@ -1,6 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:fithub_portal_admin/config/theme/app_colors.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/bloc/auth_bloc.dart';
 
@@ -15,6 +15,9 @@ class PortalHomeShell extends StatelessWidget {
           ? (b.state as AuthAuthenticated).profile
           : null,
     );
+    final dash = 'home.shell.em_dash'.tr();
+    final name = profile?.name ?? 'home.shell.admin_fallback'.tr();
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -28,8 +31,9 @@ class PortalHomeShell extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Welcome, ${profile?.name ?? 'Admin'}',
-                      style: GoogleFonts.lexend(
+                      'home.shell.welcome'.tr(namedArgs: {'name': name}),
+                      textAlign: TextAlign.start,
+                      style: textTheme.titleLarge?.copyWith(
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                         color: AppColors.pureWhite,
@@ -37,7 +41,7 @@ class PortalHomeShell extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    tooltip: 'Sign out',
+                    tooltip: 'home.shell.sign_out'.tr(),
                     onPressed: () => context.read<AuthBloc>().add(
                           const AuthSignOutRequested(),
                         ),
@@ -47,8 +51,9 @@ class PortalHomeShell extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'COMMAND CENTER',
-                style: GoogleFonts.inter(
+                'home.shell.command_center'.tr(),
+                textAlign: TextAlign.start,
+                style: textTheme.labelLarge?.copyWith(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2,
@@ -57,8 +62,11 @@ class PortalHomeShell extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Role: ${profile?.role ?? '—'}',
-                style: GoogleFonts.lexend(
+                'home.shell.role'.tr(
+                  namedArgs: {'role': profile?.role ?? dash},
+                ),
+                textAlign: TextAlign.start,
+                style: textTheme.titleMedium?.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.primaryContainer,
@@ -66,8 +74,11 @@ class PortalHomeShell extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'Tenant: ${profile?.tenantId ?? '—'}',
-                style: GoogleFonts.inter(
+                'home.shell.tenant'.tr(
+                  namedArgs: {'tenant': profile?.tenantId ?? dash},
+                ),
+                textAlign: TextAlign.start,
+                style: textTheme.bodyMedium?.copyWith(
                   fontSize: 13,
                   color: AppColors.zinc500,
                 ),

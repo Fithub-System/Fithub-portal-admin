@@ -1,86 +1,108 @@
+import 'package:easy_localization/easy_localization.dart';
+
 class Validator {
-  // Check if a string is empty
-  static String? isNotEmpty(String? value, {String message = 'Field cannot be empty'}) {
+  static String? isNotEmpty(
+    String? value, {
+    String? message,
+  }) {
     if (value == null || value.trim().isEmpty) {
-      return message;
+      return message ?? 'validation.field_empty'.tr();
     }
     return null;
   }
 
-  // Validate email format
-  static String? isValidEmail(String? value, {String message = 'Invalid email address'}) {
+  static String? isValidEmail(
+    String? value, {
+    String? message,
+  }) {
     if (value == null || value.trim().isEmpty) {
-      return 'Email cannot be empty';
+      return 'validation.email_empty'.tr();
     }
-    String pattern = r'^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
-    RegExp regex = RegExp(pattern);
+    const pattern = r'^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
+    final regex = RegExp(pattern);
     if (!regex.hasMatch(value)) {
-      return message;
+      return message ?? 'validation.email_invalid'.tr();
     }
     return null;
   }
 
-  // Check if a string has a minimum length
-  static String? hasMinLength(String? value, int minLength, {String message = ''}) {
-    message = message.isEmpty ? 'Minimum length is $minLength characters' : message;
+  static String? hasMinLength(
+    String? value,
+    int minLength, {
+    String? message,
+  }) {
+    final resolved = message ??
+        'validation.min_length'.tr(namedArgs: {'min': '$minLength'});
     if (value == null || value.length < minLength) {
-      return message;
+      return resolved;
     }
     return null;
   }
 
-  // Check if a string has a maximum length
-  static String? hasMaxLength(String? value, int maxLength, {String message = ''}) {
-    message = message.isEmpty ? 'Maximum length is $maxLength characters' : message;
+  static String? hasMaxLength(
+    String? value,
+    int maxLength, {
+    String? message,
+  }) {
+    final resolved = message ??
+        'validation.max_length'.tr(namedArgs: {'max': '$maxLength'});
     if (value != null && value.length > maxLength) {
-      return message;
+      return resolved;
     }
     return null;
   }
 
-  // Validate if the value is a valid number
-  static String? isNumeric(String? value, {String message = 'Value must be a number'}) {
+  static String? isNumeric(
+    String? value, {
+    String? message,
+  }) {
     if (value == null || value.trim().isEmpty) {
-      return message;
+      return message ?? 'validation.numeric'.tr();
     }
     if (double.tryParse(value) == null) {
-      return message;
+      return message ?? 'validation.numeric'.tr();
     }
     return null;
   }
 
-  // Validate phone number (basic validation)
-  static String? isValidPhone(String? value, {String message = 'Invalid phone number'}) {
+  static String? isValidPhone(
+    String? value, {
+    String? message,
+  }) {
     if (value == null || value.trim().isEmpty) {
-      return 'Phone number cannot be empty';
+      return 'validation.phone_empty'.tr();
     }
-    String pattern = r'^\+?[0-9]{7,15}$'; // Matches phone numbers with 7 to 15 digits, optional "+" at start
-    RegExp regex = RegExp(pattern);
+    const pattern = r'^\+?[0-9]{7,15}$';
+    final regex = RegExp(pattern);
     if (!regex.hasMatch(value)) {
-      return message;
+      return message ?? 'validation.phone_invalid'.tr();
     }
     return null;
   }
 
-  // Validate password (minimum 8 characters, at least one letter and one number)
-  static String? isValidPassword(String? value, {String message = 'Password must be at least 8 characters long, contain at least one letter and one number'}) {
+  static String? isValidPassword(
+    String? value, {
+    String? message,
+  }) {
     if (value == null || value.isEmpty) {
-      return 'Password cannot be empty';
+      return 'validation.password_empty'.tr();
     }
-    String pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$';
-    RegExp regex = RegExp(pattern);
+    const pattern = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$';
+    final regex = RegExp(pattern);
     if (!regex.hasMatch(value)) {
-      return message;
+      return message ?? 'validation.password_invalid'.tr();
     }
     return null;
   }
 
-  // Check if two passwords match
-  static String? doPasswordsMatch(String? password, String? confirmPassword, {String message = 'Passwords do not match'}) {
+  static String? doPasswordsMatch(
+    String? password,
+    String? confirmPassword, {
+    String? message,
+  }) {
     if (password != confirmPassword) {
-      return message;
+      return message ?? 'validation.passwords_mismatch'.tr();
     }
     return null;
   }
 }
-
