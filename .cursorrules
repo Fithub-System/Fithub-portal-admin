@@ -22,10 +22,13 @@ You are an expert Flutter Developer specializing in multi-platform responsive la
 - Scaffold this app ONLY with [`flutter_custom_creator`](https://github.com/flutter-try-catch/flutter_custom_creator) (`dart pub global activate flutter_custom_creator` then `flutter_custom_creator <name> <domain>`).
 - Do NOT use plain `flutter create` or a custom folder layout that diverges from the kit.
 - Preserve and extend: `config/` (helpers, router, theme), `core/` (network, utils), `features/`, `injection_container.dart`, `app.dart`, `main.dart`. Prefer flavors (`dev` / `staging` / `prod`) when prompted.
+- **New features:** ONLY `cleanarch <snake_case_name> <sm-flag>` (`-b`/`-c`/`-p`/`-r` as appropriate per feature/FSD; default `-b`). Package: [`clean_architecture_with_state_management`](https://pub.dev/packages/clean_architecture_with_state_management). FORBIDDEN to hand-roll features. Wire feature DI into root facade. Obey `Fithub-documentation/standards/flutter-kit-conventions.md`.
+- **Outer data:** Dio kit `ApiProvider` **and** Supabase APIs as adapters behind ports (not in UI).
+- **DI:** Per-feature `features/<name>/injection_container.dart`; root facade only orchestrates + getters.
 
 ## Core Technical Patterns:
 - Architecture: Clean Architecture (Data, Domain, Presentation) mapped into the starter kit's `features/` layout.
-- State Management: BLoC pattern for all features, especially live status and UI responsive switches.
+- State Management: BLoC pattern for all features (`presentation/bloc` or `presentation/cubit`), especially live status and UI responsive switches — never invent alternate SM folder layouts.
 - Offline-First Strategy: Local database must use Drift (SQLite) to store cached membership rosters.
 - Access Validation: Offline cryptographic verification of incoming user QR codes must happen locally against Drift caching tables.
 - Network State: Implement visual Indicators for connection states (Online vs. Offline SafeMode).
