@@ -53,6 +53,15 @@
   "connectivity": {
     "safe_mode": {
       "banner": "Pulse SafeMode: data is saved locally"
+    },
+    "sync": {
+      "error": {
+        "not_configured": "Cloud sync is not configured for this build.",
+        "upsert_failed": "Could not sync offline attendance logs.",
+        "attendance_grant": "Attendance sync denied — Backend must GRANT INSERT on attendance_logs.",
+        "occupancy_rls": "Gym occupancy update denied by RLS — report to Backend (do not invent policies).",
+        "unknown": "Offline sync failed."
+      }
     }
   },
   "dashboard": {

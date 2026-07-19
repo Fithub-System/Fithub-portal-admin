@@ -41,6 +41,17 @@ class AppDatabase extends _$AppDatabase {
     )..where((q) => q.isSynced.equals(false))).get();
   }
 
+  /// Marks queued rows synced after a successful cloud upsert (idempotent).
+  Future<void> markAttendanceSynced(Iterable<String> ids) async {
+    final idList = ids.toList(growable: false);
+    if (idList.isEmpty) return;
+
+    await transaction(() async {
+      await (update(localAttendanceQueue)..where((q) => q.id.isIn(idList)))
+          .write(const LocalAttendanceQueueCompanion(isSynced: Value(true)));
+    });
+  }
+
   Future<LocalGymCacheEntry?> gymForTenant(String tenantId) {
     return (select(
       localGymCache,

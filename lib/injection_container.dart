@@ -13,6 +13,9 @@ import 'package:fithub_portal_admin/features/dashboard/data/datasources/gyms_occ
 import 'package:fithub_portal_admin/features/dashboard/domain/repositories/gyms_occupancy_repository.dart';
 import 'package:fithub_portal_admin/features/dashboard/injection_container.dart'
     as dashboard_di;
+import 'package:fithub_portal_admin/features/offline_sync/domain/use_cases/offline_sync_use_case.dart';
+import 'package:fithub_portal_admin/features/offline_sync/injection_container.dart'
+    as offline_sync_di;
 import 'package:fithub_portal_admin/features/scan/data/repositories/scan_repository.dart';
 import 'package:fithub_portal_admin/features/staff_invite/injection_container.dart'
     as staff_invite_di;
@@ -32,6 +35,7 @@ class InjectionContainer {
     auth_di.registerAuthDependencies(getIt);
     connectivity_di.registerConnectivityDependencies(getIt);
     dashboard_di.registerDashboardDependencies(getIt);
+    offline_sync_di.registerOfflineSyncDependencies(getIt);
     staff_invite_di.registerStaffInviteDependencies(getIt);
 
     if (!getIt.isRegistered<ScanRepository>()) {
@@ -59,6 +63,9 @@ class InjectionContainer {
   static ApiProvider get apiProvider => getIt<ApiProvider>();
 
   static ScanRepository get scanRepository => getIt<ScanRepository>();
+
+  static SyncPendingAttendanceUseCase get syncPendingAttendance =>
+      getIt<SyncPendingAttendanceUseCase>();
 
   static SecureStorageService get secureStorage =>
       getIt<SecureStorageService>();

@@ -7,6 +7,7 @@ import 'package:fithub_portal_admin/features/auth/presentation/pages/login_page.
 import 'package:fithub_portal_admin/features/connectivity/presentation/cubit/connectivity_cubit.dart';
 import 'package:fithub_portal_admin/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:fithub_portal_admin/features/home/presentation/pages/portal_home_shell.dart';
+import 'package:fithub_portal_admin/features/offline_sync/presentation/cubit/offline_sync_cubit.dart';
 import 'package:fithub_portal_admin/injection_container.dart';
 
 /// Auth gate: login vs Portal home shell (AC-A1 / AC-D1).
@@ -45,6 +46,18 @@ class _AuthenticatedShell extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ConnectivityCubit(connectivity)..start()),
+        BlocProvider(
+          create: (_) {
+            final cubit = OfflineSyncCubit(
+              syncPendingAttendance: InjectionContainer.syncPendingAttendance,
+              tenantId: profile.tenantId,
+              isOnline: () => connectivity.isOnline,
+              onConnectivityChanged: connectivity.onStatusChanged,
+            );
+            cubit.start();
+            return cubit;
+          },
+        ),
         BlocProvider(
           create: (context) {
             final cubit = DashboardCubit(

@@ -53,6 +53,15 @@
   "connectivity": {
     "safe_mode": {
       "banner": "وضع الأمان Pulse: تُحفظ البيانات محليًا"
+    },
+    "sync": {
+      "error": {
+        "not_configured": "مزامنة السحابة غير مُعدّة لهذا البناء.",
+        "upsert_failed": "تعذّرت مزامنة سجلات الحضور دون اتصال.",
+        "attendance_grant": "رُفضت مزامنة الحضور — يجب على الخلفية منح INSERT على attendance_logs.",
+        "occupancy_rls": "رُفض تحديث إشغال الصالة بسبب RLS — أبلِغ الخلفية (لا تُنشئ سياسات).",
+        "unknown": "فشلت المزامنة دون اتصال."
+      }
     }
   },
   "dashboard": {
