@@ -20,4 +20,10 @@ abstract final class AppEndpoints {
   /// Payload per event matches [gymOccupancy] response body.
   static String gymOccupancyStream(String tenantId) =>
       '$_root/v1/gyms/$tenantId/occupancy/stream';
+
+  /// FEAT-05 staff invite Edge Function (user JWT only).
+  ///
+  /// `POST /functions/v1/invite-staff`
+  /// Body JSON: `{ email, role, name }` where role ∈ Admin|Receptionist|Coach.
+  static String get inviteStaff => '$_root/functions/v1/invite-staff';
 }

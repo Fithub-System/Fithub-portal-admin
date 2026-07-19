@@ -52,5 +52,9 @@ abstract final class KineticTokens {
   /// Cited Stitch screen for Live Occupancy (Verification Audit).
   static const String stitchOccupancyScreenId =
       '216e0407184f4c39bd501ed436c1e88b';
+
+  /// Cited Stitch screen for Invite Staff / Staff Profile Creator (FEAT-05).
+  static const String stitchStaffInviteScreenId =
+      'dcc070ef2b1e45058b3e042ad70140e3';
   static const String stitchProjectId = '13435235862240753621';
 }

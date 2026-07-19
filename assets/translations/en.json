@@ -77,6 +77,42 @@
       "rejected": "Rejected: {reason}"
     }
   },
+  "staff_invite": {
+    "title": "STAFF PROFILE CREATOR",
+    "subtitle": "Onboard new personnel and manage operational logistics.",
+    "identity_section": "Identity & Credentials",
+    "protocol_section": "Access Protocol",
+    "cta": "INITIALIZE PROFILE",
+    "success": "Staff invited successfully.",
+    "field": {
+      "name_label": "FULL LEGAL NAME",
+      "name_hint": "Johnathan Wick",
+      "name_required": "Display name is required",
+      "email_label": "PROFESSIONAL EMAIL",
+      "email_hint": "j.wick@kinetic.com",
+      "email_required": "Email is required"
+    },
+    "role": {
+      "admin": {
+        "title": "Admin",
+        "description": "FULL SYSTEM CONTROL"
+      },
+      "coach": {
+        "title": "Coach",
+        "description": "SESSION MANAGEMENT"
+      },
+      "receptionist": {
+        "title": "Receptionist",
+        "description": "CHECK-IN & POS"
+      }
+    },
+    "error": {
+      "forbidden": "Only Admins can invite staff.",
+      "invalid_body": "Email, role, and name are required.",
+      "not_configured": "Invite staff is not configured for this build.",
+      "unknown": "Staff invite failed."
+    }
+  },
   "router": {
     "unknown": {
       "title": "Page Not Found",

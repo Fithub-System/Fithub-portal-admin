@@ -77,6 +77,42 @@
       "rejected": "مرفوض: {reason}"
     }
   },
+  "staff_invite": {
+    "title": "إنشاء ملف الموظف",
+    "subtitle": "إضافة موظفين جدد وإدارة التشغيل.",
+    "identity_section": "الهوية وبيانات الدخول",
+    "protocol_section": "بروتوكول الوصول",
+    "cta": "تهيئة الملف",
+    "success": "تمت دعوة الموظف بنجاح.",
+    "field": {
+      "name_label": "الاسم الكامل",
+      "name_hint": "جوناثان ويك",
+      "name_required": "اسم العرض مطلوب",
+      "email_label": "البريد المهني",
+      "email_hint": "j.wick@kinetic.com",
+      "email_required": "البريد الإلكتروني مطلوب"
+    },
+    "role": {
+      "admin": {
+        "title": "مسؤول",
+        "description": "تحكم كامل بالنظام"
+      },
+      "coach": {
+        "title": "مدرب",
+        "description": "إدارة الجلسات"
+      },
+      "receptionist": {
+        "title": "استقبال",
+        "description": "تسجيل الحضور ونقاط البيع"
+      }
+    },
+    "error": {
+      "forbidden": "دعوة الموظفين للمسؤول فقط.",
+      "invalid_body": "البريد والدور والاسم مطلوبة.",
+      "not_configured": "دعوة الموظفين غير مُعدّة لهذا البناء.",
+      "unknown": "فشلت دعوة الموظف."
+    }
+  },
   "router": {
     "unknown": {
       "title": "الصفحة غير موجودة",

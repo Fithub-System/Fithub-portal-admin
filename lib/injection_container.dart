@@ -14,6 +14,9 @@ import 'package:fithub_portal_admin/features/dashboard/domain/repositories/gyms_
 import 'package:fithub_portal_admin/features/dashboard/injection_container.dart'
     as dashboard_di;
 import 'package:fithub_portal_admin/features/scan/data/repositories/scan_repository.dart';
+import 'package:fithub_portal_admin/features/staff_invite/injection_container.dart'
+    as staff_invite_di;
+import 'package:fithub_portal_admin/features/staff_invite/presentation/bloc/staff_invite_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -29,6 +32,7 @@ class InjectionContainer {
     auth_di.registerAuthDependencies(getIt);
     connectivity_di.registerConnectivityDependencies(getIt);
     dashboard_di.registerDashboardDependencies(getIt);
+    staff_invite_di.registerStaffInviteDependencies(getIt);
 
     if (!getIt.isRegistered<ScanRepository>()) {
       getIt.registerLazySingleton<ScanRepository>(
@@ -36,6 +40,8 @@ class InjectionContainer {
       );
     }
   }
+
+  static StaffInviteBloc createStaffInviteBloc() => getIt<StaffInviteBloc>();
 
   static AuthRepository get authRepository => getIt<AuthRepository>();
 
