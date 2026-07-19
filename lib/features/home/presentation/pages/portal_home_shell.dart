@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
+import '../../../../injection_container.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../../../dashboard/presentation/widgets/live_occupancy_gauge.dart';
+import '../../../staff_invite/presentation/screens/staff_invite_screen.dart';
 
 /// Adaptive Admin shell: NavigationRail (desktop/tablet) / NavigationBar (mobile).
 class PortalHomeShell extends StatefulWidget {
@@ -311,67 +313,73 @@ class _AccountDestination extends StatelessWidget {
     final dash = 'home.shell.em_dash'.tr();
     final name = profile?.name ?? 'home.shell.admin_fallback'.tr();
     final textTheme = Theme.of(context).textTheme;
+    final canInvite = profile?.canInviteStaff ?? false;
 
-    return Padding(
+    return ListView(
       padding: const EdgeInsetsDirectional.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'home.shell.welcome'.tr(namedArgs: {'name': name}),
-                  textAlign: TextAlign.start,
-                  style: textTheme.titleLarge?.copyWith(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: KineticTokens.pureWhite,
-                  ),
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'home.shell.welcome'.tr(namedArgs: {'name': name}),
+                textAlign: TextAlign.start,
+                style: textTheme.titleLarge?.copyWith(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: KineticTokens.pureWhite,
                 ),
               ),
-              IconButton(
-                tooltip: 'home.shell.sign_out'.tr(),
-                onPressed: () =>
-                    context.read<AuthBloc>().add(const AuthSignOutRequested()),
-                icon: const Icon(Icons.logout, color: KineticTokens.zincGray),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'home.shell.command_center'.tr(),
-            textAlign: TextAlign.start,
-            style: textTheme.labelLarge?.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 2,
-              color: KineticTokens.zincGray,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'home.shell.role'.tr(namedArgs: {'role': profile?.role ?? dash}),
-            textAlign: TextAlign.start,
-            style: textTheme.titleMedium?.copyWith(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: KineticTokens.electricLime,
+            IconButton(
+              tooltip: 'home.shell.sign_out'.tr(),
+              onPressed: () =>
+                  context.read<AuthBloc>().add(const AuthSignOutRequested()),
+              icon: const Icon(Icons.logout, color: KineticTokens.zincGray),
             ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'home.shell.command_center'.tr(),
+          textAlign: TextAlign.start,
+          style: textTheme.labelLarge?.copyWith(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 2,
+            color: KineticTokens.zincGray,
           ),
-          const SizedBox(height: 4),
-          Text(
-            'home.shell.tenant'.tr(
-              namedArgs: {'tenant': profile?.tenantId ?? dash},
-            ),
-            textAlign: TextAlign.start,
-            style: textTheme.bodyMedium?.copyWith(
-              fontSize: 13,
-              color: KineticTokens.zincGray,
-            ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'home.shell.role'.tr(namedArgs: {'role': profile?.role ?? dash}),
+          textAlign: TextAlign.start,
+          style: textTheme.titleMedium?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: KineticTokens.electricLime,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'home.shell.tenant'.tr(
+            namedArgs: {'tenant': profile?.tenantId ?? dash},
+          ),
+          textAlign: TextAlign.start,
+          style: textTheme.bodyMedium?.copyWith(
+            fontSize: 13,
+            color: KineticTokens.zincGray,
+          ),
+        ),
+        const SizedBox(height: 32),
+        if (canInvite)
+          BlocProvider(
+            create: (_) => InjectionContainer.createStaffInviteBloc(),
+            child: const StaffInviteScreen(),
+          )
+        else
+          const StaffInviteDeniedView(),
+      ],
     );
   }
 }

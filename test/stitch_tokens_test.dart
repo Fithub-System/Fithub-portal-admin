@@ -26,6 +26,8 @@ void main() {
     expect(en['auth']['login']['cta_initialize_session'], 'INITIALIZE SESSION');
     expect(ar['auth']['login']['cta_initialize_session'], 'بدء الجلسة');
     expect(en['connectivity']['safe_mode']['banner'], isA<String>());
+    expect(en['staff_invite']['cta'], 'INITIALIZE PROFILE');
+    expect(ar['staff_invite']['cta'], 'تهيئة الملف');
   });
 
   test('Accept-Language initialHeaders normalize to en|ar', () {

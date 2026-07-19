@@ -86,6 +86,9 @@ class ApiProvider {
         if (nested is Map && nested['message'] != null) {
           throw Exception(nested['message']);
         }
+        if (nested is String && nested.isNotEmpty) {
+          throw Exception(nested);
+        }
         throw Exception(data['message'] ?? 'an error occurred');
       }
       rethrow;

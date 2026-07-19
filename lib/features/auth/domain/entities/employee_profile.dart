@@ -18,6 +18,9 @@ class EmployeeProfile extends Equatable {
 
   bool get isPortalRole => role == 'Admin' || role == 'Receptionist';
 
+  /// FEAT-05 AC-B4 — only Admin may invite staff (UI gate; Backend enforces).
+  bool get canInviteStaff => role == 'Admin';
+
   @override
   List<Object?> get props => [id, tenantId, userId, name, role];
 }
