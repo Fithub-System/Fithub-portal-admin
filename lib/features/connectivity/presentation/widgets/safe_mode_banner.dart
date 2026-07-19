@@ -26,10 +26,10 @@ class SafeModeBanner extends StatelessWidget {
                 KineticTokens.safeModeMessageKey.tr(),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: KineticTokens.pureWhite,
-                    ),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: KineticTokens.pureWhite,
+                ),
               ),
             )
           : const SizedBox.shrink(key: ValueKey('safe-mode-off')),

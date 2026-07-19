@@ -1,3 +1,4 @@
+import 'package:fithub_portal_admin/core/network/accept_language.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -7,7 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// - [main.dart] — `Supabase.initialize(..., headers: Accept-Language)`
 /// - [apply] — on every locale change via [App] rebuild
 abstract final class SupabaseLocaleHeaders {
-  static const headerName = 'Accept-Language';
+  static const headerName = AcceptLanguage.headerName;
 
   /// Merges `Accept-Language` into the live client header map (AC-I7).
   static void apply(String languageCode) {
@@ -16,7 +17,7 @@ abstract final class SupabaseLocaleHeaders {
       if (!Supabase.instance.isInitialized) return;
       final client = Supabase.instance.client;
       final next = Map<String, String>.from(client.headers);
-      next[headerName] = _normalize(languageCode);
+      next[headerName] = AcceptLanguage.normalize(languageCode);
       // Setter propagates to rest / auth / functions / storage clients.
       client.headers = next;
     } catch (_) {
@@ -25,12 +26,6 @@ abstract final class SupabaseLocaleHeaders {
   }
 
   static Map<String, String> initialHeaders(String languageCode) => {
-        headerName: _normalize(languageCode),
-      };
-
-  static String _normalize(String languageCode) {
-    final code = languageCode.toLowerCase();
-    if (code.startsWith('ar')) return 'ar';
-    return 'en';
-  }
+    headerName: AcceptLanguage.normalize(languageCode),
+  };
 }

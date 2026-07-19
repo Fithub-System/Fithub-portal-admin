@@ -6,7 +6,7 @@ import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../cubit/dashboard_cubit.dart';
-import '../widgets/live_occupancy_ring.dart';
+import '../widgets/live_occupancy_gauge.dart';
 
 /// Standalone dashboard page (also embedded via [PortalHomeShell]).
 class DashboardPage extends StatelessWidget {
@@ -30,7 +30,7 @@ class DashboardPage extends StatelessWidget {
                 children: [
                   SafeModeBanner(visible: connectivity.isOffline),
                   Expanded(
-                    child: Padding(
+                    child: SingleChildScrollView(
                       padding: const EdgeInsetsDirectional.all(24),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,15 +55,24 @@ class DashboardPage extends StatelessWidget {
                               color: KineticTokens.zincGray,
                             ),
                           ),
-                          const Spacer(),
-                          Center(
-                            child: LiveOccupancyRing(
-                              current: dashboard.currentOccupancy,
-                              capacity: dashboard.capacityLimit,
+                          if (dashboard.statusMessageKey != null) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              dashboard.statusMessageKey!.tr(),
+                              textAlign: TextAlign.start,
+                              style: textTheme.bodyMedium?.copyWith(
+                                fontSize: 12,
+                                color: KineticTokens.electricLime,
+                              ),
                             ),
+                          ],
+                          const SizedBox(height: 24),
+                          LiveOccupancyGauge(
+                            current: dashboard.currentOccupancy,
+                            capacity: dashboard.capacityLimit,
                           ),
-                          const Spacer(),
-                          if (dashboard.lastScanMessageKey != null)
+                          if (dashboard.lastScanMessageKey != null) ...[
+                            const SizedBox(height: 24),
                             Text(
                               _scanMessage(dashboard),
                               textAlign: TextAlign.start,
@@ -72,6 +81,7 @@ class DashboardPage extends StatelessWidget {
                                 color: KineticTokens.electricLime,
                               ),
                             ),
+                          ],
                         ],
                       ),
                     ),

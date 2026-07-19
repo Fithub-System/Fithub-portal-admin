@@ -11,16 +11,17 @@ import 'support/localized_pump.dart';
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
 void main() {
-  testWidgets('cold start without session shows Stitch Gym Connect brand',
-      (tester) async {
+  testWidgets('cold start without session shows Stitch Gym Connect brand', (
+    tester,
+  ) async {
     final repository = _MockAuthRepository();
     when(() => repository.currentSession).thenReturn(null);
 
     await pumpLocalizedApp(
       tester,
       BlocProvider(
-        create: (_) => AuthBloc(authRepository: repository)
-          ..add(const AuthStarted()),
+        create: (_) =>
+            AuthBloc(authRepository: repository)..add(const AuthStarted()),
         child: const LoginPage(),
       ),
       waitFor: find.text('Gym Connect'),
@@ -33,16 +34,17 @@ void main() {
     expect(find.text('AR'), findsOneWidget);
   });
 
-  testWidgets('Arabic start locale renders translated login without crash',
-      (tester) async {
+  testWidgets('Arabic start locale renders translated login without crash', (
+    tester,
+  ) async {
     final repository = _MockAuthRepository();
     when(() => repository.currentSession).thenReturn(null);
 
     await pumpLocalizedApp(
       tester,
       BlocProvider(
-        create: (_) => AuthBloc(authRepository: repository)
-          ..add(const AuthStarted()),
+        create: (_) =>
+            AuthBloc(authRepository: repository)..add(const AuthStarted()),
         child: const LoginPage(),
       ),
       locale: AppLocales.ar,

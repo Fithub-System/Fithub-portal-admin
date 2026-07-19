@@ -12,10 +12,7 @@ final class AuthStarted extends AuthEvent {
 }
 
 final class AuthSignInSubmitted extends AuthEvent {
-  const AuthSignInSubmitted({
-    required this.email,
-    required this.password,
-  });
+  const AuthSignInSubmitted({required this.email, required this.password});
 
   final String email;
   final String password;

@@ -34,11 +34,11 @@ class _LoginPageState extends State<LoginPage> {
     if (form == null || !form.validate()) return;
 
     context.read<AuthBloc>().add(
-          AuthSignInSubmitted(
-            email: _emailController.text,
-            password: _passwordController.text,
-          ),
-        );
+      AuthSignInSubmitted(
+        email: _emailController.text,
+        password: _passwordController.text,
+      ),
+    );
   }
 
   Future<void> _setLocale(Locale locale) async {
@@ -57,7 +57,10 @@ class _LoginPageState extends State<LoginPage> {
           current.message!.isNotEmpty,
       listener: (context, state) {
         if (state is AuthUnauthenticated && state.message != null) {
-          StitchAuthSnackbar.show(context, state.message!.tr());
+          final raw = state.message!;
+          // i18n keys look like `auth.error.*`; raw PostgREST text is shown as-is.
+          final text = raw.startsWith('auth.') ? raw.tr() : raw;
+          StitchAuthSnackbar.show(context, text);
         }
       },
       child: Scaffold(
@@ -135,10 +138,7 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 class _LocaleToggle extends StatelessWidget {
-  const _LocaleToggle({
-    required this.locale,
-    required this.onSelect,
-  });
+  const _LocaleToggle({required this.locale, required this.onSelect});
 
   final Locale locale;
   final Future<void> Function(Locale locale) onSelect;
@@ -241,9 +241,7 @@ class _LoginCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loading = context.select(
-      (AuthBloc b) => b.state is AuthLoading,
-    );
+    final loading = context.select((AuthBloc b) => b.state is AuthLoading);
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -521,9 +519,9 @@ class _SocialButton extends StatelessWidget {
       label: Text(
         label,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontSize: 14,
-              color: AppColors.primary,
-            ),
+          fontSize: 14,
+          color: AppColors.primary,
+        ),
       ),
       style: OutlinedButton.styleFrom(
         backgroundColor: AppColors.surfaceContainer,

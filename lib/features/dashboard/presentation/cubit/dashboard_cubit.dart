@@ -1,26 +1,31 @@
 import 'dart:async';
 
-import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/database/app_database.dart';
 import '../../../scan/data/repositories/scan_repository.dart';
+import '../../data/datasources/gyms_occupancy_local_data_source.dart';
 import '../../domain/entities/gym_occupancy.dart';
 import '../../domain/repositories/gyms_occupancy_repository.dart';
 
-/// Dashboard occupancy: Drift cache offline; Supabase realtime when online.
+/// Dashboard occupancy Cubit — no `supabase_flutter` import (FEAT-04 AC-C3).
 class DashboardCubit extends Cubit<DashboardState> {
   DashboardCubit({
-    required AppDatabase this._database,
-    required GymsOccupancyRepository this._gymsRepository,
-    required String this._tenantId,
-    required bool Function() this._isOnline,
-    required Stream<bool> this._onConnectivityChanged,
-    ScanRepository? this._scanRepository,
-  }) : super(const DashboardState.initial());
+    required GymsOccupancyLocalDataSource local,
+    required GymsOccupancyRepository gymsRepository,
+    required String tenantId,
+    required bool Function() isOnline,
+    required Stream<bool> onConnectivityChanged,
+    ScanRepository? scanRepository,
+  }) : _local = local,
+       _gymsRepository = gymsRepository,
+       _tenantId = tenantId,
+       _isOnline = isOnline,
+       _onConnectivityChanged = onConnectivityChanged,
+       _scanRepository = scanRepository,
+       super(const DashboardState.initial());
 
-  final AppDatabase _database;
+  final GymsOccupancyLocalDataSource _local;
   final GymsOccupancyRepository _gymsRepository;
   final String _tenantId;
   final bool Function() _isOnline;
@@ -52,16 +57,16 @@ class DashboardCubit extends Cubit<DashboardState> {
     }
   }
 
-  /// Prefer Drift [LocalGymCache] (SafeMode / offline carry-forward).
+  /// Prefer Drift [GymsOccupancyLocalDataSource] (SafeMode / offline).
   Future<void> loadFromCache() async {
-    final gym = await _database.gymForTenant(_tenantId);
+    final gym = await _local.readCached(_tenantId);
     emit(
       state.copyWith(
         currentOccupancy: gym?.currentOccupancy ?? state.currentOccupancy,
         capacityLimit: gym?.capacityLimit ?? state.capacityLimit,
         gymName: gym?.name ?? state.gymName,
         source: OccupancySource.cache,
-        clearError: true,
+        clearStatus: true,
       ),
     );
   }
@@ -72,23 +77,42 @@ class DashboardCubit extends Cubit<DashboardState> {
   Future<void> _attachRemote() async {
     await _detachRemote();
 
+    var oneShotOk = false;
     try {
       final snapshot = await _gymsRepository.fetchOccupancy(_tenantId);
       if (snapshot != null) {
+        oneShotOk = true;
         await _persistAndEmit(snapshot, OccupancySource.remote);
+      } else {
+        emit(state.copyWith(statusMessageKey: 'dashboard.status.no_gym_row'));
       }
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } catch (_) {
+      emit(state.copyWith(statusMessageKey: 'dashboard.status.fetch_failed'));
     }
 
     _remoteSub = _gymsRepository
         .watchOccupancy(_tenantId)
         .listen(
           (occupancy) async {
-            await _persistAndEmit(occupancy, OccupancySource.remote);
+            try {
+              await _persistAndEmit(occupancy, OccupancySource.remote);
+            } catch (_) {
+              emit(
+                state.copyWith(
+                  statusMessageKey: 'dashboard.status.fetch_failed',
+                ),
+              );
+            }
           },
-          onError: (Object error) {
-            emit(state.copyWith(errorMessage: error.toString()));
+          onError: (Object _) {
+            // Soft fallback: keep one-shot / Drift; localized recoverable status.
+            emit(
+              state.copyWith(
+                statusMessageKey: oneShotOk
+                    ? 'dashboard.status.realtime_degraded'
+                    : 'dashboard.status.realtime_failed',
+              ),
+            );
           },
         );
   }
@@ -102,11 +126,12 @@ class DashboardCubit extends Cubit<DashboardState> {
     GymOccupancy occupancy,
     OccupancySource source,
   ) async {
-    await _database.upsertGymCache(
-      LocalGymCacheCompanion.insert(
-        tenantId: occupancy.id,
-        name: occupancy.name.isEmpty ? state.gymName : occupancy.name,
-        currentOccupancy: Value(occupancy.currentOccupancy),
+    final named = occupancy.name.isEmpty ? state.gymName : occupancy.name;
+    await _local.writeCache(
+      GymOccupancy(
+        id: occupancy.id,
+        name: named,
+        currentOccupancy: occupancy.currentOccupancy,
         capacityLimit: occupancy.capacityLimit,
       ),
     );
@@ -115,9 +140,9 @@ class DashboardCubit extends Cubit<DashboardState> {
       state.copyWith(
         currentOccupancy: occupancy.currentOccupancy,
         capacityLimit: occupancy.capacityLimit,
-        gymName: occupancy.name.isEmpty ? state.gymName : occupancy.name,
+        gymName: named,
         source: source,
-        clearError: true,
+        clearStatus: true,
       ),
     );
   }
@@ -170,7 +195,7 @@ class DashboardState extends Equatable {
     this.lastScanMemberName,
     this.lastScanRejectReason,
     this.source = OccupancySource.initial,
-    this.errorMessage,
+    this.statusMessageKey,
   });
 
   const DashboardState.initial()
@@ -181,7 +206,7 @@ class DashboardState extends Equatable {
       lastScanMemberName = null,
       lastScanRejectReason = null,
       source = OccupancySource.initial,
-      errorMessage = null;
+      statusMessageKey = null;
 
   final int currentOccupancy;
   final int capacityLimit;
@@ -190,7 +215,12 @@ class DashboardState extends Equatable {
   final String? lastScanMemberName;
   final String? lastScanRejectReason;
   final OccupancySource source;
-  final String? errorMessage;
+
+  /// Localized recoverable status (realtime soft-fallback etc.).
+  final String? statusMessageKey;
+
+  /// Legacy accessor for tests / callers that used [errorMessage].
+  String? get errorMessage => statusMessageKey;
 
   /// Legacy accessor for tests that check [lastScanMessage] string.
   String? get lastScanMessage {
@@ -212,8 +242,8 @@ class DashboardState extends Equatable {
     String? lastScanMemberName,
     String? lastScanRejectReason,
     OccupancySource? source,
-    String? errorMessage,
-    bool clearError = false,
+    String? statusMessageKey,
+    bool clearStatus = false,
   }) {
     return DashboardState(
       currentOccupancy: currentOccupancy ?? this.currentOccupancy,
@@ -223,7 +253,9 @@ class DashboardState extends Equatable {
       lastScanMemberName: lastScanMemberName ?? this.lastScanMemberName,
       lastScanRejectReason: lastScanRejectReason ?? this.lastScanRejectReason,
       source: source ?? this.source,
-      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      statusMessageKey: clearStatus
+          ? null
+          : (statusMessageKey ?? this.statusMessageKey),
     );
   }
 
@@ -236,6 +268,6 @@ class DashboardState extends Equatable {
     lastScanMemberName,
     lastScanRejectReason,
     source,
-    errorMessage,
+    statusMessageKey,
   ];
 }

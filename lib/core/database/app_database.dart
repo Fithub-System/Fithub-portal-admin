@@ -7,9 +7,7 @@ import 'tables/local_members.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(
-  tables: [LocalMembers, LocalAttendanceQueue, LocalGymCache],
-)
+@DriftDatabase(tables: [LocalMembers, LocalAttendanceQueue, LocalGymCache])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
@@ -17,12 +15,20 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(name: 'fithub_portal_admin');
+    return driftDatabase(
+      name: 'fithub_portal_admin',
+      // Required on Flutter web (Wasm + shared worker). Ignored on native.
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
+      ),
+    );
   }
 
   Future<LocalMember?> findMemberById(String athleteId) {
-    return (select(localMembers)..where((m) => m.id.equals(athleteId)))
-        .getSingleOrNull();
+    return (select(
+      localMembers,
+    )..where((m) => m.id.equals(athleteId))).getSingleOrNull();
   }
 
   Future<void> enqueueAttendance(LocalAttendanceQueueCompanion entry) {
@@ -30,14 +36,15 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<LocalAttendanceQueueItem>> pendingAttendance() {
-    return (select(localAttendanceQueue)
-          ..where((q) => q.isSynced.equals(false)))
-        .get();
+    return (select(
+      localAttendanceQueue,
+    )..where((q) => q.isSynced.equals(false))).get();
   }
 
   Future<LocalGymCacheEntry?> gymForTenant(String tenantId) {
-    return (select(localGymCache)..where((g) => g.tenantId.equals(tenantId)))
-        .getSingleOrNull();
+    return (select(
+      localGymCache,
+    )..where((g) => g.tenantId.equals(tenantId))).getSingleOrNull();
   }
 
   Future<void> upsertGymCache(LocalGymCacheCompanion entry) {

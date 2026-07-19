@@ -9,8 +9,8 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(const AuthInitial()) {
+    : _authRepository = authRepository,
+      super(const AuthInitial()) {
     on<AuthStarted>(_onStarted);
     on<AuthSignInSubmitted>(_onSignIn);
     on<AuthSignOutRequested>(_onSignOut);
