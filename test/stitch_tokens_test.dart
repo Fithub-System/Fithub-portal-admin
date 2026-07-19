@@ -18,43 +18,23 @@ void main() {
   test('translation assets expose auth.login.cta_initialize_session', () async {
     TestWidgetsFlutterBinding.ensureInitialized();
 
-    final enRaw =
-        await rootBundle.loadString('assets/translations/en.json');
-    final arRaw =
-        await rootBundle.loadString('assets/translations/ar.json');
+    final enRaw = await rootBundle.loadString('assets/translations/en.json');
+    final arRaw = await rootBundle.loadString('assets/translations/ar.json');
     final en = jsonDecode(enRaw) as Map<String, dynamic>;
     final ar = jsonDecode(arRaw) as Map<String, dynamic>;
 
-    expect(
-      en['auth']['login']['cta_initialize_session'],
-      'INITIALIZE SESSION',
-    );
-    expect(
-      ar['auth']['login']['cta_initialize_session'],
-      'بدء الجلسة',
-    );
-    expect(
-      en['connectivity']['safe_mode']['banner'],
-      isA<String>(),
-    );
+    expect(en['auth']['login']['cta_initialize_session'], 'INITIALIZE SESSION');
+    expect(ar['auth']['login']['cta_initialize_session'], 'بدء الجلسة');
+    expect(en['connectivity']['safe_mode']['banner'], isA<String>());
   });
 
   test('Accept-Language initialHeaders normalize to en|ar', () {
-    expect(
-      SupabaseLocaleHeaders.initialHeaders('en')['Accept-Language'],
-      'en',
-    );
-    expect(
-      SupabaseLocaleHeaders.initialHeaders('ar')['Accept-Language'],
-      'ar',
-    );
+    expect(SupabaseLocaleHeaders.initialHeaders('en')['Accept-Language'], 'en');
+    expect(SupabaseLocaleHeaders.initialHeaders('ar')['Accept-Language'], 'ar');
     expect(
       SupabaseLocaleHeaders.initialHeaders('ar_SA')['Accept-Language'],
       'ar',
     );
-    expect(
-      SupabaseLocaleHeaders.initialHeaders('fr')['Accept-Language'],
-      'en',
-    );
+    expect(SupabaseLocaleHeaders.initialHeaders('fr')['Accept-Language'], 'en');
   });
 }

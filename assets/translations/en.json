@@ -59,10 +59,18 @@
     "gym_fallback": "Pulse Gym",
     "status": {
       "online": "Online — cloud sync active",
-      "offline": "Offline — local SafeMode active"
+      "offline": "Offline — local SafeMode active",
+      "realtime_degraded": "Live stream unavailable — showing last fetch. Check Realtime publication.",
+      "realtime_failed": "Live stream failed — using cached occupancy. Retry when online.",
+      "fetch_failed": "Could not refresh occupancy — showing local cache.",
+      "no_gym_row": "No gym row readable for this tenant (check SELECT RLS / GRANT)."
     },
     "occupancy": {
-      "live_label": "LIVE OCCUPANCY"
+      "live_label": "LIVE OCCUPANCY",
+      "subtitle": "REAL-TIME GYM FLOOR STATUS",
+      "timeline_start": "05:00 AM",
+      "timeline_peak": "PEAK HOUR: 06:00 PM",
+      "timeline_end": "11:00 PM"
     },
     "scan": {
       "approved": "Approved: {name}",

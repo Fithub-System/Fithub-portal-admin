@@ -1,20 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 
 class Validator {
-  static String? isNotEmpty(
-    String? value, {
-    String? message,
-  }) {
+  static String? isNotEmpty(String? value, {String? message}) {
     if (value == null || value.trim().isEmpty) {
       return message ?? 'validation.field_empty'.tr();
     }
     return null;
   }
 
-  static String? isValidEmail(
-    String? value, {
-    String? message,
-  }) {
+  static String? isValidEmail(String? value, {String? message}) {
     if (value == null || value.trim().isEmpty) {
       return 'validation.email_empty'.tr();
     }
@@ -26,36 +20,25 @@ class Validator {
     return null;
   }
 
-  static String? hasMinLength(
-    String? value,
-    int minLength, {
-    String? message,
-  }) {
-    final resolved = message ??
-        'validation.min_length'.tr(namedArgs: {'min': '$minLength'});
+  static String? hasMinLength(String? value, int minLength, {String? message}) {
+    final resolved =
+        message ?? 'validation.min_length'.tr(namedArgs: {'min': '$minLength'});
     if (value == null || value.length < minLength) {
       return resolved;
     }
     return null;
   }
 
-  static String? hasMaxLength(
-    String? value,
-    int maxLength, {
-    String? message,
-  }) {
-    final resolved = message ??
-        'validation.max_length'.tr(namedArgs: {'max': '$maxLength'});
+  static String? hasMaxLength(String? value, int maxLength, {String? message}) {
+    final resolved =
+        message ?? 'validation.max_length'.tr(namedArgs: {'max': '$maxLength'});
     if (value != null && value.length > maxLength) {
       return resolved;
     }
     return null;
   }
 
-  static String? isNumeric(
-    String? value, {
-    String? message,
-  }) {
+  static String? isNumeric(String? value, {String? message}) {
     if (value == null || value.trim().isEmpty) {
       return message ?? 'validation.numeric'.tr();
     }
@@ -65,10 +48,7 @@ class Validator {
     return null;
   }
 
-  static String? isValidPhone(
-    String? value, {
-    String? message,
-  }) {
+  static String? isValidPhone(String? value, {String? message}) {
     if (value == null || value.trim().isEmpty) {
       return 'validation.phone_empty'.tr();
     }
@@ -80,10 +60,7 @@ class Validator {
     return null;
   }
 
-  static String? isValidPassword(
-    String? value, {
-    String? message,
-  }) {
+  static String? isValidPassword(String? value, {String? message}) {
     if (value == null || value.isEmpty) {
       return 'validation.password_empty'.tr();
     }

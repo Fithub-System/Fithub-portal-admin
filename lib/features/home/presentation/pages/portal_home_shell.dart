@@ -7,7 +7,7 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
-import '../../../dashboard/presentation/widgets/live_occupancy_ring.dart';
+import '../../../dashboard/presentation/widgets/live_occupancy_gauge.dart';
 
 /// Adaptive Admin shell: NavigationRail (desktop/tablet) / NavigationBar (mobile).
 class PortalHomeShell extends StatefulWidget {
@@ -185,7 +185,7 @@ class _DashboardDestination extends StatelessWidget {
                 ? 'dashboard.gym_fallback'.tr()
                 : dashboard.gymName;
 
-            return Padding(
+            return SingleChildScrollView(
               padding: const EdgeInsetsDirectional.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,15 +210,24 @@ class _DashboardDestination extends StatelessWidget {
                       color: KineticTokens.zincGray,
                     ),
                   ),
-                  const Spacer(),
-                  Center(
-                    child: LiveOccupancyRing(
-                      current: dashboard.currentOccupancy,
-                      capacity: dashboard.capacityLimit,
+                  if (dashboard.statusMessageKey != null) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      dashboard.statusMessageKey!.tr(),
+                      textAlign: TextAlign.start,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontSize: 12,
+                        color: KineticTokens.electricLime,
+                      ),
                     ),
+                  ],
+                  const SizedBox(height: 24),
+                  LiveOccupancyGauge(
+                    current: dashboard.currentOccupancy,
+                    capacity: dashboard.capacityLimit,
                   ),
-                  const Spacer(),
-                  if (dashboard.lastScanMessageKey != null)
+                  if (dashboard.lastScanMessageKey != null) ...[
+                    const SizedBox(height: 24),
                     Text(
                       _scanMessage(dashboard),
                       textAlign: TextAlign.start,
@@ -227,6 +236,7 @@ class _DashboardDestination extends StatelessWidget {
                         color: KineticTokens.electricLime,
                       ),
                     ),
+                  ],
                 ],
               ),
             );

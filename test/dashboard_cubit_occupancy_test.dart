@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:fithub_portal_admin/core/database/app_database.dart';
+import 'package:fithub_portal_admin/features/dashboard/data/datasources/gyms_occupancy_drift_local_data_source.dart';
+import 'package:fithub_portal_admin/features/dashboard/data/datasources/gyms_occupancy_local_data_source.dart';
 import 'package:fithub_portal_admin/features/dashboard/domain/entities/gym_occupancy.dart';
 import 'package:fithub_portal_admin/features/dashboard/domain/repositories/gyms_occupancy_repository.dart';
 import 'package:fithub_portal_admin/features/dashboard/presentation/cubit/dashboard_cubit.dart';
@@ -14,6 +15,7 @@ class _MockGymsRepo extends Mock implements GymsOccupancyRepository {}
 
 void main() {
   late AppDatabase database;
+  late GymsOccupancyLocalDataSource local;
   late _MockGymsRepo gymsRepo;
   late StreamController<bool> connectivity;
   late StreamController<GymOccupancy> remote;
@@ -21,15 +23,16 @@ void main() {
 
   setUp(() async {
     database = AppDatabase(NativeDatabase.memory());
+    local = GymsOccupancyDriftLocalDataSource(database);
     gymsRepo = _MockGymsRepo();
     connectivity = StreamController<bool>.broadcast();
     remote = StreamController<GymOccupancy>.broadcast();
 
-    await database.upsertGymCache(
-      LocalGymCacheCompanion.insert(
-        tenantId: tenantId,
+    await local.writeCache(
+      const GymOccupancy(
+        id: tenantId,
         name: 'Pulse Downtown',
-        currentOccupancy: const Value(42),
+        currentOccupancy: 42,
         capacityLimit: 120,
       ),
     );
@@ -55,7 +58,7 @@ void main() {
 
   DashboardCubit buildCubit({required bool online}) {
     return DashboardCubit(
-      database: database,
+      local: local,
       gymsRepository: gymsRepo,
       tenantId: tenantId,
       isOnline: () => online,
@@ -94,7 +97,7 @@ void main() {
     expect(cubit.state.capacityLimit, 120);
     expect(cubit.state.source, OccupancySource.remote);
 
-    final cached = await database.gymForTenant(tenantId);
+    final cached = await local.readCached(tenantId);
     expect(cached?.currentOccupancy, 55);
 
     await cubit.close();
@@ -103,7 +106,7 @@ void main() {
   test('keeps Drift occupancy after going offline', () async {
     var online = true;
     final cubit = DashboardCubit(
-      database: database,
+      local: local,
       gymsRepository: gymsRepo,
       tenantId: tenantId,
       isOnline: () => online,
@@ -131,4 +134,24 @@ void main() {
 
     await cubit.close();
   });
+
+  test(
+    'soft-fallback status when realtime stream errors after one-shot',
+    () async {
+      final cubit = buildCubit(online: true);
+      await cubit.start();
+      expect(cubit.state.currentOccupancy, 42);
+
+      remote.addError(StateError('channel closed'));
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+
+      expect(
+        cubit.state.statusMessageKey,
+        'dashboard.status.realtime_degraded',
+      );
+      expect(cubit.state.currentOccupancy, 42);
+
+      await cubit.close();
+    },
+  );
 }

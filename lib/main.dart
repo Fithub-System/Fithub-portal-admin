@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fithub_portal_admin/app.dart';
 import 'package:fithub_portal_admin/core/i18n/app_locales.dart';
+import 'package:fithub_portal_admin/core/network/locale_code_holder.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/core/network/supabase_locale_headers.dart';
 import 'package:fithub_portal_admin/injection_container.dart';
@@ -12,6 +13,7 @@ Future<void> main() async {
   await EasyLocalization.ensureInitialized();
 
   final startLocale = AppLocales.resolveStartLocale();
+  LocaleCodeHolder.update(startLocale.languageCode);
 
   // AC-I6: Accept-Language on Supabase.initialize (see SupabaseLocaleHeaders).
   if (SupabaseConfig.isConfigured) {

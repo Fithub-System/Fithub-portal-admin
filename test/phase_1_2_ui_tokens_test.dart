@@ -3,12 +3,28 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fithub_portal_admin/config/theme/kinetic_tokens.dart';
 import 'package:fithub_portal_admin/features/connectivity/presentation/widgets/safe_mode_banner.dart';
+import 'package:fithub_portal_admin/features/dashboard/presentation/widgets/live_occupancy_gauge.dart';
 import 'package:fithub_portal_admin/features/dashboard/presentation/widgets/live_occupancy_ring.dart';
 
 import 'support/localized_pump.dart';
 
 void main() {
-  test('OccupancyRingPainter uses Kinetic Monolith stroke and glow tokens', () {
+  test('Stitch Occupancy gauge tokens match Admin Overview export', () {
+    expect(
+      KineticTokens.stitchOccupancyScreenId,
+      '216e0407184f4c39bd501ed436c1e88b',
+    );
+    expect(KineticTokens.stitchProjectId, '13435235862240753621');
+    expect(KineticTokens.dashboardCardRadius, 12);
+    expect(KineticTokens.occupancyCardAccentWidth, 4);
+    expect(KineticTokens.occupancyProgressHeight, 16);
+    expect(KineticTokens.secondaryContainer.toARGB32(), 0xFF4A8EFF);
+    expect(KineticTokens.cyberBlue.toARGB32(), 0xFF007BFF);
+    expect(KineticTokens.electricLime.toARGB32(), 0xFFCCFF00);
+    expect(KineticTokens.surfaceContainerLow.toARGB32(), 0xFF1C1B1B);
+  });
+
+  test('Legacy OccupancyRingPainter still exposes Kinetic stroke/glow', () {
     const painter = OccupancyRingPainter(
       progress: 0.5,
       activeColor: KineticTokens.electricLime,
@@ -18,27 +34,6 @@ void main() {
     expect(painter.strokeWidth, KineticTokens.occupancyRingStroke);
     expect(painter.glowBlur, KineticTokens.occupancyGlowBlur);
     expect(painter.activeColor.toARGB32(), 0xFFCCFF00);
-    expect(painter.trackColor.toARGB32(), 0xFF6E6E73);
-    expect(KineticTokens.occupancyRingSize, 220);
-    expect(KineticTokens.occupancyRingStroke, 12);
-    expect(KineticTokens.dashboardCardRadius, 16);
-    expect(KineticTokens.occupancyGlowBlur, 20);
-    expect(KineticTokens.gunmetalCard.toARGB32(), 0xFF1A1A1A);
-  });
-
-  test('OccupancyRingPainter shouldRepaint when progress changes', () {
-    const a = OccupancyRingPainter(
-      progress: 0.2,
-      activeColor: KineticTokens.electricLime,
-      trackColor: KineticTokens.zincGray,
-    );
-    const b = OccupancyRingPainter(
-      progress: 0.8,
-      activeColor: KineticTokens.electricLime,
-      trackColor: KineticTokens.zincGray,
-    );
-    expect(a.shouldRepaint(b), isTrue);
-    expect(a.shouldRepaint(a), isFalse);
   });
 
   testWidgets('SafeMode banner uses 24px zinc gray bar', (tester) async {
@@ -61,28 +56,23 @@ void main() {
     expect(banner.color, KineticTokens.zincGray);
   });
 
-  testWidgets('Live occupancy ring renders current and capacity', (
+  testWidgets('Live occupancy gauge renders Stitch count and labels', (
     tester,
   ) async {
     await pumpLocalizedApp(
       tester,
-      const Scaffold(body: LiveOccupancyRing(current: 42, capacity: 120)),
-      waitFor: find.text('42'),
+      const Scaffold(
+        body: SingleChildScrollView(
+          child: LiveOccupancyGauge(current: 80, capacity: 100),
+        ),
+      ),
+      waitFor: find.textContaining('80'),
     );
 
-    expect(find.text('42'), findsOneWidget);
-    expect(find.text('/ 120'), findsOneWidget);
+    expect(find.textContaining('80'), findsOneWidget);
+    expect(find.textContaining('100'), findsOneWidget);
     expect(find.text('LIVE OCCUPANCY'), findsOneWidget);
-
-    final paintFinder = find.byType(CustomPaint);
-    expect(paintFinder, findsWidgets);
-
-    final customPaint = tester
-        .widgetList<CustomPaint>(paintFinder)
-        .firstWhere((w) => w.painter is OccupancyRingPainter);
-    final painter = customPaint.painter! as OccupancyRingPainter;
-    expect(painter.activeColor, KineticTokens.electricLime);
-    expect(painter.strokeWidth, KineticTokens.occupancyRingStroke);
-    expect(painter.glowBlur, KineticTokens.occupancyGlowBlur);
+    expect(find.text('REAL-TIME GYM FLOOR STATUS'), findsOneWidget);
+    expect(find.text('PEAK HOUR: 06:00 PM'), findsOneWidget);
   });
 }

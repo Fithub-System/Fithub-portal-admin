@@ -5,11 +5,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 /// Observes device connectivity and exposes online/offline transitions.
 class ConnectivityService {
   ConnectivityService({Connectivity? connectivity})
-      : _connectivity = connectivity ?? Connectivity();
+    : _connectivity = connectivity ?? Connectivity();
 
   final Connectivity _connectivity;
-  final StreamController<bool> _controller =
-      StreamController<bool>.broadcast();
+  final StreamController<bool> _controller = StreamController<bool>.broadcast();
 
   StreamSubscription<List<ConnectivityResult>>? _subscription;
   bool _isOnline = true;

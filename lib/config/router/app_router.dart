@@ -48,7 +48,7 @@ class _AuthenticatedShell extends StatelessWidget {
         BlocProvider(
           create: (context) {
             final cubit = DashboardCubit(
-              database: InjectionContainer.database,
+              local: InjectionContainer.gymsOccupancyLocalDataSource,
               gymsRepository: InjectionContainer.gymsOccupancyRepository,
               tenantId: profile.tenantId,
               isOnline: () => connectivity.isOnline,

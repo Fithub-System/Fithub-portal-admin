@@ -23,17 +23,15 @@ final class EmployeeProfileMissingFailure extends AuthFailure {
 
 /// Portal allows Admin | Receptionist only (FEAT-02 §4.2).
 final class WrongAppRoleFailure extends AuthFailure {
-  const WrongAppRoleFailure([
-    super.message = 'auth.error.wrong_app_role',
-  ]);
+  const WrongAppRoleFailure([super.message = 'auth.error.wrong_app_role']);
 }
 
 final class AuthNotConfiguredFailure extends AuthFailure {
-  const AuthNotConfiguredFailure([
-    super.message = 'auth.error.not_configured',
-  ]);
+  const AuthNotConfiguredFailure([super.message = 'auth.error.not_configured']);
 }
 
 final class AuthUnknownFailure extends AuthFailure {
+  /// [message] may be an i18n key (`auth.error.unknown`) or a raw diagnostic
+  /// string (e.g. PostgREST/RLS) shown as-is when it does not look like a key.
   const AuthUnknownFailure([super.message = 'auth.error.unknown']);
 }

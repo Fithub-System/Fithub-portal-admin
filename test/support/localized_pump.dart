@@ -13,12 +13,12 @@ Map<String, dynamic>? _ar;
 Future<void> ensureTestTranslationsLoaded() async {
   if (_en != null && _ar != null) return;
   TestWidgetsFlutterBinding.ensureInitialized();
-  _en = json.decode(
-    await rootBundle.loadString('assets/translations/en.json'),
-  ) as Map<String, dynamic>;
-  _ar = json.decode(
-    await rootBundle.loadString('assets/translations/ar.json'),
-  ) as Map<String, dynamic>;
+  _en =
+      json.decode(await rootBundle.loadString('assets/translations/en.json'))
+          as Map<String, dynamic>;
+  _ar =
+      json.decode(await rootBundle.loadString('assets/translations/ar.json'))
+          as Map<String, dynamic>;
 }
 
 class _PreloadedAssetLoader extends AssetLoader {

@@ -25,7 +25,9 @@ void main() {
         capacityLimit: 120,
       ),
     );
-    await database.into(database.localMembers).insert(
+    await database
+        .into(database.localMembers)
+        .insert(
           LocalMembersCompanion.insert(
             id: athleteId,
             tenantId: tenantId,

@@ -30,10 +30,10 @@ class EmployeeProfileModel extends EmployeeProfile {
   }
 
   Map<String, String> toCacheMap() => {
-        'id': id,
-        'tenant_id': tenantId,
-        'user_id': userId,
-        'name': name,
-        'role': role,
-      };
+    'id': id,
+    'tenant_id': tenantId,
+    'user_id': userId,
+    'name': name,
+    'role': role,
+  };
 }
