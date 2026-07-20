@@ -32,12 +32,45 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
 
   final TextEditingController _manualPayloadController = TextEditingController();
   bool _useManualEntry = false;
+  bool _cameraFallbackScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Sync after first frame — never from build / MobileScanner listeners.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<AccessScannerCubit>().onScannerOpened();
+    });
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     _manualPayloadController.dispose();
     super.dispose();
+  }
+
+  void _scheduleCameraFallback() {
+    if (_cameraFallbackScheduled || _useManualEntry) return;
+    _cameraFallbackScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _useManualEntry) return;
+      setState(() => _useManualEntry = true);
+    });
+  }
+
+  void _onBarcodeDetect(BuildContext context, BarcodeCapture capture) {
+    // MobileScanner notifies from ValueListenableBuilder build paths on some
+    // platforms — defer Cubit emits until after the frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final cubit = context.read<AccessScannerCubit>();
+      cubit.markCameraReady();
+      final value = capture.barcodes.firstOrNull?.rawValue;
+      if (value == null) return;
+      cubit.onQrDetected(value);
+    });
   }
 
   @override
@@ -68,15 +101,8 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                       )
                     : _CameraPane(
                         controller: _controller,
-                        onDetect: (capture) {
-                          context.read<AccessScannerCubit>().markCameraReady();
-                          final value = capture.barcodes.firstOrNull?.rawValue;
-                          if (value == null) return;
-                          context.read<AccessScannerCubit>().onQrDetected(value);
-                        },
-                        onCameraError: () {
-                          if (mounted) setState(() => _useManualEntry = true);
-                        },
+                        onDetect: (capture) => _onBarcodeDetect(context, capture),
+                        onCameraError: _scheduleCameraFallback,
                       ),
               ),
             ),
@@ -147,11 +173,40 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                       state.rosterErrorKey != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        state.rosterErrorKey!.tr(),
-                        style: textTheme.bodySmall?.copyWith(
-                          color: Colors.orangeAccent,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            state.rosterErrorKey!.tr(),
+                            style: textTheme.bodySmall?.copyWith(
+                              color: Colors.orangeAccent,
+                            ),
+                          ),
+                          if (state.rosterCount != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                'access_scanner.roster.synced'.tr(
+                                  namedArgs: {'count': '${state.rosterCount}'},
+                                ),
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: KineticTokens.zincGray,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: 8),
+                          TextButton(
+                            onPressed: () =>
+                                context.read<AccessScannerCubit>().syncRoster(),
+                            style: TextButton.styleFrom(
+                              foregroundColor: KineticTokens.electricLime,
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text('access_scanner.roster.retry'.tr()),
+                          ),
+                        ],
                       ),
                     ),
                 ],
@@ -202,7 +257,8 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                 child: FloatingActionButton.small(
                   heroTag: 'scanner-toggle-manual',
                   backgroundColor: KineticTokens.gunmetalCard,
-                  onPressed: () => setState(() => _useManualEntry = !_useManualEntry),
+                  onPressed: () =>
+                      setState(() => _useManualEntry = !_useManualEntry),
                   child: Icon(
                     _useManualEntry ? Icons.camera_alt : Icons.keyboard,
                     color: KineticTokens.electricLime,
@@ -239,6 +295,8 @@ class _CameraPane extends StatelessWidget {
       controller: controller,
       onDetect: onDetect,
       errorBuilder: (context, error) {
+        // Must not setState here — MobileScanner builds this inside
+        // ValueListenableBuilder during its own build phase.
         onCameraError();
         return Center(
           child: Padding(

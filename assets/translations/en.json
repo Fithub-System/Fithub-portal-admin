@@ -106,10 +106,12 @@
     "roster": {
       "syncing": "Syncing member roster…",
       "synced": "{count} members cached locally",
+      "retry": "Retry sync",
       "error": {
         "not_configured": "Member roster sync is not configured for this build.",
-        "policy": "Member roster denied — Backend employee SELECT athletes policy required.",
-        "unknown": "Member roster sync failed."
+        "policy": "Member roster denied — apply Backend migration athletes_employee_roster_select, then Retry.",
+        "empty": "No members enrolled — seed gym_members (tenant_id, athlete_id) or complete one online check-in, then Retry.",
+        "unknown": "Member roster sync failed. Check network and Retry."
       }
     }
   },

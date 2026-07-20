@@ -15,6 +15,11 @@ class MemberRosterPolicyFailure extends MemberRosterFailure {
     : super('access_scanner.roster.error.policy');
 }
 
+class MemberRosterEmptyFailure extends MemberRosterFailure {
+  const MemberRosterEmptyFailure()
+    : super('access_scanner.roster.error.empty');
+}
+
 class MemberRosterUnknownFailure extends MemberRosterFailure {
   const MemberRosterUnknownFailure()
     : super('access_scanner.roster.error.unknown');

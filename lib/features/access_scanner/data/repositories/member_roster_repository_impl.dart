@@ -28,4 +28,9 @@ class MemberRosterRepositoryImpl implements MemberRosterRepository {
     await _local.upsertMembers(tenantId: tenantId, members: members);
     return members.length;
   }
+
+  @override
+  Future<int> countCachedMembers({required String tenantId}) {
+    return _local.countCachedMembers(tenantId: tenantId);
+  }
 }
