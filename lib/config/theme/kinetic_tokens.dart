@@ -56,5 +56,10 @@ abstract final class KineticTokens {
   /// Cited Stitch screen for Invite Staff / Staff Profile Creator (FEAT-05).
   static const String stitchStaffInviteScreenId =
       'dcc070ef2b1e45058b3e042ad70140e3';
+
+  /// FEAT-01 Access Scanner — confirm id via Stitch MCP `list_screens`.
+  static const String stitchAccessScannerScreenId =
+      'pending_stitch_mcp_verification';
+
   static const String stitchProjectId = '13435235862240753621';
 }

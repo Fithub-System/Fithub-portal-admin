@@ -26,7 +26,8 @@
 	<string>$(PRODUCT_COPYRIGHT)</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
-	<key>NSPrincipalClass</key>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access is required to scan member QR codes for gym check-in.</string>
 	<string>NSApplication</string>
 </dict>
 </plist>

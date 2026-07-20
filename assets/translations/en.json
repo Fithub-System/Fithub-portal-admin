@@ -86,6 +86,33 @@
       "rejected": "Rejected: {reason}"
     }
   },
+  "access_scanner": {
+    "title": "Access Scanner",
+    "subtitle": "Point the camera at the member QR code",
+    "success": {
+      "active_badge": "Active"
+    },
+    "scan": {
+      "rejected": "Scan rejected: {reason}"
+    },
+    "camera": {
+      "unavailable": "Camera unavailable — use manual entry below."
+    },
+    "manual": {
+      "title": "Manual QR payload",
+      "hint": "Paste JSON QR payload",
+      "submit": "Validate scan"
+    },
+    "roster": {
+      "syncing": "Syncing member roster…",
+      "synced": "{count} members cached locally",
+      "error": {
+        "not_configured": "Member roster sync is not configured for this build.",
+        "policy": "Member roster denied — Backend employee SELECT athletes policy required.",
+        "unknown": "Member roster sync failed."
+      }
+    }
+  },
   "staff_invite": {
     "title": "STAFF PROFILE CREATOR",
     "subtitle": "Onboard new personnel and manage operational logistics.",

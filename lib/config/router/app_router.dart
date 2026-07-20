@@ -4,6 +4,8 @@ import 'package:fithub_portal_admin/config/theme/app_colors.dart';
 import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/pages/login_page.dart';
+import 'package:fithub_portal_admin/features/access_scanner/injection_container.dart'
+    as access_scanner_di;
 import 'package:fithub_portal_admin/features/connectivity/presentation/cubit/connectivity_cubit.dart';
 import 'package:fithub_portal_admin/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:fithub_portal_admin/features/home/presentation/pages/portal_home_shell.dart';
@@ -70,6 +72,19 @@ class _AuthenticatedShell extends StatelessWidget {
             );
             cubit.start();
             return cubit;
+          },
+        ),
+        BlocProvider(
+          create: (context) {
+            final scannerCubit = access_scanner_di.createAccessScannerCubit(
+              getIt: getIt,
+              tenantId: profile.tenantId,
+              isOnline: () => connectivity.isOnline,
+              onScanProcessed: (result) {
+                context.read<DashboardCubit>().reportScanResult(result);
+              },
+            )..start();
+            return scannerCubit;
           },
         ),
       ],

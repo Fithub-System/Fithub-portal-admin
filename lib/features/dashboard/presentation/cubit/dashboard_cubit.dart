@@ -156,6 +156,14 @@ class DashboardCubit extends Cubit<DashboardState> {
       rawPayload: rawPayload,
     );
 
+    _emitScanResult(result);
+  }
+
+  void reportScanResult(ScanProcessResult result) {
+    _emitScanResult(result);
+  }
+
+  void _emitScanResult(ScanProcessResult result) {
     if (result.isApproved) {
       emit(
         state.copyWith(

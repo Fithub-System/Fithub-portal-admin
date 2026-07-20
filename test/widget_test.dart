@@ -16,6 +16,7 @@ void main() {
   ) async {
     final repository = _MockAuthRepository();
     when(() => repository.currentSession).thenReturn(null);
+    when(() => repository.readCachedProfile()).thenAnswer((_) async => null);
 
     await pumpLocalizedApp(
       tester,
@@ -39,6 +40,7 @@ void main() {
   ) async {
     final repository = _MockAuthRepository();
     when(() => repository.currentSession).thenReturn(null);
+    when(() => repository.readCachedProfile()).thenAnswer((_) async => null);
 
     await pumpLocalizedApp(
       tester,
