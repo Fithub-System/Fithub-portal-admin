@@ -72,4 +72,17 @@ class AppDatabase extends _$AppDatabase {
         .write(LocalGymCacheCompanion(currentOccupancy: Value(next)));
     return next;
   }
+
+  Future<void> upsertMembers(List<LocalMembersCompanion> members) async {
+    if (members.isEmpty) return;
+    await batch((batch) {
+      for (final member in members) {
+        batch.insert(
+          localMembers,
+          member,
+          mode: InsertMode.insertOrReplace,
+        );
+      }
+    });
+  }
 }

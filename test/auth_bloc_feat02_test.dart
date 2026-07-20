@@ -164,6 +164,7 @@ void main() {
       'AuthStarted without session → Unauthenticated (login shown)',
       () async {
         when(() => repository.currentSession).thenReturn(null);
+        when(() => repository.readCachedProfile()).thenAnswer((_) async => null);
 
         final bloc = AuthBloc(authRepository: repository);
         final states = await _collect(bloc, const AuthStarted());

@@ -16,12 +16,13 @@ final class AuthLoading extends AuthState {
 }
 
 final class AuthAuthenticated extends AuthState {
-  const AuthAuthenticated(this.profile);
+  const AuthAuthenticated(this.profile, {this.restoredFromCache = false});
 
   final EmployeeProfile profile;
+  final bool restoredFromCache;
 
   @override
-  List<Object?> get props => [profile];
+  List<Object?> get props => [profile, restoredFromCache];
 }
 
 final class AuthUnauthenticated extends AuthState {

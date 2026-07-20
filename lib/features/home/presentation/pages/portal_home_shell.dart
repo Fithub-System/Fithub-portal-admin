@@ -9,6 +9,7 @@ import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../../../dashboard/presentation/widgets/live_occupancy_gauge.dart';
+import '../../../access_scanner/presentation/screens/access_scanner_screen.dart';
 import '../../../staff_invite/presentation/screens/staff_invite_screen.dart';
 
 /// Adaptive Admin shell: NavigationRail (desktop/tablet) / NavigationBar (mobile).
@@ -37,7 +38,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
               index: _selectedIndex,
               children: const [
                 _DashboardDestination(),
-                _PlaceholderDestination(titleKey: 'nav.scan'),
+                AccessScannerScreen(),
                 _AccountDestination(),
               ],
             );
@@ -260,43 +261,6 @@ class _DashboardDestination extends StatelessWidget {
       );
     }
     return dashboard.lastScanMessageKey?.tr() ?? '';
-  }
-}
-
-class _PlaceholderDestination extends StatelessWidget {
-  const _PlaceholderDestination({required this.titleKey});
-
-  final String titleKey;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsetsDirectional.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              titleKey.tr(),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: KineticTokens.pureWhite,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'nav.coming_soon'.tr(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 13,
-                color: KineticTokens.zincGray,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

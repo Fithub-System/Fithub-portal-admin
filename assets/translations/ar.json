@@ -86,6 +86,33 @@
       "rejected": "مرفوض: {reason}"
     }
   },
+  "access_scanner": {
+    "title": "ماسح الدخول",
+    "subtitle": "وجّه الكاميرا نحو رمز QR الخاص بالعضو",
+    "success": {
+      "active_badge": "نشط"
+    },
+    "scan": {
+      "rejected": "تم رفض المسح: {reason}"
+    },
+    "camera": {
+      "unavailable": "الكاميرا غير متاحة — استخدم الإدخال اليدوي أدناه."
+    },
+    "manual": {
+      "title": "إدخال QR يدوي",
+      "hint": "الصق حمولة JSON لرمز QR",
+      "submit": "التحقق من المسح"
+    },
+    "roster": {
+      "syncing": "جارٍ مزامنة قائمة الأعضاء…",
+      "synced": "تم تخزين {count} عضوًا محليًا",
+      "error": {
+        "not_configured": "مزامنة قائمة الأعضاء غير مُعدّة لهذا البناء.",
+        "policy": "تم رفض قائمة الأعضاء — يلزم سياسة Backend لقراءة athletes.",
+        "unknown": "فشلت مزامنة قائمة الأعضاء."
+      }
+    }
+  },
   "staff_invite": {
     "title": "إنشاء ملف الموظف",
     "subtitle": "إضافة موظفين جدد وإدارة التشغيل.",
