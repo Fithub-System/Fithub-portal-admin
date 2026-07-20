@@ -31,6 +31,15 @@ class AppDatabase extends _$AppDatabase {
     )..where((m) => m.id.equals(athleteId))).getSingleOrNull();
   }
 
+  Future<int> countMembersForTenant(String tenantId) async {
+    final countExp = localMembers.id.count();
+    final query = selectOnly(localMembers)
+      ..addColumns([countExp])
+      ..where(localMembers.tenantId.equals(tenantId));
+    final row = await query.getSingle();
+    return row.read(countExp) ?? 0;
+  }
+
   Future<void> enqueueAttendance(LocalAttendanceQueueCompanion entry) {
     return into(localAttendanceQueue).insert(entry);
   }

@@ -9,7 +9,6 @@ import 'data/repositories/member_roster_repository_impl.dart';
 import 'domain/repositories/member_roster_repository.dart';
 import 'domain/use_cases/process_qr_scan_use_case.dart';
 import 'domain/use_cases/sync_member_roster_use_case.dart';
-import 'package:fithub_portal_admin/features/scan/data/repositories/scan_repository.dart';
 import 'presentation/cubit/access_scanner_cubit.dart';
 
 /// Access scanner feature DI (FEAT-01 / `cleanarch access_scanner -c`).
@@ -55,6 +54,7 @@ AccessScannerCubit createAccessScannerCubit({
   return AccessScannerCubit(
     processQrScan: getIt<ProcessQrScanUseCase>(),
     syncMemberRoster: getIt<SyncMemberRosterUseCase>(),
+    memberRosterRepository: getIt<MemberRosterRepository>(),
     tenantId: tenantId,
     isOnline: isOnline,
     onScanProcessed: onScanProcessed,

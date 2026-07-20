@@ -8,6 +8,8 @@ abstract class MemberRosterLocalDataSource {
     required String tenantId,
     required List<MemberRosterEntry> members,
   });
+
+  Future<int> countCachedMembers({required String tenantId});
 }
 
 class MemberRosterDriftLocalDataSource implements MemberRosterLocalDataSource {
@@ -35,5 +37,10 @@ class MemberRosterDriftLocalDataSource implements MemberRosterLocalDataSource {
         .toList(growable: false);
 
     return _database.upsertMembers(companions);
+  }
+
+  @override
+  Future<int> countCachedMembers({required String tenantId}) {
+    return _database.countMembersForTenant(tenantId);
   }
 }
