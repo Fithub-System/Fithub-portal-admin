@@ -27,13 +27,25 @@ class _MockProcessQrScan extends Mock implements ProcessQrScanUseCase {}
 
 void main() {
   group('FEAT-01 Access Scanner', () {
-    test('cites Stitch project and screen placeholder id', () {
+    test('cites Stitch Admin Overview companion for Access Scanner', () {
       expect(KineticTokens.stitchProjectId, '13435235862240753621');
       expect(
         AccessScannerScreen.stitchScreenId,
         KineticTokens.stitchAccessScannerScreenId,
       );
+      expect(
+        KineticTokens.stitchAccessScannerScreenId,
+        '216e0407184f4c39bd501ed436c1e88b',
+      );
+      expect(
+        KineticTokens.stitchAccessScannerScreenId,
+        KineticTokens.stitchOccupancyScreenId,
+      );
       expect(AccessScannerScreen.stitchScreenTitle, 'Access Scanner');
+      expect(
+        KineticTokens.stitchAccessScannerScreenId,
+        isNot('pending_stitch_mcp_verification'),
+      );
     });
 
     test('sync member roster use case returns count', () async {

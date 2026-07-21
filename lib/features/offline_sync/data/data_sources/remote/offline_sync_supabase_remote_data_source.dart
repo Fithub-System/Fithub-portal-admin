@@ -43,6 +43,11 @@ class OfflineSyncSupabaseRemoteDataSource
       // Single PostgREST upsert = one SQL statement; conflict on PK → idempotent.
       await client.from('attendance_logs').upsert(payload, onConflict: 'id');
     } on PostgrestException catch (error) {
+      // Same-day unique (23505): cloud already has a check-in for that
+      // athlete/tenant/UTC day — treat as idempotent success (caller marks synced).
+      if (_isUniqueViolation(error)) {
+        return;
+      }
       throw OfflineSyncAttendanceUpsertFailure(_mapUpsertMessage(error));
     } catch (_) {
       throw const OfflineSyncAttendanceUpsertFailure();
@@ -98,5 +103,16 @@ class OfflineSyncSupabaseRemoteDataSource
         message.contains('row-level security') ||
         message.contains('rls') ||
         message.contains('new row violates');
+  }
+
+  /// Postgres unique_violation — same-day attendance index or PK race.
+  bool _isUniqueViolation(PostgrestException error) {
+    final code = error.code ?? '';
+    final message = error.message.toLowerCase();
+    final details = (error.details?.toString() ?? '').toLowerCase();
+    return code == '23505' ||
+        message.contains('duplicate key') ||
+        message.contains('unique constraint') ||
+        details.contains('attendance_logs_one_per_athlete_tenant_utc_day');
   }
 }

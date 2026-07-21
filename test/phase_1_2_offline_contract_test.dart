@@ -127,5 +127,53 @@ void main() {
       final gym = await database.gymForTenant(tenantId);
       expect(gym?.currentOccupancy, 43);
     });
+
+    test('soft rejects second check-in same UTC day', () async {
+      const validator = QrSignatureValidator();
+      final firstNow = DateTime.utc(2026, 7, 16, 12, 0, 5);
+      final secondNow = DateTime.utc(2026, 7, 16, 18, 30, 0);
+      final timestamp = DateTime.utc(2026, 7, 16, 12, 0, 0);
+      final signature = validator.sign(
+        athleteId: athleteId,
+        timestampSeconds: timestamp.millisecondsSinceEpoch ~/ 1000,
+        salt: salt,
+      );
+      final payload = jsonEncode({
+        'athlete_id': athleteId,
+        'timestamp': timestamp.millisecondsSinceEpoch ~/ 1000,
+        'signature': signature,
+      });
+
+      final first = await scanRepository.processOfflineScan(
+        tenantId: tenantId,
+        rawPayload: payload,
+        now: firstNow,
+      );
+      expect(first.isApproved, isTrue);
+
+      final secondTs = DateTime.utc(2026, 7, 16, 18, 30, 0);
+      final secondSig = validator.sign(
+        athleteId: athleteId,
+        timestampSeconds: secondTs.millisecondsSinceEpoch ~/ 1000,
+        salt: salt,
+      );
+      final secondPayload = jsonEncode({
+        'athlete_id': athleteId,
+        'timestamp': secondTs.millisecondsSinceEpoch ~/ 1000,
+        'signature': secondSig,
+      });
+
+      final second = await scanRepository.processOfflineScan(
+        tenantId: tenantId,
+        rawPayload: secondPayload,
+        now: secondNow,
+      );
+
+      expect(second.isApproved, isFalse);
+      expect(second.reason, 'Already checked in today.');
+      expect(await database.pendingAttendance(), hasLength(1));
+      final gym = await database.gymForTenant(tenantId);
+      expect(gym?.currentOccupancy, 43);
+    });
   });
 }
