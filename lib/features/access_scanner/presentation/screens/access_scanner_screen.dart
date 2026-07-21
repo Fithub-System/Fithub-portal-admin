@@ -12,11 +12,12 @@ import '../widgets/scanner_target_overlay.dart';
 
 /// Stitch **Access Scanner** (FEAT-01 §3)
 /// Project: `13435235862240753621`
-/// Screen id: verify via Stitch MCP `list_screens` — see [stitchScreenId].
+/// Screen id: Admin Overview companion — see [stitchScreenId]
+/// (no dedicated Access Scanner screen in Stitch catalog 2026-07-21).
 class AccessScannerScreen extends StatefulWidget {
   const AccessScannerScreen({super.key});
 
-  /// Stitch screen id — confirm via MCP when `GOOGLE_STITCH_API_KEY` is set.
+  /// Admin Overview Dashboard companion id (Kinetic / FEAT-01 §3 tokens).
   static const String stitchScreenId = KineticTokens.stitchAccessScannerScreenId;
   static const String stitchScreenTitle = 'Access Scanner';
 

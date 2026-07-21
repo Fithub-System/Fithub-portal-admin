@@ -44,6 +44,27 @@ class AppDatabase extends _$AppDatabase {
     return into(localAttendanceQueue).insert(entry);
   }
 
+  /// True if any local queue row exists for this athlete/tenant on the UTC day
+  /// of [day] (Hardening Gate — mirrors cloud same-day unique index).
+  Future<bool> hasAttendanceOnUtcDay({
+    required String tenantId,
+    required String athleteId,
+    required DateTime day,
+  }) async {
+    final dayStart = DateTime.utc(day.year, day.month, day.day);
+    final dayEnd = dayStart.add(const Duration(days: 1));
+    final row =
+        await (select(localAttendanceQueue)..where(
+              (q) =>
+                  q.tenantId.equals(tenantId) &
+                  q.athleteId.equals(athleteId) &
+                  q.checkedInAt.isBiggerOrEqualValue(dayStart) &
+                  q.checkedInAt.isSmallerThanValue(dayEnd),
+            ))
+            .getSingleOrNull();
+    return row != null;
+  }
+
   Future<List<LocalAttendanceQueueItem>> pendingAttendance() {
     return (select(
       localAttendanceQueue,

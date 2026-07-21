@@ -49,6 +49,19 @@ class ScanRepository {
     }
 
     final checkedInAt = now ?? DateTime.now().toUtc();
+    // Soft reject when local queue already has a same-UTC-day check-in
+    // (cloud unique index attendance_logs_one_per_athlete_tenant_utc_day).
+    final alreadyToday = await _database.hasAttendanceOnUtcDay(
+      tenantId: tenantId,
+      athleteId: member.id,
+      day: checkedInAt,
+    );
+    if (alreadyToday) {
+      return const ScanProcessResult.rejected(
+        'Already checked in today.',
+      );
+    }
+
     await _database.enqueueAttendance(
       LocalAttendanceQueueCompanion.insert(
         id: _uuid.v4(),
