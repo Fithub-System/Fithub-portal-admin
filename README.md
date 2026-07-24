@@ -45,3 +45,11 @@ flutter build web --dart-define-from-file=dart_defines.json
 ```
 
 In Cursor / VS Code: use launch config **Portal Admin (Chrome)** (`.vscode/launch.json`), which already passes `--dart-define-from-file=dart_defines.json`.
+
+## Vercel test preview (dev only)
+
+Automated deploy uses **GitHub Actions → Vercel** on pushes to **`dev`** only (Option 3).
+
+Operator setup (secrets, disable Vercel Git auto-build, Auth handoff):
+
+[`Docs/vercel-dev-deploy.md`](Docs/vercel-dev-deploy.md)

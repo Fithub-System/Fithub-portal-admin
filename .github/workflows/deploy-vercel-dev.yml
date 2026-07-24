@@ -1,0 +1,78 @@
+# Option 3: build Flutter web on GitHub Actions, deploy static output to Vercel.
+# Trigger: push/merge to `dev` only (stable preview for Auth Site URL).
+name: Deploy Vercel (dev)
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-portal-dev
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Write dart_defines.json from secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          AUTH_REDIRECT_URL: ${{ secrets.AUTH_REDIRECT_URL }}
+        run: |
+          if [[ -z "${SUPABASE_URL}" || -z "${SUPABASE_ANON_KEY}" ]]; then
+            echo "Missing required secrets: SUPABASE_URL and/or SUPABASE_ANON_KEY"
+            exit 1
+          fi
+          python3 <<'PY'
+          import json, os
+          defines = {
+              "SUPABASE_URL": os.environ["SUPABASE_URL"],
+              "SUPABASE_ANON_KEY": os.environ["SUPABASE_ANON_KEY"],
+              "BASE_URL": os.environ["SUPABASE_URL"],
+              "OCCUPANCY_BACKEND": "supabase",
+              "AUTH_REDIRECT_URL": os.environ.get("AUTH_REDIRECT_URL") or "",
+          }
+          with open("dart_defines.json", "w", encoding="utf-8") as f:
+              json.dump(defines, f, indent=2)
+              f.write("\n")
+          PY
+
+      - name: Build Flutter web
+        run: flutter build web --release --dart-define-from-file=dart_defines.json
+
+      - name: Copy vercel.json into web output
+        run: cp vercel.json build/web/vercel.json
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@39.1.1
+
+      - name: Deploy to Vercel (production)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [[ -z "${VERCEL_TOKEN}" || -z "${VERCEL_ORG_ID}" || -z "${VERCEL_PROJECT_ID}" ]]; then
+            echo "Missing Vercel secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID"
+            exit 1
+          fi
+          # Deploy prebuilt static output; --prod updates the stable Production URL.
+          vercel deploy build/web --prod --yes --token="$VERCEL_TOKEN"
