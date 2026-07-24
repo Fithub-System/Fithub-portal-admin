@@ -62,7 +62,8 @@ jobs:
         run: cp vercel.json build/web/vercel.json
 
       - name: Install Vercel CLI
-        run: npm install -g vercel@39.1.1
+        # Endpoint requires >= 47.2.2 (pin major for reproducible CI).
+        run: npm install -g vercel@47.2.2
 
       - name: Deploy to Vercel (production)
         env:
