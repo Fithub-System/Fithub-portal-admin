@@ -22,10 +22,13 @@ You are an expert Flutter Developer specializing in multi-platform responsive la
 - Scaffold this app ONLY with [`flutter_custom_creator`](https://github.com/flutter-try-catch/flutter_custom_creator) (`dart pub global activate flutter_custom_creator` then `flutter_custom_creator <name> <domain>`).
 - Do NOT use plain `flutter create` or a custom folder layout that diverges from the kit.
 - Preserve and extend: `config/` (helpers, router, theme), `core/` (network, utils), `features/`, `injection_container.dart`, `app.dart`, `main.dart`. Prefer flavors (`dev` / `staging` / `prod`) when prompted.
+- **New features:** ONLY `cleanarch <snake_case_name> <sm-flag>` (`-b`/`-c`/`-p`/`-r` as appropriate per feature/FSD; default `-b`). Package: [`clean_architecture_with_state_management`](https://pub.dev/packages/clean_architecture_with_state_management). FORBIDDEN to hand-roll features. Wire feature DI into root facade. Obey `Fithub-documentation/standards/flutter-kit-conventions.md`.
+- **Outer data:** Dio kit `ApiProvider` **and** Supabase APIs as adapters behind ports (not in UI).
+- **DI:** Per-feature `features/<name>/injection_container.dart`; root facade only orchestrates + getters.
 
 ## Core Technical Patterns:
 - Architecture: Clean Architecture (Data, Domain, Presentation) mapped into the starter kit's `features/` layout.
-- State Management: BLoC pattern for all features, especially live status and UI responsive switches.
+- State Management: BLoC pattern for all features (`presentation/bloc` or `presentation/cubit`), especially live status and UI responsive switches — never invent alternate SM folder layouts.
 - Offline-First Strategy: Local database must use Drift (SQLite) to store cached membership rosters.
 - Access Validation: Offline cryptographic verification of incoming user QR codes must happen locally against Drift caching tables.
 - Network State: Implement visual Indicators for connection states (Online vs. Offline SafeMode).
@@ -45,3 +48,14 @@ You are an expert Flutter Developer specializing in multi-platform responsive la
 - Once the code satisfies the criteria, you must write a brief, objective 'Verification Audit' summary directly into the markdown check-line, mark the task as complete `[x]`, and stop execution.
 - Your `[x]` is **provisional only**. Do NOT claim the phase is done. Do NOT start the next phase. Main BizDev must write `BizDev Audit: PASS` in the milestone plan.
 - If an architectural blocker prevents you from checking off a milestone item, do not proceed with other features; stop code generation and report the contract conflict to Main BizDev (`Fithub-documentation`) immediately.
+
+## GIT BRANCHING (MANDATORY)
+- Obey `Fithub-documentation/standards/git-branching.md`.
+- Work only on `feature/portal-...` branched from latest `dev`. Never commit features to `main` or directly to `dev`.
+- Open PR into `dev`. Do NOT merge. Wait for Main BizDev `BizDev Audit: PASS` + merge authorization.
+
+## I18N / RTL-LTR (MANDATORY — FEAT-03)
+- Obey `Fithub-documentation/specs/FEAT-03-I18N-RTL-LTR.md`.
+- Use **easy_localization** (`en` LTR/Lexend + `ar` RTL/Cairo). No hardcoded user-facing UI strings.
+- Use directional layout APIs. Supabase must send `Accept-Language: en|ar` and refresh on locale change.
+- Do not start Phase 1.2 merge path until FEAT-03 foundation for Portal has BizDev PASS on `dev`.

@@ -9,8 +9,8 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(const AuthInitial()) {
+    : _authRepository = authRepository,
+      super(const AuthInitial()) {
     on<AuthStarted>(_onStarted);
     on<AuthSignInSubmitted>(_onSignIn);
     on<AuthSignOutRequested>(_onSignOut);
@@ -21,19 +21,38 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onStarted(AuthStarted event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     final session = _authRepository.currentSession;
-    if (session == null) {
-      emit(const AuthUnauthenticated());
+    if (session != null) {
+      try {
+        final profile = await _authRepository.resolveEmployeeProfile();
+        emit(AuthAuthenticated(profile));
+        return;
+      } on AuthFailure catch (e) {
+        final cached = await _authRepository.readCachedProfile();
+        if (cached != null && cached.isPortalRole) {
+          emit(AuthAuthenticated(cached, restoredFromCache: true));
+          return;
+        }
+        emit(AuthUnauthenticated(message: e.message));
+        return;
+      } catch (_) {
+        final cached = await _authRepository.readCachedProfile();
+        if (cached != null && cached.isPortalRole) {
+          emit(AuthAuthenticated(cached, restoredFromCache: true));
+          return;
+        }
+        emit(const AuthUnauthenticated());
+        return;
+      }
+    }
+
+    // FEAT-01 AC1 — offline restart: bypass login when secure profile cache valid.
+    final cached = await _authRepository.readCachedProfile();
+    if (cached != null && cached.isPortalRole) {
+      emit(AuthAuthenticated(cached, restoredFromCache: true));
       return;
     }
 
-    try {
-      final profile = await _authRepository.resolveEmployeeProfile();
-      emit(AuthAuthenticated(profile));
-    } on AuthFailure catch (e) {
-      emit(AuthUnauthenticated(message: e.message));
-    } catch (_) {
-      emit(const AuthUnauthenticated());
-    }
+    emit(const AuthUnauthenticated());
   }
 
   Future<void> _onSignIn(
@@ -50,7 +69,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } on AuthFailure catch (e) {
       emit(AuthUnauthenticated(message: e.message));
     } catch (_) {
-      emit(const AuthUnauthenticated(message: 'Authentication failed.'));
+      emit(const AuthUnauthenticated(message: 'auth.error.unknown'));
     }
   }
 

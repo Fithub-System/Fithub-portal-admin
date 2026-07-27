@@ -1,4 +1,6 @@
 /// Auth / profile resolve failures surfaced as Stitch error snackbars.
+///
+/// [message] holds an EasyLocalization key (`auth.error.*`), translated at UI.
 sealed class AuthFailure implements Exception {
   const AuthFailure(this.message);
   final String message;
@@ -9,32 +11,27 @@ sealed class AuthFailure implements Exception {
 
 final class InvalidCredentialsFailure extends AuthFailure {
   const InvalidCredentialsFailure([
-    super.message = 'Invalid credentials. Check email and access key.',
+    super.message = 'auth.error.invalid_credentials',
   ]);
 }
 
 final class EmployeeProfileMissingFailure extends AuthFailure {
   const EmployeeProfileMissingFailure([
-    super.message =
-        'Employee profile not found. Access denied — contact your gym admin.',
+    super.message = 'auth.error.employee_profile_missing',
   ]);
 }
 
 /// Portal allows Admin | Receptionist only (FEAT-02 §4.2).
 final class WrongAppRoleFailure extends AuthFailure {
-  const WrongAppRoleFailure([
-    super.message =
-        'Access denied — Admin Portal is for Admin and Receptionist only. '
-        'Coach accounts use the Coach app.',
-  ]);
+  const WrongAppRoleFailure([super.message = 'auth.error.wrong_app_role']);
 }
 
 final class AuthNotConfiguredFailure extends AuthFailure {
-  const AuthNotConfiguredFailure([
-    super.message = 'Supabase is not configured for this build.',
-  ]);
+  const AuthNotConfiguredFailure([super.message = 'auth.error.not_configured']);
 }
 
 final class AuthUnknownFailure extends AuthFailure {
-  const AuthUnknownFailure([super.message = 'Authentication failed.']);
+  /// [message] may be an i18n key (`auth.error.unknown`) or a raw diagnostic
+  /// string (e.g. PostgREST/RLS) shown as-is when it does not look like a key.
+  const AuthUnknownFailure([super.message = 'auth.error.unknown']);
 }

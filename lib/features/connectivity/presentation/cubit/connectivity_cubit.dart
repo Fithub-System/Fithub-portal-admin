@@ -5,7 +5,7 @@ import '../../../../core/network/connectivity_service.dart';
 
 class ConnectivityCubit extends Cubit<ConnectivityState> {
   ConnectivityCubit(this._service)
-      : super(const ConnectivityState(isOnline: true));
+    : super(const ConnectivityState(isOnline: true));
 
   final ConnectivityService _service;
 

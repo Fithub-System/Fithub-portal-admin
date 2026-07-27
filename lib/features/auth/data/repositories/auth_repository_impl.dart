@@ -10,8 +10,8 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required SecureStorageService secureStorage,
     SupabaseClient? client,
-  })  : _secureStorage = secureStorage,
-        _client = client;
+  }) : _secureStorage = secureStorage,
+       _client = client;
 
   final SecureStorageService _secureStorage;
   final SupabaseClient? _client;
@@ -55,15 +55,11 @@ class AuthRepositoryImpl implements AuthRepository {
       return resolveEmployeeProfile();
     } on AuthFailure {
       rethrow;
-    } on AuthException catch (e) {
-      throw InvalidCredentialsFailure(
-        e.message.isNotEmpty
-            ? e.message
-            : 'Invalid credentials. Check email and access key.',
-      );
+    } on AuthException {
+      throw const InvalidCredentialsFailure();
     } catch (e) {
       if (e is AuthFailure) rethrow;
-      throw AuthUnknownFailure(e.toString());
+      throw const AuthUnknownFailure();
     }
   }
 
@@ -71,15 +67,24 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<EmployeeProfile> resolveEmployeeProfile() async {
     final uid = _supabase.auth.currentUser?.id;
     if (uid == null) {
-      throw const InvalidCredentialsFailure('No active session.');
+      throw const InvalidCredentialsFailure('auth.error.no_session');
     }
 
-    // FEAT-02 §4.2 — employees where user_id = auth.uid()
-    final row = await _supabase
-        .from('employees')
-        .select('id, tenant_id, user_id, name, role, created_at')
-        .eq('user_id', uid)
-        .maybeSingle();
+    late final Map<String, dynamic>? row;
+    try {
+      // FEAT-02 §4.2 — employees where user_id = auth.uid()
+      row = await _supabase
+          .from('employees')
+          .select('id, tenant_id, user_id, name, role, created_at')
+          .eq('user_id', uid)
+          .maybeSingle();
+    } on PostgrestException catch (e) {
+      await signOut();
+      // Surface PostgREST/RLS/GRANT failures (often look like "nothing happened").
+      throw AuthUnknownFailure(
+        'Profile resolve failed (${e.code}): ${e.message}',
+      );
+    }
 
     if (row == null) {
       await signOut();
@@ -94,7 +99,11 @@ class AuthRepositoryImpl implements AuthRepository {
       throw const WrongAppRoleFailure();
     }
 
-    await _cacheProfile(profile);
+    try {
+      await _cacheProfile(profile);
+    } catch (_) {
+      // Cache is best-effort; do not block shell entry (web secure storage).
+    }
     return profile;
   }
 

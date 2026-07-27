@@ -11,9 +11,9 @@ class ScanRepository {
     required AppDatabase database,
     QrSignatureValidator? validator,
     Uuid? uuid,
-  })  : _database = database,
-        _validator = validator ?? const QrSignatureValidator(),
-        _uuid = uuid ?? const Uuid();
+  }) : _database = database,
+       _validator = validator ?? const QrSignatureValidator(),
+       _uuid = uuid ?? const Uuid();
 
   final AppDatabase _database;
   final QrSignatureValidator _validator;
@@ -49,6 +49,19 @@ class ScanRepository {
     }
 
     final checkedInAt = now ?? DateTime.now().toUtc();
+    // Soft reject when local queue already has a same-UTC-day check-in
+    // (cloud unique index attendance_logs_one_per_athlete_tenant_utc_day).
+    final alreadyToday = await _database.hasAttendanceOnUtcDay(
+      tenantId: tenantId,
+      athleteId: member.id,
+      day: checkedInAt,
+    );
+    if (alreadyToday) {
+      return const ScanProcessResult.rejected(
+        'Already checked in today.',
+      );
+    }
+
     await _database.enqueueAttendance(
       LocalAttendanceQueueCompanion.insert(
         id: _uuid.v4(),
@@ -94,14 +107,14 @@ class ScanProcessResult {
     String? avatarUrl,
     required int occupancy,
   }) : this._(
-          isApproved: true,
-          memberName: memberName,
-          avatarUrl: avatarUrl,
-          occupancy: occupancy,
-        );
+         isApproved: true,
+         memberName: memberName,
+         avatarUrl: avatarUrl,
+         occupancy: occupancy,
+       );
 
   const ScanProcessResult.rejected(String reason)
-      : this._(isApproved: false, reason: reason);
+    : this._(isApproved: false, reason: reason);
 
   final bool isApproved;
   final String? memberName;

@@ -4,7 +4,9 @@ import 'package:crypto/crypto.dart';
 
 /// Validates dynamic QR payloads per FEAT-01 AC2.
 class QrSignatureValidator {
-  const QrSignatureValidator({this.tokenLifetime = const Duration(seconds: 30)});
+  const QrSignatureValidator({
+    this.tokenLifetime = const Duration(seconds: 30),
+  });
 
   final Duration tokenLifetime;
 
@@ -60,11 +62,7 @@ class QrSignatureValidator {
     required int timestampSeconds,
     required String salt,
   }) {
-    return _sign(
-      athleteId: athleteId,
-      timestamp: timestampSeconds,
-      salt: salt,
-    );
+    return _sign(athleteId: athleteId, timestamp: timestampSeconds, salt: salt);
   }
 
   static String _sign({
@@ -104,7 +102,7 @@ class QrValidationResult {
   }) : this._(isValid: true, athleteId: athleteId, issuedAt: issuedAt);
 
   const QrValidationResult.invalid(String reason)
-      : this._(isValid: false, reason: reason);
+    : this._(isValid: false, reason: reason);
 
   final bool isValid;
   final String? athleteId;

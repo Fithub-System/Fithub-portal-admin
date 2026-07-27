@@ -48,68 +48,69 @@ void main() {
   }
 
   group('AC-A1 — valid employee sign-in resolves tenant + role + home', () {
-    test('emits loading then authenticated with tenant_id + portal role',
-        () async {
-      when(
-        () => repository.signInWithPassword(
-          email: any(named: 'email'),
-          password: any(named: 'password'),
-        ),
-      ).thenAnswer((_) async => adminProfile);
+    test(
+      'emits loading then authenticated with tenant_id + portal role',
+      () async {
+        when(
+          () => repository.signInWithPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => adminProfile);
 
-      final bloc = AuthBloc(authRepository: repository);
-      final states = await _collect(
-        bloc,
-        const AuthSignInSubmitted(
-          email: 'sara@gym.com',
-          password: 'secret',
-        ),
-      );
+        final bloc = AuthBloc(authRepository: repository);
+        final states = await _collect(
+          bloc,
+          const AuthSignInSubmitted(email: 'sara@gym.com', password: 'secret'),
+        );
 
-      expect(states, [
-        const AuthLoading(),
-        const AuthAuthenticated(adminProfile),
-      ]);
-      expect(adminProfile.role, 'Receptionist');
-      expect(adminProfile.tenantId, 'tenant-gym-1');
-      verify(
-        () => repository.signInWithPassword(
-          email: 'sara@gym.com',
-          password: 'secret',
-        ),
-      ).called(1);
-      await bloc.close();
-    });
+        expect(states, [
+          const AuthLoading(),
+          const AuthAuthenticated(adminProfile),
+        ]);
+        expect(adminProfile.role, 'Receptionist');
+        expect(adminProfile.tenantId, 'tenant-gym-1');
+        verify(
+          () => repository.signInWithPassword(
+            email: 'sara@gym.com',
+            password: 'secret',
+          ),
+        ).called(1);
+        await bloc.close();
+      },
+    );
   });
 
   group('AC-A2 — Auth ok but missing employees row denied', () {
-    test('emits unauthenticated with profile-missing message; not Authenticated',
-        () async {
-      when(
-        () => repository.signInWithPassword(
-          email: any(named: 'email'),
-          password: any(named: 'password'),
-        ),
-      ).thenThrow(const EmployeeProfileMissingFailure());
+    test(
+      'emits unauthenticated with profile-missing message; not Authenticated',
+      () async {
+        when(
+          () => repository.signInWithPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenThrow(const EmployeeProfileMissingFailure());
 
-      final bloc = AuthBloc(authRepository: repository);
-      final states = await _collect(
-        bloc,
-        const AuthSignInSubmitted(
-          email: 'orphan@gym.com',
-          password: 'secret',
-        ),
-      );
+        final bloc = AuthBloc(authRepository: repository);
+        final states = await _collect(
+          bloc,
+          const AuthSignInSubmitted(
+            email: 'orphan@gym.com',
+            password: 'secret',
+          ),
+        );
 
-      expect(states.first, const AuthLoading());
-      expect(states.last, isA<AuthUnauthenticated>());
-      expect(
-        (states.last as AuthUnauthenticated).message,
-        contains('Employee profile not found'),
-      );
-      expect(states.whereType<AuthAuthenticated>(), isEmpty);
-      await bloc.close();
-    });
+        expect(states.first, const AuthLoading());
+        expect(states.last, isA<AuthUnauthenticated>());
+        expect(
+          (states.last as AuthUnauthenticated).message,
+          'auth.error.employee_profile_missing',
+        );
+        expect(states.whereType<AuthAuthenticated>(), isEmpty);
+        await bloc.close();
+      },
+    );
   });
 
   group('AC-A3 — invalid credentials show Stitch error path (no home)', () {
@@ -124,17 +125,14 @@ void main() {
       final bloc = AuthBloc(authRepository: repository);
       final states = await _collect(
         bloc,
-        const AuthSignInSubmitted(
-          email: 'bad@gym.com',
-          password: 'wrong',
-        ),
+        const AuthSignInSubmitted(email: 'bad@gym.com', password: 'wrong'),
       );
 
       expect(states.first, const AuthLoading());
       expect(states.last, isA<AuthUnauthenticated>());
       expect(
         (states.last as AuthUnauthenticated).message,
-        contains('Invalid credentials'),
+        'auth.error.invalid_credentials',
       );
       expect(states.whereType<AuthAuthenticated>(), isEmpty);
       await bloc.close();
@@ -142,34 +140,38 @@ void main() {
   });
 
   group('AC-D1 — cold start with persisted session skips login', () {
-    test('AuthStarted with session resolves employee → Authenticated', () async {
-      when(() => repository.currentSession).thenReturn(_FakeSession());
-      when(() => repository.resolveEmployeeProfile())
-          .thenAnswer((_) async => adminProfile);
+    test(
+      'AuthStarted with session resolves employee → Authenticated',
+      () async {
+        when(() => repository.currentSession).thenReturn(_FakeSession());
+        when(
+          () => repository.resolveEmployeeProfile(),
+        ).thenAnswer((_) async => adminProfile);
 
-      final bloc = AuthBloc(authRepository: repository);
-      final states = await _collect(bloc, const AuthStarted());
+        final bloc = AuthBloc(authRepository: repository);
+        final states = await _collect(bloc, const AuthStarted());
 
-      expect(states, [
-        const AuthLoading(),
-        const AuthAuthenticated(adminProfile),
-      ]);
-      verify(() => repository.resolveEmployeeProfile()).called(1);
-      await bloc.close();
-    });
+        expect(states, [
+          const AuthLoading(),
+          const AuthAuthenticated(adminProfile),
+        ]);
+        verify(() => repository.resolveEmployeeProfile()).called(1);
+        await bloc.close();
+      },
+    );
 
-    test('AuthStarted without session → Unauthenticated (login shown)',
-        () async {
-      when(() => repository.currentSession).thenReturn(null);
+    test(
+      'AuthStarted without session → Unauthenticated (login shown)',
+      () async {
+        when(() => repository.currentSession).thenReturn(null);
+        when(() => repository.readCachedProfile()).thenAnswer((_) async => null);
 
-      final bloc = AuthBloc(authRepository: repository);
-      final states = await _collect(bloc, const AuthStarted());
+        final bloc = AuthBloc(authRepository: repository);
+        final states = await _collect(bloc, const AuthStarted());
 
-      expect(states, [
-        const AuthLoading(),
-        const AuthUnauthenticated(),
-      ]);
-      await bloc.close();
-    });
+        expect(states, [const AuthLoading(), const AuthUnauthenticated()]);
+        await bloc.close();
+      },
+    );
   });
 }

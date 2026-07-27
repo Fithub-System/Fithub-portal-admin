@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 abstract final class AppTheme {
-  static ThemeData get dark {
+  /// Lexend for `en` (LTR); Cairo for `ar` (RTL) — FEAT-03 §4.2.
+  static ThemeData darkFor(Locale locale) {
     final base = ThemeData(
       brightness: Brightness.dark,
       useMaterial3: true,
@@ -20,11 +21,18 @@ abstract final class AppTheme {
       ),
     );
 
+    final textTheme = locale.languageCode == 'ar'
+        ? GoogleFonts.cairoTextTheme(base.textTheme)
+        : GoogleFonts.lexendTextTheme(base.textTheme);
+
     return base.copyWith(
-      textTheme: GoogleFonts.interTextTheme(base.textTheme).apply(
+      textTheme: textTheme.apply(
         bodyColor: AppColors.onSurface,
         displayColor: AppColors.onSurface,
       ),
     );
   }
+
+  /// Backward-compatible default (English / Lexend).
+  static ThemeData get dark => darkFor(const Locale('en'));
 }

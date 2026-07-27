@@ -13,15 +13,11 @@ final ThemeData kineticDarkTheme = ThemeData(
     onPrimary: KineticTokens.deepCharcoal,
     onSurface: KineticTokens.pureWhite,
   ),
-  textTheme: GoogleFonts.lexendTextTheme(
-    ThemeData.dark().textTheme,
-  ),
+  textTheme: GoogleFonts.lexendTextTheme(ThemeData.dark().textTheme),
   cardTheme: CardThemeData(
     color: KineticTokens.gunmetalCard,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(
-        KineticTokens.dashboardCardRadius,
-      ),
+      borderRadius: BorderRadius.circular(KineticTokens.dashboardCardRadius),
     ),
   ),
   useMaterial3: true,

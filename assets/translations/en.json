@@ -1,0 +1,173 @@
+{
+  "app": {
+    "title": "Gym Connect Portal"
+  },
+  "auth": {
+    "login": {
+      "brand": "Gym Connect",
+      "subtitle": "COMMAND CENTER LOGIN",
+      "credential_label": "CREDENTIAL IDENTIFIER",
+      "credential_hint": "Email or Username",
+      "credential_required": "Credential Identifier is required",
+      "access_key_label": "ACCESS KEY",
+      "access_key_required": "Access Key is required",
+      "recover_key": "Recover Key",
+      "recover_key_unavailable": "Recover Key is not available in this release.",
+      "cta_initialize_session": "INITIALIZE SESSION",
+      "or_social": "OR VIA SOCIAL LINK",
+      "continue_google": "Continue with Google",
+      "continue_apple": "Continue with Apple",
+      "social_out_of_scope": "Social login is out of scope for Phase 1.1.",
+      "privacy": "Privacy Protocol",
+      "terms": "Terms of Access",
+      "copyright": "© 2024 KINETIC PERFORMANCE SYSTEMS. ALL RIGHTS RESERVED.",
+      "locale_en": "EN",
+      "locale_ar": "AR"
+    },
+    "error": {
+      "invalid_credentials": "Invalid credentials. Check email and access key.",
+      "employee_profile_missing": "Employee profile not found. Access denied — contact your gym admin.",
+      "wrong_app_role": "Access denied — Admin Portal is for Admin and Receptionist only. Coach accounts use the Coach app.",
+      "not_configured": "Supabase is not configured for this build.",
+      "unknown": "Authentication failed.",
+      "no_session": "No active session."
+    }
+  },
+  "home": {
+    "shell": {
+      "welcome": "Welcome, {name}",
+      "admin_fallback": "Admin",
+      "sign_out": "Sign out",
+      "command_center": "COMMAND CENTER",
+      "role": "Role: {role}",
+      "tenant": "Tenant: {tenant}",
+      "em_dash": "—"
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "scan": "Scan",
+    "account": "Account",
+    "coming_soon": "Coming soon in a later phase."
+  },
+  "connectivity": {
+    "safe_mode": {
+      "banner": "Pulse SafeMode: data is saved locally"
+    },
+    "sync": {
+      "error": {
+        "not_configured": "Cloud sync is not configured for this build.",
+        "upsert_failed": "Could not sync offline attendance logs.",
+        "attendance_grant": "Attendance sync denied — Backend must GRANT INSERT on attendance_logs.",
+        "occupancy_rls": "Gym occupancy update denied by RLS — report to Backend (do not invent policies).",
+        "unknown": "Offline sync failed."
+      }
+    }
+  },
+  "dashboard": {
+    "gym_fallback": "Pulse Gym",
+    "status": {
+      "online": "Online — cloud sync active",
+      "offline": "Offline — local SafeMode active",
+      "realtime_degraded": "Live stream unavailable — showing last fetch. Check Realtime publication.",
+      "realtime_failed": "Live stream failed — using cached occupancy. Retry when online.",
+      "fetch_failed": "Could not refresh occupancy — showing local cache.",
+      "no_gym_row": "No gym row readable for this tenant (check SELECT RLS / GRANT)."
+    },
+    "occupancy": {
+      "live_label": "LIVE OCCUPANCY",
+      "subtitle": "REAL-TIME GYM FLOOR STATUS",
+      "timeline_start": "05:00 AM",
+      "timeline_peak": "PEAK HOUR: 06:00 PM",
+      "timeline_end": "11:00 PM"
+    },
+    "scan": {
+      "approved": "Approved: {name}",
+      "rejected": "Rejected: {reason}"
+    }
+  },
+  "access_scanner": {
+    "title": "Access Scanner",
+    "subtitle": "Point the camera at the member QR code",
+    "success": {
+      "active_badge": "Active"
+    },
+    "scan": {
+      "rejected": "Scan rejected: {reason}"
+    },
+    "camera": {
+      "unavailable": "Camera unavailable — use manual entry below."
+    },
+    "manual": {
+      "title": "Manual QR payload",
+      "hint": "Paste JSON QR payload",
+      "submit": "Validate scan"
+    },
+    "roster": {
+      "syncing": "Syncing member roster…",
+      "synced": "{count} members cached locally",
+      "retry": "Retry sync",
+      "error": {
+        "not_configured": "Member roster sync is not configured for this build.",
+        "policy": "Member roster denied — apply Backend migration athletes_employee_roster_select, then Retry.",
+        "empty": "No members enrolled — seed gym_members (tenant_id, athlete_id) or complete one online check-in, then Retry.",
+        "unknown": "Member roster sync failed. Check network and Retry."
+      }
+    }
+  },
+  "staff_invite": {
+    "title": "STAFF PROFILE CREATOR",
+    "subtitle": "Onboard new personnel and manage operational logistics.",
+    "identity_section": "Identity & Credentials",
+    "protocol_section": "Access Protocol",
+    "cta": "INITIALIZE PROFILE",
+    "success": "Staff invited successfully.",
+    "field": {
+      "name_label": "FULL LEGAL NAME",
+      "name_hint": "Johnathan Wick",
+      "name_required": "Display name is required",
+      "email_label": "PROFESSIONAL EMAIL",
+      "email_hint": "j.wick@kinetic.com",
+      "email_required": "Email is required"
+    },
+    "role": {
+      "admin": {
+        "title": "Admin",
+        "description": "FULL SYSTEM CONTROL"
+      },
+      "coach": {
+        "title": "Coach",
+        "description": "SESSION MANAGEMENT"
+      },
+      "receptionist": {
+        "title": "Receptionist",
+        "description": "CHECK-IN & POS"
+      }
+    },
+    "error": {
+      "forbidden": "Only Admins can invite staff.",
+      "invalid_body": "Email, role, and name are required.",
+      "not_configured": "Invite staff is not configured for this build.",
+      "unknown": "Staff invite failed."
+    }
+  },
+  "router": {
+    "unknown": {
+      "title": "Page Not Found",
+      "subtitle": "You missed your way !!"
+    }
+  },
+  "validation": {
+    "field_empty": "Field cannot be empty",
+    "email_empty": "Email cannot be empty",
+    "email_invalid": "Invalid email address",
+    "min_length": "Minimum length is {min} characters",
+    "max_length": "Maximum length is {max} characters",
+    "numeric": "Value must be a number",
+    "phone_empty": "Phone number cannot be empty",
+    "phone_invalid": "Invalid phone number",
+    "password_empty": "Password cannot be empty",
+    "password_invalid": "Password must be at least 8 characters long, contain at least one letter and one number",
+    "passwords_mismatch": "Passwords do not match"
+  }
+}
