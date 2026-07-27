@@ -5,12 +5,12 @@ import '../data_sources/remote/memberships_remote_data_source.dart';
 class MembershipsRepositoryImpl implements MembershipsRepository {
   MembershipsRepositoryImpl({
     required MembershipsRemoteDataSource remote,
-    required String Function() resolveTenantId,
+    required Future<String> Function() resolveTenantId,
   }) : _remote = remote,
        _resolveTenantId = resolveTenantId;
 
   final MembershipsRemoteDataSource _remote;
-  final String Function() _resolveTenantId;
+  final Future<String> Function() _resolveTenantId;
 
   @override
   Future<List<MembershipPlan>> listPlans({bool activeOnly = false}) {
@@ -24,9 +24,10 @@ class MembershipsRepositoryImpl implements MembershipsRepository {
     required int durationDays,
     required int priceCents,
     String currency = 'EGP',
-  }) {
+  }) async {
+    final tenantId = await _resolveTenantId();
     return _remote.createPlan(
-      tenantId: _resolveTenantId(),
+      tenantId: tenantId,
       name: name,
       description: description,
       durationDays: durationDays,

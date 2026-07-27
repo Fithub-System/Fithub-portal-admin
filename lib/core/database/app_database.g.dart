@@ -93,6 +93,40 @@ class $LocalMembersTable extends LocalMembers
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _membershipStatusMeta = const VerificationMeta(
+    'membershipStatus',
+  );
+  @override
+  late final GeneratedColumn<String> membershipStatus = GeneratedColumn<String>(
+    'membership_status',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _membershipPlanNameMeta =
+      const VerificationMeta('membershipPlanName');
+  @override
+  late final GeneratedColumn<String> membershipPlanName =
+      GeneratedColumn<String>(
+        'membership_plan_name',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _membershipEndsAtMeta = const VerificationMeta(
+    'membershipEndsAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> membershipEndsAt =
+      GeneratedColumn<DateTime>(
+        'membership_ends_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -102,6 +136,9 @@ class $LocalMembersTable extends LocalMembers
     powerScore,
     cryptoSalt,
     createdAt,
+    membershipStatus,
+    membershipPlanName,
+    membershipEndsAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -164,6 +201,33 @@ class $LocalMembersTable extends LocalMembers
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('membership_status')) {
+      context.handle(
+        _membershipStatusMeta,
+        membershipStatus.isAcceptableOrUnknown(
+          data['membership_status']!,
+          _membershipStatusMeta,
+        ),
+      );
+    }
+    if (data.containsKey('membership_plan_name')) {
+      context.handle(
+        _membershipPlanNameMeta,
+        membershipPlanName.isAcceptableOrUnknown(
+          data['membership_plan_name']!,
+          _membershipPlanNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('membership_ends_at')) {
+      context.handle(
+        _membershipEndsAtMeta,
+        membershipEndsAt.isAcceptableOrUnknown(
+          data['membership_ends_at']!,
+          _membershipEndsAtMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -201,6 +265,18 @@ class $LocalMembersTable extends LocalMembers
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      membershipStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}membership_status'],
+      ),
+      membershipPlanName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}membership_plan_name'],
+      ),
+      membershipEndsAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}membership_ends_at'],
+      ),
     );
   }
 
@@ -218,6 +294,11 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
   final int powerScore;
   final String cryptoSalt;
   final DateTime createdAt;
+
+  /// Cached from `athlete_memberships.status` (FEAT-07 roster sync).
+  final String? membershipStatus;
+  final String? membershipPlanName;
+  final DateTime? membershipEndsAt;
   const LocalMember({
     required this.id,
     required this.tenantId,
@@ -226,6 +307,9 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     required this.powerScore,
     required this.cryptoSalt,
     required this.createdAt,
+    this.membershipStatus,
+    this.membershipPlanName,
+    this.membershipEndsAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -239,6 +323,15 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     map['power_score'] = Variable<int>(powerScore);
     map['crypto_salt'] = Variable<String>(cryptoSalt);
     map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || membershipStatus != null) {
+      map['membership_status'] = Variable<String>(membershipStatus);
+    }
+    if (!nullToAbsent || membershipPlanName != null) {
+      map['membership_plan_name'] = Variable<String>(membershipPlanName);
+    }
+    if (!nullToAbsent || membershipEndsAt != null) {
+      map['membership_ends_at'] = Variable<DateTime>(membershipEndsAt);
+    }
     return map;
   }
 
@@ -253,6 +346,15 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
       powerScore: Value(powerScore),
       cryptoSalt: Value(cryptoSalt),
       createdAt: Value(createdAt),
+      membershipStatus: membershipStatus == null && nullToAbsent
+          ? const Value.absent()
+          : Value(membershipStatus),
+      membershipPlanName: membershipPlanName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(membershipPlanName),
+      membershipEndsAt: membershipEndsAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(membershipEndsAt),
     );
   }
 
@@ -269,6 +371,13 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
       powerScore: serializer.fromJson<int>(json['powerScore']),
       cryptoSalt: serializer.fromJson<String>(json['cryptoSalt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      membershipStatus: serializer.fromJson<String?>(json['membershipStatus']),
+      membershipPlanName: serializer.fromJson<String?>(
+        json['membershipPlanName'],
+      ),
+      membershipEndsAt: serializer.fromJson<DateTime?>(
+        json['membershipEndsAt'],
+      ),
     );
   }
   @override
@@ -282,6 +391,9 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
       'powerScore': serializer.toJson<int>(powerScore),
       'cryptoSalt': serializer.toJson<String>(cryptoSalt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'membershipStatus': serializer.toJson<String?>(membershipStatus),
+      'membershipPlanName': serializer.toJson<String?>(membershipPlanName),
+      'membershipEndsAt': serializer.toJson<DateTime?>(membershipEndsAt),
     };
   }
 
@@ -293,6 +405,9 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     int? powerScore,
     String? cryptoSalt,
     DateTime? createdAt,
+    Value<String?> membershipStatus = const Value.absent(),
+    Value<String?> membershipPlanName = const Value.absent(),
+    Value<DateTime?> membershipEndsAt = const Value.absent(),
   }) => LocalMember(
     id: id ?? this.id,
     tenantId: tenantId ?? this.tenantId,
@@ -301,6 +416,15 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     powerScore: powerScore ?? this.powerScore,
     cryptoSalt: cryptoSalt ?? this.cryptoSalt,
     createdAt: createdAt ?? this.createdAt,
+    membershipStatus: membershipStatus.present
+        ? membershipStatus.value
+        : this.membershipStatus,
+    membershipPlanName: membershipPlanName.present
+        ? membershipPlanName.value
+        : this.membershipPlanName,
+    membershipEndsAt: membershipEndsAt.present
+        ? membershipEndsAt.value
+        : this.membershipEndsAt,
   );
   LocalMember copyWithCompanion(LocalMembersCompanion data) {
     return LocalMember(
@@ -315,6 +439,15 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
           ? data.cryptoSalt.value
           : this.cryptoSalt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      membershipStatus: data.membershipStatus.present
+          ? data.membershipStatus.value
+          : this.membershipStatus,
+      membershipPlanName: data.membershipPlanName.present
+          ? data.membershipPlanName.value
+          : this.membershipPlanName,
+      membershipEndsAt: data.membershipEndsAt.present
+          ? data.membershipEndsAt.value
+          : this.membershipEndsAt,
     );
   }
 
@@ -327,7 +460,10 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
           ..write('avatarUrl: $avatarUrl, ')
           ..write('powerScore: $powerScore, ')
           ..write('cryptoSalt: $cryptoSalt, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('membershipStatus: $membershipStatus, ')
+          ..write('membershipPlanName: $membershipPlanName, ')
+          ..write('membershipEndsAt: $membershipEndsAt')
           ..write(')'))
         .toString();
   }
@@ -341,6 +477,9 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     powerScore,
     cryptoSalt,
     createdAt,
+    membershipStatus,
+    membershipPlanName,
+    membershipEndsAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -352,7 +491,10 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
           other.avatarUrl == this.avatarUrl &&
           other.powerScore == this.powerScore &&
           other.cryptoSalt == this.cryptoSalt &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.membershipStatus == this.membershipStatus &&
+          other.membershipPlanName == this.membershipPlanName &&
+          other.membershipEndsAt == this.membershipEndsAt);
 }
 
 class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
@@ -363,6 +505,9 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
   final Value<int> powerScore;
   final Value<String> cryptoSalt;
   final Value<DateTime> createdAt;
+  final Value<String?> membershipStatus;
+  final Value<String?> membershipPlanName;
+  final Value<DateTime?> membershipEndsAt;
   final Value<int> rowid;
   const LocalMembersCompanion({
     this.id = const Value.absent(),
@@ -372,6 +517,9 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     this.powerScore = const Value.absent(),
     this.cryptoSalt = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.membershipStatus = const Value.absent(),
+    this.membershipPlanName = const Value.absent(),
+    this.membershipEndsAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalMembersCompanion.insert({
@@ -382,6 +530,9 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     this.powerScore = const Value.absent(),
     required String cryptoSalt,
     required DateTime createdAt,
+    this.membershipStatus = const Value.absent(),
+    this.membershipPlanName = const Value.absent(),
+    this.membershipEndsAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        tenantId = Value(tenantId),
@@ -396,6 +547,9 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     Expression<int>? powerScore,
     Expression<String>? cryptoSalt,
     Expression<DateTime>? createdAt,
+    Expression<String>? membershipStatus,
+    Expression<String>? membershipPlanName,
+    Expression<DateTime>? membershipEndsAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -406,6 +560,10 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
       if (powerScore != null) 'power_score': powerScore,
       if (cryptoSalt != null) 'crypto_salt': cryptoSalt,
       if (createdAt != null) 'created_at': createdAt,
+      if (membershipStatus != null) 'membership_status': membershipStatus,
+      if (membershipPlanName != null)
+        'membership_plan_name': membershipPlanName,
+      if (membershipEndsAt != null) 'membership_ends_at': membershipEndsAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -418,6 +576,9 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     Value<int>? powerScore,
     Value<String>? cryptoSalt,
     Value<DateTime>? createdAt,
+    Value<String?>? membershipStatus,
+    Value<String?>? membershipPlanName,
+    Value<DateTime?>? membershipEndsAt,
     Value<int>? rowid,
   }) {
     return LocalMembersCompanion(
@@ -428,6 +589,9 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
       powerScore: powerScore ?? this.powerScore,
       cryptoSalt: cryptoSalt ?? this.cryptoSalt,
       createdAt: createdAt ?? this.createdAt,
+      membershipStatus: membershipStatus ?? this.membershipStatus,
+      membershipPlanName: membershipPlanName ?? this.membershipPlanName,
+      membershipEndsAt: membershipEndsAt ?? this.membershipEndsAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -456,6 +620,15 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (membershipStatus.present) {
+      map['membership_status'] = Variable<String>(membershipStatus.value);
+    }
+    if (membershipPlanName.present) {
+      map['membership_plan_name'] = Variable<String>(membershipPlanName.value);
+    }
+    if (membershipEndsAt.present) {
+      map['membership_ends_at'] = Variable<DateTime>(membershipEndsAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -472,6 +645,9 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
           ..write('powerScore: $powerScore, ')
           ..write('cryptoSalt: $cryptoSalt, ')
           ..write('createdAt: $createdAt, ')
+          ..write('membershipStatus: $membershipStatus, ')
+          ..write('membershipPlanName: $membershipPlanName, ')
+          ..write('membershipEndsAt: $membershipEndsAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1213,6 +1389,9 @@ typedef $$LocalMembersTableCreateCompanionBuilder =
       Value<int> powerScore,
       required String cryptoSalt,
       required DateTime createdAt,
+      Value<String?> membershipStatus,
+      Value<String?> membershipPlanName,
+      Value<DateTime?> membershipEndsAt,
       Value<int> rowid,
     });
 typedef $$LocalMembersTableUpdateCompanionBuilder =
@@ -1224,6 +1403,9 @@ typedef $$LocalMembersTableUpdateCompanionBuilder =
       Value<int> powerScore,
       Value<String> cryptoSalt,
       Value<DateTime> createdAt,
+      Value<String?> membershipStatus,
+      Value<String?> membershipPlanName,
+      Value<DateTime?> membershipEndsAt,
       Value<int> rowid,
     });
 
@@ -1268,6 +1450,21 @@ class $$LocalMembersTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get membershipStatus => $composableBuilder(
+    column: $table.membershipStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get membershipPlanName => $composableBuilder(
+    column: $table.membershipPlanName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get membershipEndsAt => $composableBuilder(
+    column: $table.membershipEndsAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1315,6 +1512,21 @@ class $$LocalMembersTableOrderingComposer
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get membershipStatus => $composableBuilder(
+    column: $table.membershipStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get membershipPlanName => $composableBuilder(
+    column: $table.membershipPlanName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get membershipEndsAt => $composableBuilder(
+    column: $table.membershipEndsAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LocalMembersTableAnnotationComposer
@@ -1350,6 +1562,21 @@ class $$LocalMembersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get membershipStatus => $composableBuilder(
+    column: $table.membershipStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get membershipPlanName => $composableBuilder(
+    column: $table.membershipPlanName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get membershipEndsAt => $composableBuilder(
+    column: $table.membershipEndsAt,
+    builder: (column) => column,
+  );
 }
 
 class $$LocalMembersTableTableManager
@@ -1390,6 +1617,9 @@ class $$LocalMembersTableTableManager
                 Value<int> powerScore = const Value.absent(),
                 Value<String> cryptoSalt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> membershipStatus = const Value.absent(),
+                Value<String?> membershipPlanName = const Value.absent(),
+                Value<DateTime?> membershipEndsAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalMembersCompanion(
                 id: id,
@@ -1399,6 +1629,9 @@ class $$LocalMembersTableTableManager
                 powerScore: powerScore,
                 cryptoSalt: cryptoSalt,
                 createdAt: createdAt,
+                membershipStatus: membershipStatus,
+                membershipPlanName: membershipPlanName,
+                membershipEndsAt: membershipEndsAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -1410,6 +1643,9 @@ class $$LocalMembersTableTableManager
                 Value<int> powerScore = const Value.absent(),
                 required String cryptoSalt,
                 required DateTime createdAt,
+                Value<String?> membershipStatus = const Value.absent(),
+                Value<String?> membershipPlanName = const Value.absent(),
+                Value<DateTime?> membershipEndsAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalMembersCompanion.insert(
                 id: id,
@@ -1419,6 +1655,9 @@ class $$LocalMembersTableTableManager
                 powerScore: powerScore,
                 cryptoSalt: cryptoSalt,
                 createdAt: createdAt,
+                membershipStatus: membershipStatus,
+                membershipPlanName: membershipPlanName,
+                membershipEndsAt: membershipEndsAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

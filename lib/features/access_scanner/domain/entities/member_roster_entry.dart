@@ -9,6 +9,9 @@ class MemberRosterEntry extends Equatable {
     required this.powerScore,
     required this.cryptoSalt,
     required this.createdAt,
+    this.membershipStatus,
+    this.membershipPlanName,
+    this.membershipEndsAt,
   });
 
   final String id;
@@ -17,6 +20,27 @@ class MemberRosterEntry extends Equatable {
   final int powerScore;
   final String cryptoSalt;
   final DateTime createdAt;
+  final String? membershipStatus;
+  final String? membershipPlanName;
+  final DateTime? membershipEndsAt;
+
+  MemberRosterEntry copyWith({
+    String? membershipStatus,
+    String? membershipPlanName,
+    DateTime? membershipEndsAt,
+  }) {
+    return MemberRosterEntry(
+      id: id,
+      fullName: fullName,
+      avatarUrl: avatarUrl,
+      powerScore: powerScore,
+      cryptoSalt: cryptoSalt,
+      createdAt: createdAt,
+      membershipStatus: membershipStatus ?? this.membershipStatus,
+      membershipPlanName: membershipPlanName ?? this.membershipPlanName,
+      membershipEndsAt: membershipEndsAt ?? this.membershipEndsAt,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -26,5 +50,8 @@ class MemberRosterEntry extends Equatable {
     powerScore,
     cryptoSalt,
     createdAt,
+    membershipStatus,
+    membershipPlanName,
+    membershipEndsAt,
   ];
 }

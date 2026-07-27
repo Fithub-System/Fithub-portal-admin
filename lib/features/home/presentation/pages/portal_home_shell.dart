@@ -11,6 +11,7 @@ import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../../../dashboard/presentation/widgets/live_occupancy_gauge.dart';
 import '../../../access_scanner/presentation/screens/access_scanner_screen.dart';
 import '../../../staff_invite/presentation/screens/staff_invite_screen.dart';
+import '../../../memberships/presentation/screens/memberships_screen.dart';
 
 /// Adaptive Admin shell: NavigationRail (desktop/tablet) / NavigationBar (mobile).
 class PortalHomeShell extends StatefulWidget {
@@ -27,6 +28,12 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    final canManageMemberships = context.select(
+      (AuthBloc b) => b.state is AuthAuthenticated
+          ? (b.state as AuthAuthenticated).profile.canManageMemberships
+          : false,
+    );
+
     return BlocBuilder<ConnectivityCubit, ConnectivityState>(
       builder: (context, connectivity) {
         return LayoutBuilder(
@@ -36,10 +43,14 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
 
             final body = IndexedStack(
               index: _selectedIndex,
-              children: const [
-                _DashboardDestination(),
-                AccessScannerScreen(),
-                _AccountDestination(),
+              children: [
+                const _DashboardDestination(),
+                const AccessScannerScreen(),
+                BlocProvider(
+                  create: (_) => InjectionContainer.createMembershipsCubit(),
+                  child: MembershipsScreen(canWrite: canManageMemberships),
+                ),
+                const _AccountDestination(),
               ],
             );
 
@@ -107,6 +118,14 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                     label: 'nav.scan'.tr(),
                   ),
                   NavigationDestination(
+                    icon: const Icon(Icons.card_membership_outlined),
+                    selectedIcon: const Icon(
+                      Icons.card_membership,
+                      color: KineticTokens.electricLime,
+                    ),
+                    label: 'nav.memberships'.tr(),
+                  ),
+                  NavigationDestination(
                     icon: const Icon(Icons.person_outline),
                     selectedIcon: const Icon(
                       Icons.person,
@@ -162,6 +181,11 @@ class _PortalNavigationRail extends StatelessWidget {
           icon: const Icon(Icons.qr_code_scanner_outlined),
           selectedIcon: const Icon(Icons.qr_code_scanner),
           label: Text('nav.scan'.tr()),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Icons.card_membership_outlined),
+          selectedIcon: const Icon(Icons.card_membership),
+          label: Text('nav.memberships'.tr()),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.person_outline),

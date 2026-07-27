@@ -1,8 +1,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../core/network/supabase_config.dart';
-import '../../domain/entities/membership_plan.dart';
-import '../../domain/memberships_failure.dart';
+import 'package:fithub_portal_admin/core/network/supabase_config.dart';
+import 'package:fithub_portal_admin/features/memberships/domain/entities/membership_plan.dart';
+import 'package:fithub_portal_admin/features/memberships/domain/memberships_failure.dart';
 
 abstract class MembershipsRemoteDataSource {
   Future<List<MembershipPlan>> listPlans({bool activeOnly = false});
@@ -43,14 +43,22 @@ class MembershipsSupabaseRemoteDataSource
   Future<List<MembershipPlan>> listPlans({bool activeOnly = false}) async {
     final client = _requireClient();
     try {
-      var query = client.from('membership_plans').select(
-        'id, tenant_id, name, description, duration_days, price_cents, '
-        'currency, is_active',
-      );
-      if (activeOnly) {
-        query = query.eq('is_active', true);
-      }
-      final rows = await query.order('created_at', ascending: false);
+      final rows = activeOnly
+          ? await client
+                .from('membership_plans')
+                .select(
+                  'id, tenant_id, name, description, duration_days, '
+                  'price_cents, currency, is_active',
+                )
+                .eq('is_active', true)
+                .order('created_at', ascending: false)
+          : await client
+                .from('membership_plans')
+                .select(
+                  'id, tenant_id, name, description, duration_days, '
+                  'price_cents, currency, is_active',
+                )
+                .order('created_at', ascending: false);
       return (rows as List<dynamic>)
           .map((row) => _mapPlan(row as Map<String, dynamic>))
           .toList(growable: false);

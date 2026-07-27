@@ -19,10 +19,12 @@ void registerMembershipsDependencies(GetIt getIt) {
     getIt.registerLazySingleton<MembershipsRepository>(
       () => MembershipsRepositoryImpl(
         remote: getIt(),
-        resolveTenantId: () {
-          throw StateError(
-            'resolveTenantId must be overridden via createMembershipsCubit',
-          );
+        resolveTenantId: () async {
+          final auth = getIt<AuthRepository>();
+          final cached = await auth.readCachedProfile();
+          if (cached != null) return cached.tenantId;
+          final profile = await auth.resolveEmployeeProfile();
+          return profile.tenantId;
         },
       ),
     );
@@ -45,95 +47,16 @@ void registerMembershipsDependencies(GetIt getIt) {
   if (!getIt.isRegistered<ListMembershipAthletesUseCase>()) {
     getIt.registerLazySingleton(() => ListMembershipAthletesUseCase(getIt()));
   }
-}
 
-/// Factory that binds tenant from cached/resolved employee profile.
-MembershipsCubit createMembershipsCubit(GetIt getIt) {
-  final auth = getIt<AuthRepository>();
-  final remote = getIt<MembershipsRemoteDataSource>();
-  final repository = MembershipsRepositoryImpl(
-    remote: remote,
-    resolveTenantId: () {
-      throw const _DeferredTenantFailure();
-    },
-  );
-
-  // Prefer reading tenant at call time via async resolve in use cases —
-  // wrap createPlan through a tenant-aware repository proxy.
-  final tenantAware = _TenantAwareMembershipsRepository(
-    remote: remote,
-    auth: auth,
-  );
-
-  return MembershipsCubit(
-    listPlans: ListMembershipPlansUseCase(tenantAware),
-    createPlan: CreateMembershipPlanUseCase(tenantAware),
-    deactivatePlan: DeactivateMembershipPlanUseCase(tenantAware),
-    assignMembership: AssignMembershipUseCase(tenantAware),
-    listAthletes: ListMembershipAthletesUseCase(tenantAware),
-  );
-}
-
-class _DeferredTenantFailure implements Exception {
-  const _DeferredTenantFailure();
-}
-
-class _TenantAwareMembershipsRepository implements MembershipsRepository {
-  _TenantAwareMembershipsRepository({
-    required MembershipsRemoteDataSource remote,
-    required AuthRepository auth,
-  }) : _remote = remote,
-       _auth = auth;
-
-  final MembershipsRemoteDataSource _remote;
-  final AuthRepository _auth;
-
-  Future<String> _tenantId() async {
-    final cached = await _auth.readCachedProfile();
-    if (cached != null) return cached.tenantId;
-    final profile = await _auth.resolveEmployeeProfile();
-    return profile.tenantId;
-  }
-
-  @override
-  Future<List> listPlans({bool activeOnly = false}) {
-    return _remote.listPlans(activeOnly: activeOnly);
-  }
-
-  @override
-  Future createPlan({
-    required String name,
-    String? description,
-    required int durationDays,
-    required int priceCents,
-    String currency = 'EGP',
-  }) async {
-    final tenantId = await _tenantId();
-    return _remote.createPlan(
-      tenantId: tenantId,
-      name: name,
-      description: description,
-      durationDays: durationDays,
-      priceCents: priceCents,
-      currency: currency,
+  if (!getIt.isRegistered<MembershipsCubit>()) {
+    getIt.registerFactory(
+      () => MembershipsCubit(
+        listPlans: getIt(),
+        createPlan: getIt(),
+        deactivatePlan: getIt(),
+        assignMembership: getIt(),
+        listAthletes: getIt(),
+      ),
     );
-  }
-
-  @override
-  Future<void> deactivatePlan(String planId) {
-    return _remote.deactivatePlan(planId);
-  }
-
-  @override
-  Future<String> assignMembership({
-    required String planId,
-    required String athleteId,
-  }) {
-    return _remote.assignMembership(planId: planId, athleteId: athleteId);
-  }
-
-  @override
-  Future<List> listEnrolledAthletes() {
-    return _remote.listEnrolledAthletes();
   }
 }
