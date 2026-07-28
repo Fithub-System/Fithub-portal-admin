@@ -32,6 +32,9 @@ class MemberRosterDriftLocalDataSource implements MemberRosterLocalDataSource {
             powerScore: Value(member.powerScore),
             cryptoSalt: member.cryptoSalt,
             createdAt: member.createdAt,
+            membershipStatus: Value(member.membershipStatus),
+            membershipPlanName: Value(member.membershipPlanName),
+            membershipEndsAt: Value(member.membershipEndsAt),
           ),
         )
         .toList(growable: false);

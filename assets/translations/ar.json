@@ -47,6 +47,7 @@
   "nav": {
     "dashboard": "لوحة التحكم",
     "scan": "مسح",
+    "memberships": "العضويات",
     "account": "الحساب",
     "coming_soon": "قريبًا في مرحلة لاحقة."
   },
@@ -90,7 +91,10 @@
     "title": "ماسح الدخول",
     "subtitle": "وجّه الكاميرا نحو رمز QR الخاص بالعضو",
     "success": {
-      "active_badge": "نشط"
+      "active_badge": "نشط",
+      "expired_badge": "منتهية",
+      "paused_badge": "موقوفة",
+      "cancelled_badge": "ملغاة"
     },
     "scan": {
       "rejected": "تم رفض المسح: {reason}"
@@ -149,6 +153,52 @@
       "invalid_body": "البريد والدور والاسم مطلوبة.",
       "not_configured": "دعوة الموظفين غير مُعدّة لهذا البناء.",
       "unknown": "فشلت دعوة الموظف."
+    }
+  },
+  "memberships": {
+    "title": "خطط العضوية",
+    "subtitle": "عرّف الخطط وعيّن عضويات نشطة للرياضيين المسجّلين.",
+    "plans_heading": "الخطط",
+    "empty_plans": "لا توجد خطط بعد — أنشئ أول خطة لهذه الصالة.",
+    "read_only_hint": "عرض الاستقبال — إنشاء وتعيين العضويات للمسؤول فقط.",
+    "retry": "إعادة المحاولة",
+    "create_title": "إنشاء خطة",
+    "assign_title": "تعيين عضوية",
+    "plan_meta": "{days} يوم · {price} {currency}",
+    "status": {
+      "active": "نشطة",
+      "inactive": "غير نشطة"
+    },
+    "cta": {
+      "create_plan": "إنشاء خطة",
+      "assign": "تعيين عضوية",
+      "save_plan": "حفظ الخطة",
+      "confirm_assign": "تأكيد التعيين",
+      "deactivate": "إلغاء التفعيل"
+    },
+    "field": {
+      "name": "اسم الخطة",
+      "description": "الوصف (اختياري)",
+      "duration_days": "المدة (أيام)",
+      "price_cents": "السعر (سنتات)",
+      "plan": "الخطة",
+      "athlete": "الرياضي"
+    },
+    "validation": {
+      "duration": "يجب أن تكون المدة يومًا واحدًا على الأقل",
+      "price": "يجب أن يكون السعر 0 أو أكثر"
+    },
+    "success": {
+      "plan_created": "تم إنشاء الخطة.",
+      "plan_deactivated": "تم إلغاء تفعيل الخطة.",
+      "assigned": "تم تعيين العضوية."
+    },
+    "error": {
+      "not_configured": "العضويات غير مُعدّة لهذا البناء.",
+      "forbidden": "إدارة العضويات للمسؤول فقط.",
+      "invalid": "مدخلات عضوية غير صالحة.",
+      "unknown": "فشل طلب العضويات.",
+      "assign_prereq": "يلزم خطة نشطة ورياضي مسجّل للتعيين."
     }
   },
   "router": {

@@ -77,6 +77,7 @@ class ScanRepository {
       memberName: member.fullName,
       avatarUrl: member.avatarUrl,
       occupancy: occupancy,
+      membershipStatus: member.membershipStatus,
     );
   }
 
@@ -99,6 +100,7 @@ class ScanProcessResult {
     this.memberName,
     this.avatarUrl,
     this.occupancy,
+    this.membershipStatus,
     this.reason,
   });
 
@@ -106,11 +108,13 @@ class ScanProcessResult {
     required String memberName,
     String? avatarUrl,
     required int occupancy,
+    String? membershipStatus,
   }) : this._(
          isApproved: true,
          memberName: memberName,
          avatarUrl: avatarUrl,
          occupancy: occupancy,
+         membershipStatus: membershipStatus,
        );
 
   const ScanProcessResult.rejected(String reason)
@@ -120,5 +124,6 @@ class ScanProcessResult {
   final String? memberName;
   final String? avatarUrl;
   final int? occupancy;
+  final String? membershipStatus;
   final String? reason;
 }

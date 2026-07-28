@@ -7,14 +7,17 @@ class ScanSuccessNotification extends Equatable {
     required this.memberName,
     this.avatarUrl,
     required this.occupancy,
+    this.membershipStatus,
   });
 
   final String memberName;
   final String? avatarUrl;
   final int occupancy;
+  final String? membershipStatus;
 
   @override
-  List<Object?> get props => [memberName, avatarUrl, occupancy];
+  List<Object?> get props =>
+      [memberName, avatarUrl, occupancy, membershipStatus];
 }
 
 class AccessScannerState extends Equatable {

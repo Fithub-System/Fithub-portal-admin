@@ -9,6 +9,8 @@ import 'member_roster_remote_data_source.dart';
 ///
 /// Requires Backend `feature/backend-feat01-qr-member-roster` employee SELECT
 /// policy on `public.athletes` — Portal does not invent RLS.
+///
+/// FEAT-07: also loads active `athlete_memberships` (+ plan name) for Drift cache.
 class MemberRosterSupabaseRemoteDataSource
     implements MemberRosterRemoteDataSource {
   MemberRosterSupabaseRemoteDataSource({SupabaseClient? client})
@@ -37,8 +39,23 @@ class MemberRosterSupabaseRemoteDataSource
           );
 
       final list = rows as List<dynamic>;
-      return list
+      final athletes = list
           .map((row) => _mapRow(row as Map<String, dynamic>))
+          .toList(growable: false);
+
+      final membershipByAthlete = await _fetchActiveMemberships(client);
+      if (membershipByAthlete.isEmpty) return athletes;
+
+      return athletes
+          .map((athlete) {
+            final membership = membershipByAthlete[athlete.id];
+            if (membership == null) return athlete;
+            return athlete.copyWith(
+              membershipStatus: membership.status,
+              membershipPlanName: membership.planName,
+              membershipEndsAt: membership.endsAt,
+            );
+          })
           .toList(growable: false);
     } on PostgrestException catch (error) {
       if (_isPolicyDenial(error)) {
@@ -48,6 +65,39 @@ class MemberRosterSupabaseRemoteDataSource
     } catch (error) {
       if (error is MemberRosterFailure) rethrow;
       throw const MemberRosterUnknownFailure();
+    }
+  }
+
+  Future<Map<String, _CachedMembership>> _fetchActiveMemberships(
+    SupabaseClient client,
+  ) async {
+    try {
+      final rows = await client
+          .from('athlete_memberships')
+          .select('athlete_id, status, ends_at, membership_plans(name)')
+          .eq('status', 'active');
+
+      final map = <String, _CachedMembership>{};
+      for (final row in rows as List<dynamic>) {
+        final data = row as Map<String, dynamic>;
+        final athleteId = data['athlete_id'] as String?;
+        if (athleteId == null) continue;
+        final plan = data['membership_plans'];
+        String? planName;
+        if (plan is Map<String, dynamic>) {
+          planName = plan['name'] as String?;
+        }
+        final endsRaw = data['ends_at'] as String?;
+        map[athleteId] = _CachedMembership(
+          status: data['status'] as String? ?? 'active',
+          planName: planName,
+          endsAt: endsRaw == null ? null : DateTime.parse(endsRaw).toUtc(),
+        );
+      }
+      return map;
+    } on PostgrestException {
+      // Membership tables may lag behind roster; do not fail whole sync.
+      return const {};
     }
   }
 
@@ -68,4 +118,16 @@ class MemberRosterSupabaseRemoteDataSource
         code == 'PGRST301' ||
         error.message.toLowerCase().contains('policy');
   }
+}
+
+class _CachedMembership {
+  const _CachedMembership({
+    required this.status,
+    required this.planName,
+    required this.endsAt,
+  });
+
+  final String status;
+  final String? planName;
+  final DateTime? endsAt;
 }

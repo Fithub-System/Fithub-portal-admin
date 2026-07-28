@@ -228,6 +228,7 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                 child: ScanSuccessBanner(
                   memberName: state.success!.memberName,
                   avatarUrl: state.success!.avatarUrl,
+                  membershipStatus: state.success!.membershipStatus,
                   onDismiss: () =>
                       context.read<AccessScannerCubit>().dismissSuccess(),
                 ),

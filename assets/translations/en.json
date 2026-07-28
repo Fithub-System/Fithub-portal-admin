@@ -47,6 +47,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "scan": "Scan",
+    "memberships": "Memberships",
     "account": "Account",
     "coming_soon": "Coming soon in a later phase."
   },
@@ -90,7 +91,10 @@
     "title": "Access Scanner",
     "subtitle": "Point the camera at the member QR code",
     "success": {
-      "active_badge": "Active"
+      "active_badge": "Active",
+      "expired_badge": "Expired",
+      "paused_badge": "Paused",
+      "cancelled_badge": "Cancelled"
     },
     "scan": {
       "rejected": "Scan rejected: {reason}"
@@ -149,6 +153,52 @@
       "invalid_body": "Email, role, and name are required.",
       "not_configured": "Invite staff is not configured for this build.",
       "unknown": "Staff invite failed."
+    }
+  },
+  "memberships": {
+    "title": "MEMBERSHIP PLANS",
+    "subtitle": "Define plans and assign active memberships to enrolled athletes.",
+    "plans_heading": "PLANS",
+    "empty_plans": "No plans yet — create the first plan for this gym.",
+    "read_only_hint": "Receptionist view — only Admins can create or assign memberships.",
+    "retry": "Retry",
+    "create_title": "Create plan",
+    "assign_title": "Assign membership",
+    "plan_meta": "{days} days · {price} {currency}",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "cta": {
+      "create_plan": "Create plan",
+      "assign": "Assign membership",
+      "save_plan": "Save plan",
+      "confirm_assign": "Confirm assign",
+      "deactivate": "Deactivate"
+    },
+    "field": {
+      "name": "Plan name",
+      "description": "Description (optional)",
+      "duration_days": "Duration (days)",
+      "price_cents": "Price (cents)",
+      "plan": "Plan",
+      "athlete": "Athlete"
+    },
+    "validation": {
+      "duration": "Duration must be at least 1 day",
+      "price": "Price must be 0 or greater"
+    },
+    "success": {
+      "plan_created": "Plan created.",
+      "plan_deactivated": "Plan deactivated.",
+      "assigned": "Membership assigned."
+    },
+    "error": {
+      "not_configured": "Memberships are not configured for this build.",
+      "forbidden": "Only Admins can manage memberships.",
+      "invalid": "Invalid membership input.",
+      "unknown": "Memberships request failed.",
+      "assign_prereq": "Need an active plan and enrolled athlete to assign."
     }
   },
   "router": {

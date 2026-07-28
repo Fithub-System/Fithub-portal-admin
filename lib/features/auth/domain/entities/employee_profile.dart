@@ -21,6 +21,9 @@ class EmployeeProfile extends Equatable {
   /// FEAT-05 AC-B4 — only Admin may invite staff (UI gate; Backend enforces).
   bool get canInviteStaff => role == 'Admin';
 
+  /// FEAT-07 AC-A3 / AC-B4 — only Admin may create/assign memberships.
+  bool get canManageMemberships => role == 'Admin';
+
   @override
   List<Object?> get props => [id, tenantId, userId, name, role];
 }

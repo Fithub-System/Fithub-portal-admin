@@ -171,6 +171,7 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
             memberName: result.memberName ?? '',
             avatarUrl: result.avatarUrl,
             occupancy: result.occupancy ?? 0,
+            membershipStatus: result.membershipStatus,
           ),
         ),
       );
