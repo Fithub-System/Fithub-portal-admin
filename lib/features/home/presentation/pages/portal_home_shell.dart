@@ -10,8 +10,10 @@ import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../../../dashboard/presentation/widgets/live_occupancy_gauge.dart';
 import '../../../access_scanner/presentation/screens/access_scanner_screen.dart';
+import '../../../members/presentation/screens/member_management_screen.dart';
+import '../../../members/inject_members.dart' as members_di;
 import '../../../staff_invite/presentation/screens/staff_invite_screen.dart';
-import '../../../memberships/presentation/screens/memberships_screen.dart';
+import 'portal_shell_destinations.dart';
 
 /// Adaptive Admin shell: NavigationRail (desktop/tablet) / NavigationBar (mobile).
 class PortalHomeShell extends StatefulWidget {
@@ -28,11 +30,13 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
 
   @override
   Widget build(BuildContext context) {
-    final canManageMemberships = context.select(
-      (AuthBloc b) => b.state is AuthAuthenticated
-          ? (b.state as AuthAuthenticated).profile.canManageMemberships
-          : false,
-    );
+    final authState = context.select((AuthBloc b) => b.state);
+    final canManageMemberships = authState is AuthAuthenticated
+        ? authState.profile.canManageMemberships
+        : false;
+    final tenantId = authState is AuthAuthenticated
+        ? authState.profile.tenantId
+        : '';
 
     return BlocBuilder<ConnectivityCubit, ConnectivityState>(
       builder: (context, connectivity) {
@@ -46,9 +50,22 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
               children: [
                 const _DashboardDestination(),
                 const AccessScannerScreen(),
-                BlocProvider(
-                  create: (_) => InjectionContainer.createMembershipsCubit(),
-                  child: MembershipsScreen(canWrite: canManageMemberships),
+                MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (_) => InjectionContainer.createMembershipsCubit(),
+                    ),
+                    BlocProvider(
+                      create: (_) =>
+                          members_di.createMemberRosterCubit(
+                            getIt: InjectionContainer.locator,
+                            tenantId: tenantId,
+                          )..load(),
+                    ),
+                  ],
+                  child: MemberManagementScreen(
+                    canWrite: canManageMemberships,
+                  ),
                 ),
                 const _AccountDestination(),
               ],
@@ -118,12 +135,12 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                     label: 'nav.scan'.tr(),
                   ),
                   NavigationDestination(
-                    icon: const Icon(Icons.card_membership_outlined),
+                    icon: const Icon(Icons.group_outlined),
                     selectedIcon: const Icon(
-                      Icons.card_membership,
+                      Icons.group,
                       color: KineticTokens.electricLime,
                     ),
-                    label: 'nav.memberships'.tr(),
+                    label: 'nav.members'.tr(),
                   ),
                   NavigationDestination(
                     icon: const Icon(Icons.person_outline),
@@ -183,9 +200,9 @@ class _PortalNavigationRail extends StatelessWidget {
           label: Text('nav.scan'.tr()),
         ),
         NavigationRailDestination(
-          icon: const Icon(Icons.card_membership_outlined),
-          selectedIcon: const Icon(Icons.card_membership),
-          label: Text('nav.memberships'.tr()),
+          icon: const Icon(Icons.group_outlined),
+          selectedIcon: const Icon(Icons.group),
+          label: Text('nav.members'.tr()),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.person_outline),

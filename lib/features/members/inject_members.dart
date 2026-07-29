@@ -1,0 +1,24 @@
+import 'package:get_it/get_it.dart';
+
+import '../../access_scanner/domain/repositories/member_roster_repository.dart';
+import '../domain/use_cases/list_cached_member_roster_use_case.dart';
+import '../presentation/cubit/member_roster_cubit.dart';
+
+/// Members feature DI (FEAT-07-R).
+void registerMembersDependencies(GetIt getIt) {
+  if (!getIt.isRegistered<ListCachedMemberRosterUseCase>()) {
+    getIt.registerLazySingleton(
+      () => ListCachedMemberRosterUseCase(getIt<MemberRosterRepository>()),
+    );
+  }
+}
+
+MemberRosterCubit createMemberRosterCubit({
+  required GetIt getIt,
+  required String tenantId,
+}) {
+  return MemberRosterCubit(
+    listCachedRoster: getIt<ListCachedMemberRosterUseCase>(),
+    tenantId: tenantId,
+  );
+}
