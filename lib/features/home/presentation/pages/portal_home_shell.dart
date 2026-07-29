@@ -12,6 +12,8 @@ import '../../../dashboard/presentation/widgets/live_occupancy_gauge.dart';
 import '../../../access_scanner/presentation/screens/access_scanner_screen.dart';
 import '../../../staff_invite/presentation/screens/staff_invite_screen.dart';
 import '../../../memberships/presentation/screens/memberships_screen.dart';
+import '../../../billing/presentation/screens/marketing_promotions_screen.dart';
+import 'portal_shell_destinations.dart';
 
 /// Adaptive Admin shell: NavigationRail (desktop/tablet) / NavigationBar (mobile).
 class PortalHomeShell extends StatefulWidget {
@@ -24,13 +26,18 @@ class PortalHomeShell extends StatefulWidget {
 }
 
 class _PortalHomeShellState extends State<PortalHomeShell> {
-  int _selectedIndex = 0;
+  int _selectedIndex = PortalShellDestinations.dashboard;
 
   @override
   Widget build(BuildContext context) {
     final canManageMemberships = context.select(
       (AuthBloc b) => b.state is AuthAuthenticated
           ? (b.state as AuthAuthenticated).profile.canManageMemberships
+          : false,
+    );
+    final canManageBilling = context.select(
+      (AuthBloc b) => b.state is AuthAuthenticated
+          ? (b.state as AuthAuthenticated).profile.canManageBilling
           : false,
     );
 
@@ -49,6 +56,10 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                 BlocProvider(
                   create: (_) => InjectionContainer.createMembershipsCubit(),
                   child: MembershipsScreen(canWrite: canManageMemberships),
+                ),
+                BlocProvider(
+                  create: (_) => InjectionContainer.createBillingCubit(),
+                  child: MarketingPromotionsScreen(canWrite: canManageBilling),
                 ),
                 const _AccountDestination(),
               ],
@@ -126,6 +137,14 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                     label: 'nav.memberships'.tr(),
                   ),
                   NavigationDestination(
+                    icon: const Icon(Icons.campaign_outlined),
+                    selectedIcon: const Icon(
+                      Icons.campaign,
+                      color: KineticTokens.electricLime,
+                    ),
+                    label: 'nav.marketing'.tr(),
+                  ),
+                  NavigationDestination(
                     icon: const Icon(Icons.person_outline),
                     selectedIcon: const Icon(
                       Icons.person,
@@ -186,6 +205,11 @@ class _PortalNavigationRail extends StatelessWidget {
           icon: const Icon(Icons.card_membership_outlined),
           selectedIcon: const Icon(Icons.card_membership),
           label: Text('nav.memberships'.tr()),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Icons.campaign_outlined),
+          selectedIcon: const Icon(Icons.campaign),
+          label: Text('nav.marketing'.tr()),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.person_outline),
