@@ -48,6 +48,7 @@
     "dashboard": "Dashboard",
     "scan": "Scan",
     "members": "Members",
+    "marketing": "Marketing",
     "account": "Account",
     "coming_soon": "Coming soon in a later phase."
   },
@@ -201,6 +202,7 @@
       "assign_prereq": "Need an active plan and enrolled athlete to assign."
     }
   },
+  },
   "members": {
     "title": "MEMBER MANAGEMENT",
     "subtitle": "Enrolled athletes, plan types, and membership operations.",
@@ -227,6 +229,41 @@
     "empty_roster": "No members cached — sync roster from Scan tab or check in online.",
     "error": {
       "roster": "Could not load cached roster."
+    }
+  },
+  "billing": {
+    "marketing_title": "MARKETING & PROMOTIONS",
+    "marketing_subtitle": "Billing and promotions for this gym.",
+    "section_heading": "BILLING",
+    "subtitle": "Recent membership charges for your tenant.",
+    "empty": "No charges yet — assign a membership to generate the first charge.",
+    "read_only_hint": "Receptionist view — only Admins can mark charges paid or waived.",
+    "retry": "Retry",
+    "charge_meta": "{plan} · {price} {currency} · due {due}",
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "waived": "Waived"
+    },
+    "cta": {
+      "mark_paid": "Mark paid",
+      "mark_waived": "Mark waived",
+      "mark_failed": "Mark failed",
+      "apply_freeze": "Apply billing freeze"
+    },
+    "success": {
+      "marked_paid": "Charge marked paid.",
+      "marked_waived": "Charge marked waived.",
+      "marked_failed": "Charge marked failed.",
+      "updated": "Charge updated.",
+      "freeze_applied": "Billing freeze applied — {count} membership(s) paused."
+    },
+    "error": {
+      "not_configured": "Billing is not configured for this build.",
+      "forbidden": "Only Admins can update billing charges.",
+      "invalid": "Invalid billing update.",
+      "unknown": "Billing request failed."
     }
   },
   "router": {

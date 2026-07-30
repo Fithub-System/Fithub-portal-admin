@@ -19,10 +19,11 @@ void main() {
   group('FEAT-07-R shell nav indices', () {
     test('Members is index 2; Memberships tab removed from shell count', () {
       expect(PortalShellDestinations.members, 2);
+      expect(PortalShellDestinations.marketing, 3);
       expect(PortalShellDestinations.dashboard, 0);
       expect(PortalShellDestinations.scan, 1);
-      expect(PortalShellDestinations.account, 3);
-      expect(PortalShellDestinations.destinationCount, 4);
+      expect(PortalShellDestinations.account, 4);
+      expect(PortalShellDestinations.destinationCount, 5);
     });
   });
 
