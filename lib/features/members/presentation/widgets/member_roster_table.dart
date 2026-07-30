@@ -6,6 +6,9 @@ import '../../../access_scanner/domain/entities/member_roster_entry.dart';
 import '../../../memberships/presentation/widgets/memberships_plans_panel.dart';
 
 /// Enrolled athletes roster table (Plan Type from Drift cache).
+///
+/// Fills available width; scrolls horizontally only when content needs more
+/// than the viewport (avoids clipped / overflowing action cells).
 class MemberRosterTable extends StatelessWidget {
   const MemberRosterTable({
     super.key,
@@ -15,6 +18,9 @@ class MemberRosterTable extends StatelessWidget {
 
   final List<MemberRosterEntry> members;
   final bool canWrite;
+
+  /// Minimum content width before horizontal scroll kicks in.
+  static const double _minTableWidth = 720;
 
   @override
   Widget build(BuildContext context) {
@@ -30,25 +36,54 @@ class MemberRosterTable extends StatelessWidget {
       );
     }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: DataTable(
-        headingTextStyle: textTheme.labelLarge?.copyWith(
-          color: KineticTokens.zincGray,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1,
-        ),
-        dataTextStyle: textTheme.bodyMedium?.copyWith(
-          color: KineticTokens.pureWhite,
-        ),
-        columns: [
-          DataColumn(label: Text('members.column.name'.tr())),
-          DataColumn(label: Text('members.column.plan_type'.tr())),
-          DataColumn(label: Text('members.column.status'.tr())),
-          DataColumn(label: Text('members.column.actions'.tr())),
-        ],
-        rows: members.map((member) => _buildRow(context, member)).toList(),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const horizontalInset = 32.0; // 16 leading + 16 trailing
+        final viewport = constraints.maxWidth - horizontalInset;
+        final tableWidth = viewport < _minTableWidth
+            ? _minTableWidth
+            : viewport;
+
+        return Scrollbar(
+          thumbVisibility: true,
+          child: SingleChildScrollView(
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 24),
+            child: Scrollbar(
+              thumbVisibility: viewport < _minTableWidth,
+              notificationPredicate: (notification) => notification.depth == 1,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: tableWidth,
+                  child: DataTable(
+                    columnSpacing: 24,
+                    horizontalMargin: 12,
+                    headingTextStyle: textTheme.labelLarge?.copyWith(
+                      color: KineticTokens.zincGray,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1,
+                    ),
+                    dataTextStyle: textTheme.bodyMedium?.copyWith(
+                      color: KineticTokens.pureWhite,
+                    ),
+                    dataRowMinHeight: 56,
+                    dataRowMaxHeight: 72,
+                    columns: [
+                      DataColumn(label: Text('members.column.name'.tr())),
+                      DataColumn(label: Text('members.column.plan_type'.tr())),
+                      DataColumn(label: Text('members.column.status'.tr())),
+                      DataColumn(label: Text('members.column.actions'.tr())),
+                    ],
+                    rows: members
+                        .map((member) => _buildRow(context, member))
+                        .toList(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -59,32 +94,14 @@ class MemberRosterTable extends StatelessWidget {
 
     return DataRow(
       cells: [
-        DataCell(Text(member.fullName)),
-        DataCell(Text(planLabel)),
-        DataCell(Text(statusLabel)),
         DataCell(
-          Wrap(
-            spacing: 8,
-            children: [
-              if (canWrite)
-                TextButton(
-                  onPressed: () => MembershipsPlansPanel.showAssignSheet(
-                    context,
-                    initialAthleteId: member.id,
-                  ),
-                  child: Text('memberships.cta.assign'.tr()),
-                ),
-              TextButton(
-                onPressed: null,
-                child: Text('members.action.freeze'.tr()),
-              ),
-              TextButton(
-                onPressed: null,
-                child: Text('members.action.renew'.tr()),
-              ),
-            ],
-          ),
+          Text(member.fullName, overflow: TextOverflow.ellipsis, maxLines: 1),
         ),
+        DataCell(Text(planLabel, overflow: TextOverflow.ellipsis, maxLines: 1)),
+        DataCell(
+          Text(statusLabel, overflow: TextOverflow.ellipsis, maxLines: 1),
+        ),
+        DataCell(_ActionsCell(canWrite: canWrite, athleteId: member.id)),
       ],
     );
   }
@@ -105,5 +122,44 @@ class MemberRosterTable extends StatelessWidget {
       default:
         return status;
     }
+  }
+}
+
+class _ActionsCell extends StatelessWidget {
+  const _ActionsCell({required this.canWrite, required this.athleteId});
+
+  final bool canWrite;
+  final String athleteId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: AlignmentDirectional.centerStart,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (canWrite)
+              TextButton(
+                onPressed: () => MembershipsPlansPanel.showAssignSheet(
+                  context,
+                  initialAthleteId: athleteId,
+                ),
+                child: Text('memberships.cta.assign'.tr()),
+              ),
+            TextButton(
+              onPressed: null,
+              child: Text('members.action.freeze'.tr()),
+            ),
+            TextButton(
+              onPressed: null,
+              child: Text('members.action.renew'.tr()),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
