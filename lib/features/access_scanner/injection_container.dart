@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import 'package:fithub_portal_admin/core/database/app_database.dart';
+import 'package:fithub_portal_admin/features/offline_sync/domain/use_cases/offline_sync_use_case.dart';
 import 'package:fithub_portal_admin/features/scan/data/repositories/scan_repository.dart';
 import 'data/data_sources/local/member_roster_local_data_source.dart';
 import 'data/data_sources/remote/member_roster_remote_data_source.dart';
@@ -33,7 +34,12 @@ void registerAccessScannerDependencies(GetIt getIt) {
 
   if (!getIt.isRegistered<ProcessQrScanUseCase>()) {
     getIt.registerLazySingleton(
-      () => ProcessQrScanUseCase(getIt<ScanRepository>()),
+      () => ProcessQrScanUseCase(
+        getIt<ScanRepository>(),
+        syncPendingAttendance: getIt.isRegistered<SyncPendingAttendanceUseCase>()
+            ? getIt<SyncPendingAttendanceUseCase>()
+            : null,
+      ),
     );
   }
 

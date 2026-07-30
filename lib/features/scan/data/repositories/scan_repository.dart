@@ -19,6 +19,11 @@ class ScanRepository {
   final QrSignatureValidator _validator;
   final Uuid _uuid;
 
+  /// Validates QR, enqueues local `attendance_logs` mirror, bumps occupancy.
+  ///
+  /// Cloud `attendance_logs` INSERT is owned by [ProcessQrScanUseCase] when
+  /// online (flush via [SyncPendingAttendanceUseCase]) — do not treat this
+  /// method alone as a complete online check-in.
   Future<ScanProcessResult> processOfflineScan({
     required String tenantId,
     required String rawPayload,
