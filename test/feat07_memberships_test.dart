@@ -6,6 +6,7 @@ import 'package:fithub_portal_admin/features/memberships/domain/memberships_fail
 import 'package:fithub_portal_admin/features/memberships/domain/repositories/memberships_repository.dart';
 import 'package:fithub_portal_admin/features/memberships/domain/use_cases/memberships_use_cases.dart';
 import 'package:fithub_portal_admin/features/memberships/presentation/cubit/memberships_cubit.dart';
+import 'package:fithub_portal_admin/features/members/presentation/screens/member_management_screen.dart';
 import 'package:fithub_portal_admin/features/memberships/presentation/screens/memberships_screen.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -99,7 +100,18 @@ void main() {
   });
 
   group('Stitch companion citation', () {
-    test('MembershipsScreen cites Admin Overview companion id', () {
+    test('MemberManagementScreen cites Stitch Member Management id', () {
+      expect(
+        MemberManagementScreen.stitchScreenId,
+        '9b35dd57f15443e99f7e798f6867acb6',
+      );
+      expect(
+        MemberManagementScreen.stitchScreenTitle,
+        'Member Management',
+      );
+    });
+
+    test('Legacy MembershipsScreen retains Admin Overview companion id', () {
       expect(
         MembershipsScreen.stitchCompanionScreenId,
         '216e0407184f4c39bd501ed436c1e88b',

@@ -54,6 +54,13 @@ class AppDatabase extends _$AppDatabase {
     return row.read(countExp) ?? 0;
   }
 
+  Future<List<LocalMember>> listMembersForTenant(String tenantId) {
+    return (select(localMembers)
+          ..where((m) => m.tenantId.equals(tenantId))
+          ..orderBy([(m) => OrderingTerm.asc(m.fullName)]))
+        .get();
+  }
+
   Future<void> enqueueAttendance(LocalAttendanceQueueCompanion entry) {
     return into(localAttendanceQueue).insert(entry);
   }

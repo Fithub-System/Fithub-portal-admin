@@ -23,6 +23,8 @@ import 'package:fithub_portal_admin/features/access_scanner/injection_container.
     as access_scanner_di;
 import 'package:fithub_portal_admin/features/memberships/inject_memberships.dart'
     as memberships_di;
+import 'package:fithub_portal_admin/features/members/inject_members.dart'
+    as members_di;
 import 'package:fithub_portal_admin/features/staff_invite/presentation/bloc/staff_invite_bloc.dart';
 import 'package:fithub_portal_admin/features/memberships/presentation/cubit/memberships_cubit.dart';
 import 'package:get_it/get_it.dart';
@@ -44,6 +46,7 @@ class InjectionContainer {
     staff_invite_di.registerStaffInviteDependencies(getIt);
     access_scanner_di.registerAccessScannerDependencies(getIt);
     memberships_di.registerMembershipsDependencies(getIt);
+    members_di.registerMembersDependencies(getIt);
 
     if (!getIt.isRegistered<ScanRepository>()) {
       getIt.registerLazySingleton<ScanRepository>(
@@ -55,6 +58,8 @@ class InjectionContainer {
   static StaffInviteBloc createStaffInviteBloc() => getIt<StaffInviteBloc>();
 
   static MembershipsCubit createMembershipsCubit() => getIt<MembershipsCubit>();
+
+  static GetIt get locator => getIt;
 
   static AuthRepository get authRepository => getIt<AuthRepository>();
 
