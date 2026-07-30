@@ -33,4 +33,11 @@ class MemberRosterRepositoryImpl implements MemberRosterRepository {
   Future<int> countCachedMembers({required String tenantId}) {
     return _local.countCachedMembers(tenantId: tenantId);
   }
+
+  @override
+  Future<List<MemberRosterEntry>> listCachedMembers({
+    required String tenantId,
+  }) {
+    return _local.listCachedMembers(tenantId: tenantId);
+  }
 }
