@@ -157,6 +157,7 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
     final result = await _processQrScan(
       tenantId: _tenantId,
       rawPayload: trimmed,
+      online: _isOnline(),
     );
 
     if (isClosed) return;
