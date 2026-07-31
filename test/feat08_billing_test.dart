@@ -221,10 +221,10 @@ void main() {
   });
 
   group('Shell destinations', () {
-    test('Marketing is index 3; account is 4', () {
-      expect(PortalShellDestinations.marketing, 3);
-      expect(PortalShellDestinations.account, 4);
-      expect(PortalShellDestinations.destinationCount, 5);
+    test('Marketing is index 4 under FEAT-11 six-destination shell', () {
+      expect(PortalShellDestinations.marketing, 4);
+      expect(PortalShellDestinations.reports, 5);
+      expect(PortalShellDestinations.destinationCount, 6);
     });
   });
 }

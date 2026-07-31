@@ -3,20 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
+import '../../../../core/i18n/app_locales.dart';
+import '../../../../core/network/supabase_locale_headers.dart';
 import '../../../../injection_container.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../../../dashboard/presentation/widgets/live_occupancy_gauge.dart';
-import '../../../access_scanner/presentation/screens/access_scanner_screen.dart';
 import '../../../members/presentation/screens/member_management_screen.dart';
 import '../../../members/inject_members.dart' as members_di;
 import '../../../billing/presentation/screens/marketing_promotions_screen.dart';
 import '../../../staff_invite/presentation/screens/staff_invite_screen.dart';
+import '../widgets/kinetic_coming_soon_empty.dart';
 import 'portal_shell_destinations.dart';
 
 /// Adaptive Admin shell: NavigationRail (desktop/tablet) / NavigationBar (mobile).
+///
+/// FEAT-11 Install I1 — Stitch shell IA:
+/// Home | Members | Staff | Classes | Marketing | Reports
+/// (`@specs/FEAT-11-PORTAL-SHELL-MATCH-STITCH.md` §3).
+///
+/// Scan and Account removed from rail (AC-A2 / AC-E2). Access Scanner feature
+/// code retained under `access_scanner` for I2. Language + sign-out via header
+/// avatar menu (AC-E1).
 class PortalHomeShell extends StatefulWidget {
   const PortalHomeShell({super.key});
 
@@ -27,7 +37,7 @@ class PortalHomeShell extends StatefulWidget {
 }
 
 class _PortalHomeShellState extends State<PortalHomeShell> {
-  int _selectedIndex = PortalShellDestinations.dashboard;
+  int _selectedIndex = PortalShellDestinations.home;
 
   @override
   Widget build(BuildContext context) {
@@ -53,29 +63,37 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
               index: _selectedIndex,
               children: [
                 const _DashboardDestination(),
-                const AccessScannerScreen(),
                 MultiBlocProvider(
                   providers: [
                     BlocProvider(
-                      create: (_) => InjectionContainer.createMembershipsCubit(),
+                      create: (_) =>
+                          InjectionContainer.createMembershipsCubit(),
                     ),
                     BlocProvider(
-                      create: (_) =>
-                          members_di.createMemberRosterCubit(
-                            getIt: InjectionContainer.locator,
-                            tenantId: tenantId,
-                          )..load(),
+                      create: (_) => members_di.createMemberRosterCubit(
+                        getIt: InjectionContainer.locator,
+                        tenantId: tenantId,
+                      )..load(),
                     ),
                   ],
                   child: MemberManagementScreen(
                     canWrite: canManageMemberships,
                   ),
                 ),
+                const _StaffDestination(),
+                const ClassesComingSoonPage(),
                 BlocProvider(
                   create: (_) => InjectionContainer.createBillingCubit(),
                   child: MarketingPromotionsScreen(canWrite: canManageBilling),
                 ),
-                const _AccountDestination(),
+                const ReportsComingSoonPage(),
+              ],
+            );
+
+            final content = Column(
+              children: [
+                const _PortalShellHeader(),
+                Expanded(child: body),
               ],
             );
 
@@ -99,7 +117,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                             thickness: 1,
                             color: KineticTokens.zincGray,
                           ),
-                          Expanded(child: body),
+                          Expanded(child: content),
                         ],
                       ),
                     ),
@@ -113,7 +131,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
               body: Column(
                 children: [
                   SafeModeBanner(visible: connectivity.isOffline),
-                  Expanded(child: body),
+                  Expanded(child: content),
                 ],
               ),
               bottomNavigationBar: NavigationBar(
@@ -127,20 +145,12 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                 ),
                 destinations: [
                   NavigationDestination(
-                    icon: const Icon(Icons.dashboard_outlined),
+                    icon: const Icon(Icons.home_outlined),
                     selectedIcon: const Icon(
-                      Icons.dashboard,
+                      Icons.home,
                       color: KineticTokens.electricLime,
                     ),
-                    label: 'nav.dashboard'.tr(),
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.qr_code_scanner_outlined),
-                    selectedIcon: const Icon(
-                      Icons.qr_code_scanner,
-                      color: KineticTokens.electricLime,
-                    ),
-                    label: 'nav.scan'.tr(),
+                    label: 'nav.home'.tr(),
                   ),
                   NavigationDestination(
                     icon: const Icon(Icons.group_outlined),
@@ -151,6 +161,22 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                     label: 'nav.members'.tr(),
                   ),
                   NavigationDestination(
+                    icon: const Icon(Icons.badge_outlined),
+                    selectedIcon: const Icon(
+                      Icons.badge,
+                      color: KineticTokens.electricLime,
+                    ),
+                    label: 'nav.staff'.tr(),
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.fitness_center_outlined),
+                    selectedIcon: const Icon(
+                      Icons.fitness_center,
+                      color: KineticTokens.electricLime,
+                    ),
+                    label: 'nav.classes'.tr(),
+                  ),
+                  NavigationDestination(
                     icon: const Icon(Icons.campaign_outlined),
                     selectedIcon: const Icon(
                       Icons.campaign,
@@ -159,12 +185,12 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                     label: 'nav.marketing'.tr(),
                   ),
                   NavigationDestination(
-                    icon: const Icon(Icons.person_outline),
+                    icon: const Icon(Icons.insights_outlined),
                     selectedIcon: const Icon(
-                      Icons.person,
+                      Icons.insights,
                       color: KineticTokens.electricLime,
                     ),
-                    label: 'nav.account'.tr(),
+                    label: 'nav.reports'.tr(),
                   ),
                 ],
               ),
@@ -175,6 +201,96 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     );
   }
 }
+
+/// Shell chrome: language toggle + sign-out (Account rail removed — AC-E1).
+class _PortalShellHeader extends StatelessWidget {
+  const _PortalShellHeader();
+
+  Future<void> _setLocale(BuildContext context, Locale locale) async {
+    await context.setLocale(locale);
+    SupabaseLocaleHeaders.apply(locale.languageCode);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final profile = context.select(
+      (AuthBloc b) => b.state is AuthAuthenticated
+          ? (b.state as AuthAuthenticated).profile
+          : null,
+    );
+    final name = profile?.name ?? 'home.shell.admin_fallback'.tr();
+    final locale = context.locale;
+
+    return Material(
+      color: KineticTokens.gunmetalCard,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'home.shell.welcome'.tr(namedArgs: {'name': name}),
+                  textAlign: TextAlign.start,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: KineticTokens.pureWhite,
+                  ),
+                ),
+              ),
+              PopupMenuButton<_ShellMenuAction>(
+                tooltip: 'home.shell.account_menu'.tr(),
+                icon: const Icon(
+                  Icons.account_circle,
+                  color: KineticTokens.electricLime,
+                ),
+                color: KineticTokens.gunmetalCard,
+                onSelected: (action) async {
+                  switch (action) {
+                    case _ShellMenuAction.localeEn:
+                      await _setLocale(context, AppLocales.en);
+                    case _ShellMenuAction.localeAr:
+                      await _setLocale(context, AppLocales.ar);
+                    case _ShellMenuAction.signOut:
+                      context.read<AuthBloc>().add(
+                        const AuthSignOutRequested(),
+                      );
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: _ShellMenuAction.localeEn,
+                    enabled: locale.languageCode != 'en',
+                    child: Text('home.shell.locale_en'.tr()),
+                  ),
+                  PopupMenuItem(
+                    value: _ShellMenuAction.localeAr,
+                    enabled: locale.languageCode != 'ar',
+                    child: Text('home.shell.locale_ar'.tr()),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
+                    value: _ShellMenuAction.signOut,
+                    child: Text('home.shell.sign_out'.tr()),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+enum _ShellMenuAction { localeEn, localeAr, signOut }
 
 class _PortalNavigationRail extends StatelessWidget {
   const _PortalNavigationRail({
@@ -206,14 +322,9 @@ class _PortalNavigationRail extends StatelessWidget {
       labelType: NavigationRailLabelType.all,
       destinations: [
         NavigationRailDestination(
-          icon: const Icon(Icons.dashboard_outlined),
-          selectedIcon: const Icon(Icons.dashboard),
-          label: Text('nav.dashboard'.tr()),
-        ),
-        NavigationRailDestination(
-          icon: const Icon(Icons.qr_code_scanner_outlined),
-          selectedIcon: const Icon(Icons.qr_code_scanner),
-          label: Text('nav.scan'.tr()),
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: Text('nav.home'.tr()),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.group_outlined),
@@ -221,14 +332,24 @@ class _PortalNavigationRail extends StatelessWidget {
           label: Text('nav.members'.tr()),
         ),
         NavigationRailDestination(
+          icon: const Icon(Icons.badge_outlined),
+          selectedIcon: const Icon(Icons.badge),
+          label: Text('nav.staff'.tr()),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Icons.fitness_center_outlined),
+          selectedIcon: const Icon(Icons.fitness_center),
+          label: Text('nav.classes'.tr()),
+        ),
+        NavigationRailDestination(
           icon: const Icon(Icons.campaign_outlined),
           selectedIcon: const Icon(Icons.campaign),
           label: Text('nav.marketing'.tr()),
         ),
         NavigationRailDestination(
-          icon: const Icon(Icons.person_outline),
-          selectedIcon: const Icon(Icons.person),
-          label: Text('nav.account'.tr()),
+          icon: const Icon(Icons.insights_outlined),
+          selectedIcon: const Icon(Icons.insights),
+          label: Text('nav.reports'.tr()),
         ),
       ],
     );
@@ -326,8 +447,13 @@ class _DashboardDestination extends StatelessWidget {
   }
 }
 
-class _AccountDestination extends StatelessWidget {
-  const _AccountDestination();
+/// Staff destination — invite preserved from former Account rail (FEAT-05 / AC-D1).
+///
+/// Stitch Staff Management `dcc070ef2b1e45058b3e042ad70140e3`.
+class _StaffDestination extends StatelessWidget {
+  const _StaffDestination();
+
+  static const String stitchScreenId = 'dcc070ef2b1e45058b3e042ad70140e3';
 
   @override
   Widget build(BuildContext context) {
@@ -336,68 +462,42 @@ class _AccountDestination extends StatelessWidget {
           ? (b.state as AuthAuthenticated).profile
           : null,
     );
-    final dash = 'home.shell.em_dash'.tr();
-    final name = profile?.name ?? 'home.shell.admin_fallback'.tr();
     final textTheme = Theme.of(context).textTheme;
     final canInvite = profile?.canInviteStaff ?? false;
 
     return ListView(
       padding: const EdgeInsetsDirectional.all(24),
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'home.shell.welcome'.tr(namedArgs: {'name': name}),
-                textAlign: TextAlign.start,
-                style: textTheme.titleLarge?.copyWith(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: KineticTokens.pureWhite,
-                ),
-              ),
-            ),
-            IconButton(
-              tooltip: 'home.shell.sign_out'.tr(),
-              onPressed: () =>
-                  context.read<AuthBloc>().add(const AuthSignOutRequested()),
-              icon: const Icon(Icons.logout, color: KineticTokens.zincGray),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
         Text(
-          'home.shell.command_center'.tr(),
+          'staff.shell.title'.tr(),
           textAlign: TextAlign.start,
-          style: textTheme.labelLarge?.copyWith(
-            fontSize: 11,
+          style: textTheme.titleLarge?.copyWith(
+            fontSize: 22,
             fontWeight: FontWeight.w700,
-            letterSpacing: 2,
-            color: KineticTokens.zincGray,
+            color: KineticTokens.pureWhite,
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          'home.shell.role'.tr(namedArgs: {'role': profile?.role ?? dash}),
-          textAlign: TextAlign.start,
-          style: textTheme.titleMedium?.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: KineticTokens.electricLime,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'home.shell.tenant'.tr(
-            namedArgs: {'tenant': profile?.tenantId ?? dash},
-          ),
+          'staff.shell.subtitle'.tr(),
           textAlign: TextAlign.start,
           style: textTheme.bodyMedium?.copyWith(
             fontSize: 13,
             color: KineticTokens.zincGray,
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 4),
+        Text(
+          'home.coming_soon.stitch_ref'.tr(
+            namedArgs: {'id': stitchScreenId},
+          ),
+          textAlign: TextAlign.start,
+          style: textTheme.labelSmall?.copyWith(
+            fontSize: 10,
+            color: KineticTokens.zincGray.withValues(alpha: 0.7),
+          ),
+        ),
+        const SizedBox(height: 24),
         if (canInvite)
           BlocProvider(
             create: (_) => InjectionContainer.createStaffInviteBloc(),
