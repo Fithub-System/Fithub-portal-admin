@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import '../access_scanner/domain/repositories/member_roster_repository.dart';
+import '../access_scanner/domain/use_cases/sync_member_roster_use_case.dart';
 import 'domain/use_cases/list_cached_member_roster_use_case.dart';
 import 'presentation/cubit/member_roster_cubit.dart';
 
@@ -19,6 +20,9 @@ MemberRosterCubit createMemberRosterCubit({
 }) {
   return MemberRosterCubit(
     listCachedRoster: getIt<ListCachedMemberRosterUseCase>(),
+    syncRoster: getIt.isRegistered<SyncMemberRosterUseCase>()
+        ? getIt<SyncMemberRosterUseCase>()
+        : null,
     tenantId: tenantId,
   );
 }
