@@ -75,5 +75,17 @@ abstract final class KineticTokens {
   static const String stitchAccessScannerScreenIdAr =
       'bec9356e2cb941798e66fa804ac78854';
 
+  /// FEAT-10 / Install I3 — Stitch G2 Gym Settings / SKU & Marketplace (EN).
+  ///
+  /// Locked in `@specs/FEAT-10-MARKETPLACE-BOUNDARY.md` §3.2 and
+  /// `@specs/STITCH-BRIEF-PACK-INSTALL-MVP.md` G2.
+  /// Entry: avatar menu / Reports nest — not a rail tab.
+  static const String stitchGymSettingsScreenId =
+      '6cb93d6100314ce8a5d9c1af92c97723';
+
+  /// FEAT-10 / Install I3 — Stitch G2 Gym Settings AR twin.
+  static const String stitchGymSettingsScreenIdAr =
+      '9541b6e764dd436daa91336b0ce2263b';
+
   static const String stitchProjectId = '13435235862240753621';
 }

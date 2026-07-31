@@ -41,6 +41,7 @@
       "account_menu": "Account menu",
       "locale_en": "English",
       "locale_ar": "العربية",
+      "gym_settings": "Gym Settings",
       "command_center": "COMMAND CENTER",
       "role": "Role: {role}",
       "tenant": "Tenant: {tenant}",
@@ -86,6 +87,11 @@
       "title": "Reports — Coming Soon",
       "body": "Analytics and reporting are not available in this install.",
       "hint": "Attendance & revenue soon"
+    },
+    "settings_nest": {
+      "heading": "SETTINGS",
+      "gym_settings": "Gym Settings",
+      "gym_settings_body": "SKU mode and Marketplace opt-in for this gym."
     }
   },
   "connectivity": {
@@ -340,6 +346,41 @@
       "forbidden": "Only Admins can update billing charges.",
       "invalid": "Invalid billing update.",
       "unknown": "Billing request failed."
+    }
+  },
+  "gym_settings": {
+    "title": "GYM SETTINGS",
+    "subtitle": "SKU mode and Marketplace boundary for this gym.",
+    "close": "Close settings",
+    "retry": "Retry",
+    "read_only_hint": "Receptionist view — only Admins can change SKU settings.",
+    "sku_heading": "SKU MODE",
+    "marketplace_heading": "MARKETPLACE",
+    "marketplace_hint": "Private Cloud never lists this gym. Network may opt in.",
+    "marketplace_toggle": "Marketplace opt-in",
+    "marketplace_network_note": "Allowed on Network SKU.",
+    "marketplace_private_note": "Forced off for Private Cloud.",
+    "sku": {
+      "private_cloud": {
+        "title": "Private Cloud",
+        "body": "Tenant isolation — no cross-gym Marketplace listing."
+      },
+      "network": {
+        "title": "Network",
+        "body": "May opt into Marketplace when ready."
+      }
+    },
+    "cta": {
+      "save": "Save settings"
+    },
+    "success": {
+      "saved": "Gym SKU settings saved."
+    },
+    "error": {
+      "not_configured": "Gym settings are not configured for this build.",
+      "forbidden": "Only Admins can change SKU settings.",
+      "invalid": "Invalid SKU settings.",
+      "unknown": "Could not update gym settings."
     }
   },
   "router": {

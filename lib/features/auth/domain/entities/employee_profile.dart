@@ -30,6 +30,9 @@ class EmployeeProfile extends Equatable {
   /// FEAT-08 AC-B1 — only Admin may update charge status / apply freeze.
   bool get canManageBilling => role == 'Admin';
 
+  /// FEAT-10 AC-D / US-D — only Admin may mutate SKU via set_gym_sku_settings.
+  bool get canManageSkuSettings => role == 'Admin';
+
   @override
   List<Object?> get props => [id, tenantId, userId, name, role];
 }
