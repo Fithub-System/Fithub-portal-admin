@@ -48,6 +48,13 @@
     },
     "coming_soon": {
       "stitch_ref": "Stitch {id}"
+    },
+    "scanner": {
+      "panel_title": "بوابة تسجيل الدخول",
+      "panel_subtitle": "افتح ماسح الدخول لتسجيل حضور الأعضاء عبر QR.",
+      "open_cta": "فتح الماسح",
+      "close": "إغلاق الماسح",
+      "occupancy_chip": "{current} / {capacity}"
     }
   },
   "nav": {
@@ -118,7 +125,7 @@
     }
   },
   "access_scanner": {
-    "title": "ماسح الدخول",
+    "title": "بوابة تسجيل الدخول",
     "subtitle": "وجّه الكاميرا نحو رمز QR الخاص بالعضو",
     "success": {
       "active_badge": "نشط",

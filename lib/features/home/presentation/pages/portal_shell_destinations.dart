@@ -12,6 +12,9 @@
 /// - Reports empty EN `ace7bf6e830b4e9f8963cfa5dd07909b` / AR `82188fd0c27a4baa923ead6221e04d7b`
 ///
 /// Removed from rail IA: Scan, Account (FEAT-11 AC-A2 / AC-E2).
+/// Access Scanner / Check-in Gate (FEAT-12 G1) opens under Home focus mode —
+/// Stitch EN `3629845f7f1e402697f46cf5575e86da` /
+/// AR `bec9356e2cb941798e66fa804ac78854`.
 abstract final class PortalShellDestinations {
   static const int home = 0;
   static const int members = 1;
