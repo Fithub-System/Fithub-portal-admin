@@ -38,19 +38,48 @@
       "welcome": "Welcome, {name}",
       "admin_fallback": "Admin",
       "sign_out": "Sign out",
+      "account_menu": "Account menu",
+      "locale_en": "English",
+      "locale_ar": "العربية",
       "command_center": "COMMAND CENTER",
       "role": "Role: {role}",
       "tenant": "Tenant: {tenant}",
       "em_dash": "—"
+    },
+    "coming_soon": {
+      "stitch_ref": "Stitch {id}"
     }
   },
   "nav": {
-    "dashboard": "Dashboard",
+    "home": "Home",
+    "dashboard": "Home",
     "scan": "Scan",
     "members": "Members",
+    "staff": "Staff",
+    "classes": "Classes",
     "marketing": "Marketing",
+    "reports": "Reports",
     "account": "Account",
     "coming_soon": "Coming soon in a later phase."
+  },
+  "staff": {
+    "shell": {
+      "title": "Staff Management",
+      "subtitle": "Invite receptionists and coaches for your gym."
+    }
+  },
+  "classes": {
+    "coming_soon": {
+      "title": "Classes — Coming Soon",
+      "body": "Class schedules and booking will land in a later release. No schedule management in this install."
+    }
+  },
+  "reports": {
+    "coming_soon": {
+      "title": "Reports — Coming Soon",
+      "body": "Analytics and reporting are not available in this install.",
+      "hint": "Attendance & revenue soon"
+    }
   },
   "connectivity": {
     "safe_mode": {
@@ -202,7 +231,7 @@
       "assign_prereq": "Need an active plan and enrolled athlete to assign."
     }
   },
-  },
+
   "members": {
     "title": "MEMBER MANAGEMENT",
     "subtitle": "Enrolled athletes, plan types, and membership operations.",

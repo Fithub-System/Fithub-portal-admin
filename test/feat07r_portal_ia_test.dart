@@ -17,13 +17,12 @@ class _MockMemberRosterCubit extends Mock implements MemberRosterCubit {}
 
 void main() {
   group('FEAT-07-R shell nav indices', () {
-    test('Members is index 2; Memberships tab removed from shell count', () {
-      expect(PortalShellDestinations.members, 2);
-      expect(PortalShellDestinations.marketing, 3);
-      expect(PortalShellDestinations.dashboard, 0);
-      expect(PortalShellDestinations.scan, 1);
-      expect(PortalShellDestinations.account, 4);
-      expect(PortalShellDestinations.destinationCount, 5);
+    test('Members is index 1 under FEAT-11 six-destination shell', () {
+      // FEAT-11 I1: Home | Members | Staff | Classes | Marketing | Reports
+      expect(PortalShellDestinations.home, 0);
+      expect(PortalShellDestinations.members, 1);
+      expect(PortalShellDestinations.marketing, 4);
+      expect(PortalShellDestinations.destinationCount, 6);
     });
   });
 
