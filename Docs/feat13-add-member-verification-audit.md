@@ -2,6 +2,7 @@
 
 **Date:** 2026-07-31  
 **Branch:** `feature/portal-feat13-add-member`  
+**SHA:** `dd7dc1e`  
 **FSD:** `Fithub-documentation/specs/FEAT-13-ADD-MEMBER.md`  
 **Kickoff:** `Fithub-documentation/kickoff-feat13-add-member.md`  
 **Backend contract:** `Fithub-backend/docs/feat13-enroll-member-backend.md`  
