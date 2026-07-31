@@ -14,6 +14,7 @@ import '../../../dashboard/presentation/widgets/live_occupancy_gauge.dart';
 import '../../../members/presentation/screens/member_management_screen.dart';
 import '../../../members/inject_members.dart' as members_di;
 import '../../../billing/presentation/screens/marketing_promotions_screen.dart';
+import '../../../gym_sku_settings/presentation/screens/gym_sku_settings_screen.dart';
 import '../../../staff_invite/presentation/screens/staff_invite_screen.dart';
 import '../widgets/access_scanner_focus_host.dart';
 import '../widgets/home_access_scanner_cta.dart';
@@ -28,6 +29,9 @@ import 'portal_shell_destinations.dart';
 ///
 /// FEAT-12 Install I2 — G1 Access Scanner / Check-in Gate mounts under Home
 /// (CTA → focus mode). Not a rail destination (AC-A1).
+///
+/// FEAT-10 Install I3 — G2 Gym Settings opens from avatar menu or Reports nest
+/// (focus overlay). Not a 7th rail tab (AC-D4).
 /// Language + sign-out via header avatar menu (AC-E1).
 class PortalHomeShell extends StatefulWidget {
   const PortalHomeShell({super.key});
@@ -41,11 +45,13 @@ class PortalHomeShell extends StatefulWidget {
 class _PortalHomeShellState extends State<PortalHomeShell> {
   int _selectedIndex = PortalShellDestinations.home;
   bool _scannerFocus = false;
+  bool _settingsFocus = false;
 
   void _openScannerFocus() {
     setState(() {
       _selectedIndex = PortalShellDestinations.home;
       _scannerFocus = true;
+      _settingsFocus = false;
     });
   }
 
@@ -54,12 +60,26 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     setState(() => _scannerFocus = false);
   }
 
+  void _openSettingsFocus() {
+    setState(() {
+      _scannerFocus = false;
+      _settingsFocus = true;
+    });
+  }
+
+  void _closeSettingsFocus() {
+    if (!_settingsFocus) return;
+    setState(() => _settingsFocus = false);
+  }
+
   void _selectDestination(int index) {
     setState(() {
       _selectedIndex = index;
       if (index != PortalShellDestinations.home) {
         _scannerFocus = false;
       }
+      // Settings is nested overlay — closing on rail change keeps IA clear.
+      _settingsFocus = false;
     });
   }
 
@@ -75,6 +95,9 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     final canManageBilling = authState is AuthAuthenticated
         ? authState.profile.canManageBilling
         : false;
+    final canManageSkuSettings = authState is AuthAuthenticated
+        ? authState.profile.canManageSkuSettings
+        : false;
     final tenantId = authState is AuthAuthenticated
         ? authState.profile.tenantId
         : '';
@@ -85,6 +108,27 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
           builder: (context, constraints) {
             final useRail =
                 constraints.maxWidth >= PortalHomeShell.railBreakpoint;
+
+            if (_settingsFocus) {
+              return Scaffold(
+                backgroundColor: KineticTokens.deepCharcoal,
+                body: Column(
+                  children: [
+                    SafeModeBanner(visible: connectivity.isOffline),
+                    Expanded(
+                      child: BlocProvider(
+                        create: (_) =>
+                            InjectionContainer.createGymSkuSettingsBloc(),
+                        child: GymSkuSettingsScreen(
+                          canWrite: canManageSkuSettings,
+                          onClose: _closeSettingsFocus,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
 
             // Focus mode covers shell body (rail + destinations) so the
             // Check-in Gate is desk-fullscreen; zinc SafeMode stays above.
@@ -132,13 +176,13 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                   create: (_) => InjectionContainer.createBillingCubit(),
                   child: MarketingPromotionsScreen(canWrite: canManageBilling),
                 ),
-                const ReportsComingSoonPage(),
+                ReportsShellPage(onOpenGymSettings: _openSettingsFocus),
               ],
             );
 
             final content = Column(
               children: [
-                const _PortalShellHeader(),
+                _PortalShellHeader(onOpenGymSettings: _openSettingsFocus),
                 Expanded(child: body),
               ],
             );
@@ -244,9 +288,11 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
   }
 }
 
-/// Shell chrome: language toggle + sign-out (Account rail removed — AC-E1).
+/// Shell chrome: language toggle + Gym Settings + sign-out (AC-E1 / FEAT-10).
 class _PortalShellHeader extends StatelessWidget {
-  const _PortalShellHeader();
+  const _PortalShellHeader({required this.onOpenGymSettings});
+
+  final VoidCallback onOpenGymSettings;
 
   Future<void> _setLocale(BuildContext context, Locale locale) async {
     await context.setLocale(locale);
@@ -300,6 +346,8 @@ class _PortalShellHeader extends StatelessWidget {
                       await _setLocale(context, AppLocales.en);
                     case _ShellMenuAction.localeAr:
                       await _setLocale(context, AppLocales.ar);
+                    case _ShellMenuAction.gymSettings:
+                      onOpenGymSettings();
                     case _ShellMenuAction.signOut:
                       context.read<AuthBloc>().add(
                         const AuthSignOutRequested(),
@@ -319,6 +367,11 @@ class _PortalShellHeader extends StatelessWidget {
                   ),
                   const PopupMenuDivider(),
                   PopupMenuItem(
+                    value: _ShellMenuAction.gymSettings,
+                    child: Text('home.shell.gym_settings'.tr()),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
                     value: _ShellMenuAction.signOut,
                     child: Text('home.shell.sign_out'.tr()),
                   ),
@@ -332,7 +385,7 @@ class _PortalShellHeader extends StatelessWidget {
   }
 }
 
-enum _ShellMenuAction { localeEn, localeAr, signOut }
+enum _ShellMenuAction { localeEn, localeAr, gymSettings, signOut }
 
 class _PortalNavigationRail extends StatelessWidget {
   const _PortalNavigationRail({

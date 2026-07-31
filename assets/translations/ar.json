@@ -41,6 +41,7 @@
       "account_menu": "قائمة الحساب",
       "locale_en": "English",
       "locale_ar": "العربية",
+      "gym_settings": "إعدادات الصالة",
       "command_center": "مركز القيادة",
       "role": "الدور: {role}",
       "tenant": "المستأجر: {tenant}",
@@ -86,6 +87,11 @@
       "title": "التقارير — قريبًا",
       "body": "التحليلات والتقارير غير متاحة في هذا التثبيت.",
       "hint": "الحضور والإيرادات قريبًا"
+    },
+    "settings_nest": {
+      "heading": "الإعدادات",
+      "gym_settings": "إعدادات الصالة",
+      "gym_settings_body": "وضع SKU والاشتراك في Marketplace لهذه الصالة."
     }
   },
   "connectivity": {
@@ -340,6 +346,41 @@
       "forbidden": "تحديث رسوم الفوترة للمسؤول فقط.",
       "invalid": "تحديث فوترة غير صالح.",
       "unknown": "فشل طلب الفوترة."
+    }
+  },
+  "gym_settings": {
+    "title": "إعدادات الصالة",
+    "subtitle": "وضع SKU وحدود Marketplace لهذه الصالة.",
+    "close": "إغلاق الإعدادات",
+    "retry": "إعادة المحاولة",
+    "read_only_hint": "عرض الاستقبال — تغيير إعدادات SKU للمسؤول فقط.",
+    "sku_heading": "وضع SKU",
+    "marketplace_heading": "MARKETPLACE",
+    "marketplace_hint": "السحابة الخاصة لا تُدرج هذه الصالة أبدًا. الشبكة يمكنها الاشتراك.",
+    "marketplace_toggle": "الاشتراك في Marketplace",
+    "marketplace_network_note": "مسموح في وضع الشبكة.",
+    "marketplace_private_note": "مُعطّل إجباريًا للسحابة الخاصة.",
+    "sku": {
+      "private_cloud": {
+        "title": "سحابة خاصة",
+        "body": "عزل المستأجر — بدون إدراج Marketplace عبر الصالات."
+      },
+      "network": {
+        "title": "شبكة",
+        "body": "يمكن الاشتراك في Marketplace عند الجاهزية."
+      }
+    },
+    "cta": {
+      "save": "حفظ الإعدادات"
+    },
+    "success": {
+      "saved": "تم حفظ إعدادات SKU للصالة."
+    },
+    "error": {
+      "not_configured": "إعدادات الصالة غير مُعدّة لهذا البناء.",
+      "forbidden": "تغيير إعدادات SKU للمسؤول فقط.",
+      "invalid": "إعدادات SKU غير صالحة.",
+      "unknown": "تعذّر تحديث إعدادات الصالة."
     }
   },
   "router": {

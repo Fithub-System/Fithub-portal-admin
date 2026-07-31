@@ -15,6 +15,9 @@
 /// Access Scanner / Check-in Gate (FEAT-12 G1) opens under Home focus mode —
 /// Stitch EN `3629845f7f1e402697f46cf5575e86da` /
 /// AR `bec9356e2cb941798e66fa804ac78854`.
+/// Gym Settings (FEAT-10 G2) opens from avatar menu / Reports nest —
+/// Stitch EN `6cb93d6100314ce8a5d9c1af92c97723` /
+/// AR `9541b6e764dd436daa91336b0ce2263b` — not a 7th rail tab.
 abstract final class PortalShellDestinations {
   static const int home = 0;
   static const int members = 1;

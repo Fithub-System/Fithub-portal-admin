@@ -114,10 +114,10 @@ class ClassesComingSoonPage extends StatelessWidget {
   }
 }
 
-/// FEAT-11 Reports Coming soon (Stitch G6).
+/// FEAT-11 Reports Coming soon (Stitch G6) + FEAT-10 Gym Settings nest (G2).
 ///
 /// EN `ace7bf6e830b4e9f8963cfa5dd07909b` · AR `82188fd0c27a4baa923ead6221e04d7b`.
-/// No analytics Backend (AC-C2).
+/// No analytics Backend (AC-C2). Gym Settings entry is nested — not a rail tab.
 class ReportsComingSoonPage extends StatelessWidget {
   const ReportsComingSoonPage({super.key});
 
@@ -133,6 +133,153 @@ class ReportsComingSoonPage extends StatelessWidget {
       stitchScreenIdEn: stitchScreenIdEn,
       stitchScreenIdAr: stitchScreenIdAr,
       icon: Icons.insights_outlined,
+    );
+  }
+}
+
+/// Reports destination — Coming soon + Gym Settings nest (FEAT-10 Install I3).
+///
+/// Stitch G2 entry: Reports → Gym Settings (also via avatar menu).
+class ReportsShellPage extends StatelessWidget {
+  const ReportsShellPage({super.key, required this.onOpenGymSettings});
+
+  final VoidCallback onOpenGymSettings;
+
+  static const String stitchScreenIdEn = ReportsComingSoonPage.stitchScreenIdEn;
+  static const String stitchScreenIdAr = ReportsComingSoonPage.stitchScreenIdAr;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final isAr = context.locale.languageCode == 'ar';
+    final settingsStitchId = isAr
+        ? KineticTokens.stitchGymSettingsScreenIdAr
+        : KineticTokens.stitchGymSettingsScreenId;
+
+    return ColoredBox(
+      color: KineticTokens.deepCharcoal,
+      child: ListView(
+        padding: const EdgeInsetsDirectional.all(24),
+        children: [
+          Icon(
+            Icons.insights_outlined,
+            size: 48,
+            color: KineticTokens.electricLime,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'reports.coming_soon.title'.tr(),
+            textAlign: TextAlign.start,
+            style: textTheme.titleLarge?.copyWith(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: KineticTokens.pureWhite,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'reports.coming_soon.body'.tr(),
+            textAlign: TextAlign.start,
+            style: textTheme.bodyMedium?.copyWith(
+              fontSize: 14,
+              color: KineticTokens.zincGray,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'reports.coming_soon.hint'.tr(),
+            textAlign: TextAlign.start,
+            style: textTheme.bodyMedium?.copyWith(
+              fontSize: 13,
+              color: KineticTokens.electricLime,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'home.coming_soon.stitch_ref'.tr(
+              namedArgs: {
+                'id': isAr ? stitchScreenIdAr : stitchScreenIdEn,
+              },
+            ),
+            style: textTheme.labelSmall?.copyWith(
+              fontSize: 10,
+              color: KineticTokens.zincGray.withValues(alpha: 0.7),
+            ),
+          ),
+          const SizedBox(height: 32),
+          Text(
+            'reports.settings_nest.heading'.tr(),
+            style: textTheme.labelLarge?.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+              color: KineticTokens.zincGray,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Material(
+            color: KineticTokens.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(
+              KineticTokens.dashboardCardRadius,
+            ),
+            child: InkWell(
+              onTap: onOpenGymSettings,
+              borderRadius: BorderRadius.circular(
+                KineticTokens.dashboardCardRadius,
+              ),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.all(16),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.settings_outlined,
+                      color: KineticTokens.electricLime,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'reports.settings_nest.gym_settings'.tr(),
+                            style: textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: KineticTokens.pureWhite,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'reports.settings_nest.gym_settings_body'.tr(),
+                            style: textTheme.bodySmall?.copyWith(
+                              color: KineticTokens.zincGray,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'home.coming_soon.stitch_ref'.tr(
+                              namedArgs: {'id': settingsStitchId},
+                            ),
+                            style: textTheme.labelSmall?.copyWith(
+                              fontSize: 10,
+                              color: KineticTokens.zincGray.withValues(
+                                alpha: 0.7,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.chevron_right,
+                      color: KineticTokens.zincGray,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
