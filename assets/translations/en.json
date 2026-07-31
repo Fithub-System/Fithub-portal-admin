@@ -267,6 +267,46 @@
       "roster": "Could not load cached roster."
     }
   },
+  "add_member": {
+    "title": "ADD NEW MEMBER",
+    "subtitle": "Link an existing athlete to this gym, optionally assign a plan.",
+    "tab": {
+      "link": "Link existing",
+      "invite": "Invite"
+    },
+    "link_heading": "FIND ATHLETE",
+    "match_heading": "MATCHED ATHLETE",
+    "invite_heading": "SEND INVITE",
+    "invite_body": "Creating a new Auth user from Portal is not available in this install. Use Link existing for athletes who already have an account, or send an invite later.",
+    "cta": {
+      "add_new": "Add New Member",
+      "find": "Find athlete",
+      "enroll": "Enroll member",
+      "send_invite_later": "Send invite later"
+    },
+    "field": {
+      "email": "Athlete email",
+      "email_hint": "athlete@example.com",
+      "plan_optional": "Membership plan (optional)"
+    },
+    "plan": {
+      "none": "No plan now"
+    },
+    "validation": {
+      "email": "Enter a valid athlete email."
+    },
+    "success": {
+      "enrolled": "Member enrolled.",
+      "already_enrolled": "Athlete was already enrolled for this gym."
+    },
+    "error": {
+      "not_configured": "Add Member is not configured for this build.",
+      "forbidden": "Only Admins can enroll members.",
+      "not_found": "No athlete found for that email.",
+      "invalid": "Invalid enroll input.",
+      "unknown": "Could not enroll member."
+    }
+  },
   "billing": {
     "marketing_title": "MARKETING & PROMOTIONS",
     "marketing_subtitle": "Billing and promotions for this gym.",

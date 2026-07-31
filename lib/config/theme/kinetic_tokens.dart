@@ -57,6 +57,12 @@ abstract final class KineticTokens {
   static const String stitchStaffInviteScreenId =
       'dcc070ef2b1e45058b3e042ad70140e3';
 
+  /// FEAT-13 Add New Member (Stitch G4) — EN / AR.
+  static const String stitchAddMemberScreenIdEn =
+      'cd59a129a24449478a5249ccb41635fb';
+  static const String stitchAddMemberScreenIdAr =
+      '89fe5d7afb8d4d4384d7e6498bcdd065';
+
   /// FEAT-12 / Install I2 — Stitch G1 Access Scanner / Check-in Gate (EN).
   ///
   /// Locked in `@specs/FEAT-12-ACCESS-SCANNER-HOME.md` §3 and

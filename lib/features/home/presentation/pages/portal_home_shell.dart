@@ -69,6 +69,9 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     final canManageMemberships = authState is AuthAuthenticated
         ? authState.profile.canManageMemberships
         : false;
+    final canEnrollMembers = authState is AuthAuthenticated
+        ? authState.profile.canEnrollMembers
+        : false;
     final canManageBilling = authState is AuthAuthenticated
         ? authState.profile.canManageBilling
         : false;
@@ -120,6 +123,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                   ],
                   child: MemberManagementScreen(
                     canWrite: canManageMemberships,
+                    canEnroll: canEnrollMembers,
                   ),
                 ),
                 const _StaffDestination(),
