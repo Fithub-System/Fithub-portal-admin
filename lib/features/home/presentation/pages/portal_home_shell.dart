@@ -15,6 +15,8 @@ import '../../../members/presentation/screens/member_management_screen.dart';
 import '../../../members/inject_members.dart' as members_di;
 import '../../../billing/presentation/screens/marketing_promotions_screen.dart';
 import '../../../staff_invite/presentation/screens/staff_invite_screen.dart';
+import '../widgets/access_scanner_focus_host.dart';
+import '../widgets/home_access_scanner_cta.dart';
 import '../widgets/kinetic_coming_soon_empty.dart';
 import 'portal_shell_destinations.dart';
 
@@ -24,9 +26,9 @@ import 'portal_shell_destinations.dart';
 /// Home | Members | Staff | Classes | Marketing | Reports
 /// (`@specs/FEAT-11-PORTAL-SHELL-MATCH-STITCH.md` §3).
 ///
-/// Scan and Account removed from rail (AC-A2 / AC-E2). Access Scanner feature
-/// code retained under `access_scanner` for I2. Language + sign-out via header
-/// avatar menu (AC-E1).
+/// FEAT-12 Install I2 — G1 Access Scanner / Check-in Gate mounts under Home
+/// (CTA → focus mode). Not a rail destination (AC-A1).
+/// Language + sign-out via header avatar menu (AC-E1).
 class PortalHomeShell extends StatefulWidget {
   const PortalHomeShell({super.key});
 
@@ -38,6 +40,28 @@ class PortalHomeShell extends StatefulWidget {
 
 class _PortalHomeShellState extends State<PortalHomeShell> {
   int _selectedIndex = PortalShellDestinations.home;
+  bool _scannerFocus = false;
+
+  void _openScannerFocus() {
+    setState(() {
+      _selectedIndex = PortalShellDestinations.home;
+      _scannerFocus = true;
+    });
+  }
+
+  void _closeScannerFocus() {
+    if (!_scannerFocus) return;
+    setState(() => _scannerFocus = false);
+  }
+
+  void _selectDestination(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index != PortalShellDestinations.home) {
+        _scannerFocus = false;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,10 +83,28 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
             final useRail =
                 constraints.maxWidth >= PortalHomeShell.railBreakpoint;
 
+            // Focus mode covers shell body (rail + destinations) so the
+            // Check-in Gate is desk-fullscreen; zinc SafeMode stays above.
+            if (_scannerFocus) {
+              return Scaffold(
+                backgroundColor: KineticTokens.deepCharcoal,
+                body: Column(
+                  children: [
+                    SafeModeBanner(visible: connectivity.isOffline),
+                    Expanded(
+                      child: AccessScannerFocusHost(
+                        onClose: _closeScannerFocus,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             final body = IndexedStack(
               index: _selectedIndex,
               children: [
-                const _DashboardDestination(),
+                _DashboardDestination(onOpenScanner: _openScannerFocus),
                 MultiBlocProvider(
                   providers: [
                     BlocProvider(
@@ -108,9 +150,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                         children: [
                           _PortalNavigationRail(
                             selectedIndex: _selectedIndex,
-                            onDestinationSelected: (i) {
-                              setState(() => _selectedIndex = i);
-                            },
+                            onDestinationSelected: _selectDestination,
                           ),
                           const VerticalDivider(
                             width: 1,
@@ -136,9 +176,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
               ),
               bottomNavigationBar: NavigationBar(
                 selectedIndex: _selectedIndex,
-                onDestinationSelected: (i) {
-                  setState(() => _selectedIndex = i);
-                },
+                onDestinationSelected: _selectDestination,
                 backgroundColor: KineticTokens.gunmetalCard,
                 indicatorColor: KineticTokens.electricLime.withValues(
                   alpha: 0.2,
@@ -357,7 +395,9 @@ class _PortalNavigationRail extends StatelessWidget {
 }
 
 class _DashboardDestination extends StatelessWidget {
-  const _DashboardDestination();
+  const _DashboardDestination({required this.onOpenScanner});
+
+  final VoidCallback onOpenScanner;
 
   @override
   Widget build(BuildContext context) {
@@ -412,6 +452,8 @@ class _DashboardDestination extends StatelessWidget {
                     current: dashboard.currentOccupancy,
                     capacity: dashboard.capacityLimit,
                   ),
+                  const SizedBox(height: 24),
+                  HomeAccessScannerCta(onOpenScanner: onOpenScanner),
                   if (dashboard.lastScanMessageKey != null) ...[
                     const SizedBox(height: 24),
                     Text(

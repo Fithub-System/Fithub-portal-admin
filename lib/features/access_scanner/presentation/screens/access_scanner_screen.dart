@@ -10,16 +10,22 @@ import '../cubit/access_scanner_state.dart';
 import '../widgets/scan_success_banner.dart';
 import '../widgets/scanner_target_overlay.dart';
 
-/// Stitch **Access Scanner** (FEAT-01 §3)
+/// Stitch **Access Scanner / Check-in Gate** (FEAT-12 Install I2 / G1).
+///
 /// Project: `13435235862240753621`
-/// Screen id: Admin Overview companion — see [stitchScreenId]
-/// (no dedicated Access Scanner screen in Stitch catalog 2026-07-21).
+/// EN: [stitchScreenId] · AR: [stitchScreenIdAr]
+/// Entry: Home → Open scanner (not a rail tab). Kinetic `#121212` / `#CCFF00`.
 class AccessScannerScreen extends StatefulWidget {
   const AccessScannerScreen({super.key});
 
-  /// Admin Overview Dashboard companion id (Kinetic / FEAT-01 §3 tokens).
+  /// Stitch G1 Check-in Gate (EN).
   static const String stitchScreenId = KineticTokens.stitchAccessScannerScreenId;
-  static const String stitchScreenTitle = 'Access Scanner';
+
+  /// Stitch G1 Check-in Gate (AR).
+  static const String stitchScreenIdAr =
+      KineticTokens.stitchAccessScannerScreenIdAr;
+
+  static const String stitchScreenTitle = 'Check-in Gate';
 
   @override
   State<AccessScannerScreen> createState() => _AccessScannerScreenState();

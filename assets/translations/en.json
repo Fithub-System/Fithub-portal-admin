@@ -48,6 +48,13 @@
     },
     "coming_soon": {
       "stitch_ref": "Stitch {id}"
+    },
+    "scanner": {
+      "panel_title": "Check-in Gate",
+      "panel_subtitle": "Open the Access Scanner for reception QR check-in.",
+      "open_cta": "Open scanner",
+      "close": "Close scanner",
+      "occupancy_chip": "{current} / {capacity}"
     }
   },
   "nav": {
@@ -118,7 +125,7 @@
     }
   },
   "access_scanner": {
-    "title": "Access Scanner",
+    "title": "Check-in Gate",
     "subtitle": "Point the camera at the member QR code",
     "success": {
       "active_badge": "Active",

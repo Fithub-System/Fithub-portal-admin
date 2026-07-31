@@ -57,14 +57,17 @@ abstract final class KineticTokens {
   static const String stitchStaffInviteScreenId =
       'dcc070ef2b1e45058b3e042ad70140e3';
 
-  /// FEAT-01 Access Scanner visual companion.
+  /// FEAT-12 / Install I2 — Stitch G1 Access Scanner / Check-in Gate (EN).
   ///
-  /// Stitch MCP `list_screens` on project `13435235862240753621`
-  /// (verified 2026-07-21): **no screen titled Access Scanner** among 80
-  /// screens. Closest companion: Admin Overview Dashboard (Live Occupancy).
-  /// UI tokens remain FEAT-01 §3 + Kinetic Monolith (charcoal / lime grid).
+  /// Locked in `@specs/FEAT-12-ACCESS-SCANNER-HOME.md` §3 and
+  /// `@specs/STITCH-BRIEF-PACK-INSTALL-MVP.md` G1.
+  /// Entry: Home → Open scanner (not a rail tab).
   static const String stitchAccessScannerScreenId =
-      '216e0407184f4c39bd501ed436c1e88b';
+      '3629845f7f1e402697f46cf5575e86da';
+
+  /// FEAT-12 / Install I2 — Stitch G1 Access Scanner AR twin.
+  static const String stitchAccessScannerScreenIdAr =
+      'bec9356e2cb941798e66fa804ac78854';
 
   static const String stitchProjectId = '13435235862240753621';
 }
