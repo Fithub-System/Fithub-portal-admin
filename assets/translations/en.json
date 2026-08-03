@@ -280,31 +280,58 @@
   },
 
   "members": {
-    "title": "MEMBER MANAGEMENT",
-    "subtitle": "Enrolled athletes, plan types, and membership operations.",
+    "title": "ACTIVE ROSTER",
+    "subtitle": "Managing high-performance athletes and elite members. Ensure data integrity for kinetic output tracking.",
     "tab": {
       "roster": "Roster",
       "plans": "Plans"
     },
     "column": {
-      "name": "Name",
+      "name": "Member Name",
       "plan_type": "Plan Type",
+      "xp_level": "XP Level",
       "status": "Status",
       "actions": "Actions"
     },
     "plan_type": {
-      "none": "—"
+      "none": "Standard"
+    },
+    "plan_chip": {
+      "elite": "ELITE",
+      "standard": "STANDARD",
+      "basic": "BASIC"
+    },
+    "stats": {
+      "elite_tier": "ELITE TIER",
+      "avg_xp": "AVG XP LEVEL",
+      "active_sessions": "ACTIVE SESSIONS",
+      "system_health": "SYSTEM HEALTH",
+      "system_health_value": "Optimal"
+    },
+    "cta": {
+      "filter_type": "Filter Type"
+    },
+    "pagination": {
+      "showing": "SHOWING",
+      "of": "OF",
+      "members": "MEMBERS"
+    },
+    "footer": {
+      "sync_active": "SYNC ACTIVE",
+      "api_version": "API V2.4",
+      "copyright": "© 2024 KINETIC MONOLITH SYSTEMS. ALL RIGHTS RESERVED."
     },
     "status": {
       "none": "No membership"
     },
     "action": {
-      "freeze": "Freeze",
-      "renew": "Renew"
+      "freeze": "FREEZE",
+      "renew": "RENEW",
+      "full_evaluation": "FULL EVALUATION"
     },
     "empty_roster": "No members cached — sync roster from Scan tab or check in online.",
     "error": {
-      "roster": "Could not load cached roster."
+      "roster": "Could not load cached roster — showing Stitch sample roster."
     }
   },
   "add_member": {

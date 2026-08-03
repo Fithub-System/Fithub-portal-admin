@@ -1,0 +1,16 @@
+{
+  "fetchedAtUtc": "2026-08-03T20:19:32Z",
+  "screenId": "9b35dd57f15443e99f7e798f6867acb6",
+  "title": "Member Management",
+  "width": "2560",
+  "height": "2048",
+  "deviceType": "DESKTOP",
+  "screenshotFile": "projects/13435235862240753621/files/ce58d1b25f54470d896ebdbc592423fd",
+  "htmlFile": "projects/13435235862240753621/files/869d2154f21f4c4db566774fbaa349d5",
+  "arTwinCandidates": {
+    "memberManagementArabicRtl": "60b6a0e1f7fb4419b1b0e774ec8bdb32",
+    "memberRosterArabicRtl": "f6cca8491f33470f8715a97754e5aada",
+    "memberManagementRtlLtr": "90b435dba33c4af9b80caa9eeb67d801"
+  },
+  "mcpPath": "HTTP JSON-RPC tools/call list_screens+get_screen via gcloud OAuth Bearer + X-Goog-User-Project fithub-503813"
+}

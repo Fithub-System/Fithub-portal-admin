@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&amp;family=Lexend:wght@300;400;700;800;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#abd600",
+              "surface-container-highest": "#353534",
+              "on-tertiary-fixed-variant": "#374956",
+              "secondary-fixed": "#d8e2ff",
+              "inverse-surface": "#e5e2e1",
+              "tertiary-fixed-dim": "#b6c9d8",
+              "on-secondary-fixed": "#001a41",
+              "on-secondary-fixed-variant": "#004493",
+              "surface": "#131313",
+              "on-secondary": "#002e68",
+              "on-surface": "#e5e2e1",
+              "secondary-fixed-dim": "#adc7ff",
+              "primary-container": "#c3f400",
+              "inverse-primary": "#506600",
+              "inverse-on-surface": "#313030",
+              "on-tertiary-fixed": "#0b1d29",
+              "outline-variant": "#444933",
+              "background": "#131313",
+              "tertiary-container": "#d2e5f5",
+              "surface-bright": "#393939",
+              "on-primary-fixed": "#161e00",
+              "on-error": "#690005",
+              "tertiary": "#ffffff",
+              "error-container": "#93000a",
+              "secondary-container": "#4a8eff",
+              "primary": "#ffffff",
+              "surface-container-low": "#1c1b1b",
+              "on-primary-fixed-variant": "#3c4d00",
+              "surface-container-lowest": "#0e0e0e",
+              "on-error-container": "#ffdad6",
+              "on-secondary-container": "#00285b",
+              "error": "#ffb4ab",
+              "secondary": "#adc7ff",
+              "outline": "#8e9379",
+              "on-surface-variant": "#c4c9ac",
+              "on-primary": "#283500",
+              "surface-container": "#201f1f",
+              "surface-tint": "#abd600",
+              "tertiary-fixed": "#d2e5f5",
+              "on-primary-container": "#556d00",
+              "primary-fixed": "#c3f400",
+              "surface-variant": "#353534",
+              "surface-dim": "#131313",
+              "on-tertiary": "#21323e",
+              "on-tertiary-container": "#556774",
+              "on-background": "#e5e2e1",
+              "surface-container-high": "#2a2a2a"
+            },
+            fontFamily: {
+              "headline": ["Cairo", "Lexend"],
+              "body": ["Cairo", "Inter"],
+              "label": ["Cairo", "Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(42, 42, 42, 0.6);
+        backdrop-filter: blur(20px);
+      }
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: #131313; }
+      ::-webkit-scrollbar-thumb { background: #353534; border-radius: 10px; }
+      
+      /* RTL support for icons */
+      [dir="rtl"] .mirror-rtl {
+        transform: scaleX(-1);
+      }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-full sticky top-0 bg-neutral-950 h-screen w-64 border-l border-neutral-800 shrink-0">
+<div class="p-8">
+<h1 class="text-2xl font-black text-[#CCFF00] tracking-tighter font-lexend">KINETIC MONOLITH</h1>
+<p class="font-headline tracking-tight uppercase text-[10px] text-neutral-400 mt-1">إدارة الأداء النخبوية</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<div class="flex items-center gap-3 px-4 py-3 text-neutral-400 font-headline tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>الرئيسية</span>
+</div>
+<!-- ACTIVE TAB: Members -->
+<div class="flex items-center gap-3 px-4 py-3 text-[#CCFF00] bg-neutral-900/50 border-l-4 border-[#CCFF00] font-headline tracking-tight uppercase text-xs cursor-default">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>الأعضاء</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-neutral-400 font-headline tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span>الموظفين</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-neutral-400 font-headline tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span>الفصول</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-neutral-400 font-headline tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span>التسويق</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-neutral-400 font-headline tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>التقارير</span>
+</div>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full py-4 bg-primary-container text-on-primary-container font-headline font-bold uppercase tracking-widest text-xs rounded-md shadow-[0_0_20px_rgba(195,244,0,0.2)] hover:scale-[1.02] transition-transform">
+                    بدء التمرين
+                </button>
+<div class="mt-6 flex items-center gap-3 px-2">
+<img alt="Gym Manager Profile" class="w-10 h-10 rounded-full border-2 border-neutral-800" data-alt="Close-up professional portrait of a fitness director in a dark premium gym environment, cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBITD3hbEkZ5Z-_q5rhXTXT0OqMIAAu0w4CEZia3G9pVZc2KdQXoigWhTGs-di66UtZrHO9M-i2pFFr1jISFqokoPXnNASUKRAFbXc7TSkY6q1O-uWSdfGQzzpGcDmwSN08qMzeyAzz5f1rkjBtItaq-jLNwuZ0kiP1hlrdNirqnX3-WbgAARHsKPkFAV2u47ZAdDd0oBtHEo3JbNQ-UR4aulzffCYjYRIevVNpJ-M0CHdjJCQKnNqnVHhMomxUwah-Ii-D9My5xFYu"/>
+<div>
+<p class="text-sm font-bold">أليكس ريفيرا</p>
+<p class="text-[10px] text-neutral-500 uppercase tracking-tighter">مدير العمليات</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col min-w-0 bg-surface">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex justify-between items-center px-8 w-full bg-neutral-950/80 backdrop-blur-xl h-16 border-b border-neutral-800 shadow-2xl shadow-black/50">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within:text-[#CCFF00]" data-icon="search">search</span>
+<input class="w-full bg-neutral-900 border-none focus:ring-1 focus:ring-[#CCFF00] rounded-lg pr-4 pl-10 py-2 text-sm text-on-surface placeholder-neutral-600 transition-all text-right" placeholder="البحث عن الأعضاء بالاسم، الرقم التعريفي أو العلامة البيومترية..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 mr-8">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-neutral-300 hover:text-[#CCFF00] cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-neutral-300 hover:text-[#CCFF00] cursor-pointer" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span class="material-symbols-outlined text-neutral-300 hover:text-[#CCFF00] cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="p-10 space-y-8 overflow-y-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h2 class="font-headline font-black text-5xl tracking-tighter text-white uppercase italic">قائمة النشطين</h2>
+<p class="text-on-surface-variant font-body mt-2 max-w-lg">إدارة الرياضيين ذوي الأداء العالي والأعضاء النخبة. ضمان سلامة البيانات لتتبع المخرجات الحركية.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-6 py-2.5 bg-surface-container-high border border-outline-variant/30 text-on-surface font-bold text-sm flex items-center gap-2 hover:bg-surface-bright transition-colors rounded-lg">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                            نوع التصفية
+                        </button>
+<button class="px-6 py-2.5 bg-primary-container text-on-primary-container font-black text-sm uppercase tracking-wider rounded-lg shadow-lg hover:shadow-primary-container/20 transition-all">
+                            إضافة عضو جديد
+                        </button>
+</div>
+</div>
+<!-- Stats Overview (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="p-6 bg-surface-container-low rounded-xl border-r-4 border-primary-container">
+<p class="text-xs uppercase tracking-widest text-on-surface-variant font-headline">فئة النخبة</p>
+<p class="text-3xl font-headline font-bold text-white mt-1">124</p>
+</div>
+<div class="p-6 bg-surface-container-low rounded-xl">
+<p class="text-xs uppercase tracking-widest text-on-surface-variant font-headline">متوسط مستوى XP</p>
+<p class="text-3xl font-headline font-bold text-white mt-1">68.2</p>
+</div>
+<div class="p-6 bg-surface-container-low rounded-xl">
+<p class="text-xs uppercase tracking-widest text-on-surface-variant font-headline">الجلسات النشطة</p>
+<p class="text-3xl font-headline font-bold text-white mt-1">42</p>
+</div>
+<div class="p-6 bg-secondary-container rounded-xl">
+<p class="text-xs uppercase tracking-widest text-on-secondary-container font-headline">صحة النظام</p>
+<p class="text-3xl font-headline font-bold text-on-secondary-container mt-1">مثالي</p>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-2xl">
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50 border-b border-outline-variant/20">
+<th class="px-8 py-5 text-xs uppercase tracking-widest text-on-surface-variant font-headline">اسم العضو</th>
+<th class="px-6 py-5 text-xs uppercase tracking-widest text-on-surface-variant font-headline">نوع الخطة</th>
+<th class="px-6 py-5 text-xs uppercase tracking-widest text-on-surface-variant font-headline">مستوى XP</th>
+<th class="px-6 py-5 text-xs uppercase tracking-widest text-on-surface-variant text-left font-headline">الإجراءات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary-container font-black">DR</div>
+<div>
+<p class="font-bold text-white">دومينيك روسو</p>
+<p class="text-xs text-on-surface-variant">ID: KM-8821</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 bg-primary-container/10 text-primary-container text-[10px] font-black uppercase tracking-widest border border-primary-container/20 rounded-full">نخبة</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-32 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-l from-primary-container to-secondary-container" style="width: 88%"></div>
+</div>
+<span class="text-sm font-bold text-white">88</span>
+</div>
+</td>
+<td class="px-6 py-5 text-left">
+<div class="flex items-center justify-start gap-2 opacity-40 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-bright rounded text-xs font-bold uppercase text-on-surface-variant hover:text-white">تجميد</button>
+<button class="p-2 hover:bg-surface-bright rounded text-xs font-bold uppercase text-on-surface-variant hover:text-white">تجديد</button>
+<button class="p-2 bg-surface-container-highest hover:bg-[#CCFF00] hover:text-black rounded text-xs font-bold uppercase transition-colors">تقييم كامل</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary-container font-black">SM</div>
+<div>
+<p class="font-bold text-white">سارة ميلر</p>
+<p class="text-xs text-on-surface-variant">ID: KM-4521</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 bg-secondary-container/10 text-secondary-container text-[10px] font-black uppercase tracking-widest border border-secondary-container/20 rounded-full">قياسي</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-32 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-l from-primary-container to-secondary-container" style="width: 42%"></div>
+</div>
+<span class="text-sm font-bold text-white">42</span>
+</div>
+</td>
+<td class="px-6 py-5 text-left">
+<div class="flex items-center justify-start gap-2 opacity-40 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-bright rounded text-xs font-bold uppercase text-on-surface-variant hover:text-white">تجميد</button>
+<button class="p-2 hover:bg-surface-bright rounded text-xs font-bold uppercase text-on-surface-variant hover:text-white">تجديد</button>
+<button class="p-2 bg-surface-container-highest hover:bg-[#CCFF00] hover:text-black rounded text-xs font-bold uppercase transition-colors">تقييم كامل</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-neutral-400 font-black">JK</div>
+<div>
+<p class="font-bold text-white">جيسون كانغ</p>
+<p class="text-xs text-on-surface-variant">ID: KM-1092</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 bg-neutral-800 text-neutral-400 text-[10px] font-black uppercase tracking-widest border border-neutral-700 rounded-full">أساسي</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-32 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-l from-primary-container to-secondary-container" style="width: 15%"></div>
+</div>
+<span class="text-sm font-bold text-white">15</span>
+</div>
+</td>
+<td class="px-6 py-5 text-left">
+<div class="flex items-center justify-start gap-2 opacity-40 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-bright rounded text-xs font-bold uppercase text-on-surface-variant hover:text-white">تجميد</button>
+<button class="p-2 hover:bg-surface-bright rounded text-xs font-bold uppercase text-on-surface-variant hover:text-white">تجديد</button>
+<button class="p-2 bg-surface-container-highest hover:bg-[#CCFF00] hover:text-black rounded text-xs font-bold uppercase transition-colors">تقييم كامل</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary-container font-black">EB</div>
+<div>
+<p class="font-bold text-white">إيلينا بيلوفا</p>
+<p class="text-xs text-on-surface-variant">ID: KM-7732</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 bg-primary-container/10 text-primary-container text-[10px] font-black uppercase tracking-widest border border-primary-container/20 rounded-full">نخبة</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-32 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-l from-primary-container to-secondary-container" style="width: 94%"></div>
+</div>
+<span class="text-sm font-bold text-white">94</span>
+</div>
+</td>
+<td class="px-6 py-5 text-left">
+<div class="flex items-center justify-start gap-2 opacity-40 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-bright rounded text-xs font-bold uppercase text-on-surface-variant hover:text-white">تجميد</button>
+<button class="p-2 hover:bg-surface-bright rounded text-xs font-bold uppercase text-on-surface-variant hover:text-white">تجديد</button>
+<button class="p-2 bg-surface-container-highest hover:bg-[#CCFF00] hover:text-black rounded text-xs font-bold uppercase transition-colors">تقييم كامل</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Shell -->
+<div class="px-8 py-6 bg-surface-container-low/30 border-t border-outline-variant/10 flex items-center justify-between">
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-headline">عرض <span class="text-white font-bold">1-10</span> من أصل 1,240 عضواً</p>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center border border-outline-variant/20 rounded hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined text-sm mirror-rtl" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center bg-primary-container text-on-primary-container font-bold rounded">1</button>
+<button class="w-10 h-10 flex items-center justify-center border border-outline-variant/20 rounded hover:bg-surface-bright transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center border border-outline-variant/20 rounded hover:bg-surface-bright transition-colors">3</button>
+<button class="w-10 h-10 flex items-center justify-center border border-outline-variant/20 rounded hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined text-sm mirror-rtl" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Action Bar -->
+<div class="flex justify-between items-center pt-4 opacity-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="text-xs uppercase tracking-tighter font-headline">مزامنة نشطة</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="text-xs uppercase tracking-tighter font-headline">API V2.4</span>
+</div>
+</div>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-headline">© 2024 أنظمة كينيتيك مونوليث. جميع الحقوق محفوظة.</p>
+</div>
+</div>
+</main>
+</div>
+</body></html>
