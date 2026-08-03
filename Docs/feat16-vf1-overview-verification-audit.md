@@ -10,7 +10,8 @@
 **Author agent:** Portal Admin Agent  
 **Visual Spec Card:** `Docs/feat16-vf1-visual-spec-216e0407.md`  
 **Region checklist:** `Docs/feat16-vf1-region-checklist.md`  
-**Manual Test Guide:** `Fithub-documentation/manual-tests/PHASE-FEAT-16-VF1-manual-test.md`
+**Manual Test Guide:** `Fithub-documentation/manual-tests/PHASE-FEAT-16-VF1-manual-test.md`  
+**PR:** https://github.com/Fithub-System/Fithub-portal-admin/pull/20
 
 ## Status
 
@@ -80,5 +81,5 @@ flutter test \
 - [x] Layout fixes vs Spec Card
 - [x] Side-by-side / region evidence
 - [x] Tests green
-- [ ] PR URL (fill on open)
+- [x] PR URL — https://github.com/Fithub-System/Fithub-portal-admin/pull/20
 - [ ] BizDev final PASS
