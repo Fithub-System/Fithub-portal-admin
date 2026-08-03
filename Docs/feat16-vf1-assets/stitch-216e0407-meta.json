@@ -1,0 +1,23 @@
+{
+  "fetchedAtUtc": "2026-08-03T19:33:31.917454+00:00",
+  "screen": {
+    "name": "projects/13435235862240753621/screens/216e0407184f4c39bd501ed436c1e88b",
+    "title": "Admin Overview Dashboard",
+    "screenshot": {
+      "name": "projects/13435235862240753621/files/05ddfa3e7e4b49a495b679ed7933e218",
+      "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLumPd5b4X6qtRBOhffAJU3vaeY23Hwp4lkuDNrbG5gWv11MT8KUYBSrO79bcIU0MmdpfziHnVSgv97MrztcsKfnV2Sws_BQErnI2av5wRM_hB5xp6fEL2AMnp8PWZoO4tZxlf9hW6n3rQ-cumLByWNsnZV9kWGUckGXpnBQ6bgyVY1LJ2qWDbD9Obe9xp3OYG5SBaP4ANimqQc99KGH8xnXfoTEQuAgiaYKxK3hYtIbLe48Ju78whbstJIj"
+    },
+    "width": "2560",
+    "height": "2558",
+    "deviceType": "DESKTOP"
+  },
+  "htmlCodeName": "projects/13435235862240753621/files/17125172838299592977",
+  "arTwin": {
+    "id": "167e03106e8c45c6b47b8ecb48116624",
+    "title": "Admin Overview (Arabic RTL)",
+    "width": "2560",
+    "height": "2556",
+    "deviceType": "DESKTOP"
+  },
+  "mcpPath": "HTTP JSON-RPC https://stitch.googleapis.com/mcp with gcloud OAuth + X-Goog-User-Project (API key alone 401 on tools/call)"
+}

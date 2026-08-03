@@ -43,6 +43,12 @@
       "locale_ar": "العربية",
       "gym_settings": "Gym Settings",
       "command_center": "COMMAND CENTER",
+      "admin_console": "ADMIN CONSOLE",
+      "brand": "KINETIC MONOLITH",
+      "brand_subtitle": "Elite Performance Admin",
+      "search_hint": "Search athletes...",
+      "notifications": "Notifications",
+      "start_workout": "Start Workout",
       "role": "Role: {role}",
       "tenant": "Tenant: {tenant}",
       "em_dash": "—"
@@ -124,6 +130,34 @@
       "timeline_start": "05:00 AM",
       "timeline_peak": "PEAK HOUR: 06:00 PM",
       "timeline_end": "11:00 PM"
+    },
+    "yield": {
+      "title": "DAILY\nYIELD",
+      "subtitle": "TODAY'S REVENUE STREAM",
+      "delta_placeholder": "Live revenue pending"
+    },
+    "expiring": {
+      "title": "EXPIRING MEMBERSHIPS",
+      "subtitle": "Action required within 48 hours",
+      "renew_all": "RENEW ALL",
+      "col_member": "MEMBER",
+      "col_plan": "PLAN TYPE",
+      "col_expiration": "EXPIRATION",
+      "empty": "No memberships expire within 48 hours."
+    },
+    "access_gate": {
+      "title": "ACCESS GATE 1",
+      "waiting": "WAITING FOR SCAN...",
+      "status_label": "STATUS",
+      "ready": "READY",
+      "active_member": "ACTIVE MEMBER",
+      "granted": "ACCESS GRANTED"
+    },
+    "stats": {
+      "total_active": "TOTAL ACTIVE",
+      "classes_today": "CLASSES TODAY",
+      "guest_passes": "GUEST PASSES",
+      "incidents": "INCIDENT REPORTS"
     },
     "scan": {
       "approved": "Approved: {name}",

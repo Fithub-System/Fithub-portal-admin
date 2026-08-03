@@ -21,6 +21,18 @@ abstract final class KineticTokens {
   /// Stitch surface container for Live Occupancy card.
   static const Color surfaceContainerLow = Color(0xFF1C1B1B);
 
+  /// Stitch `surface-container-lowest` — footer stat tiles.
+  static const Color surfaceContainerLowest = Color(0xFF0E0E0E);
+
+  /// Stitch `surface-container-high` — Access Granted panel.
+  static const Color surfaceContainerHigh = Color(0xFF2A2A2A);
+
+  /// Stitch rail / header near `neutral-950`.
+  static const Color railSurface = Color(0xFF0A0A0A);
+
+  /// Stitch `on-primary-container` — Daily Yield text on lime.
+  static const Color onPrimaryContainer = Color(0xFF556D00);
+
   static const Color zincGray = Color(0xFF6E6E73);
   static const Color cyberBlue = Color(0xFF007BFF);
 
@@ -33,6 +45,12 @@ abstract final class KineticTokens {
   static const Color onSurface = Color(0xFFE5E2E1);
   static const Color neutralTrack = Color(0xFF262626);
   static const Color pureWhite = Color(0xFFFFFFFF);
+
+  /// Stitch `error` — urgent expiration tint.
+  static const Color stitchError = Color(0xFFFFB4AB);
+
+  /// Stitch SideNavBar width (`w-64`).
+  static const double railWidth = 256;
 
   static const double safeModeBannerHeight = 24;
 
