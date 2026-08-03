@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -6,7 +5,7 @@ import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../cubit/dashboard_cubit.dart';
-import '../widgets/live_occupancy_gauge.dart';
+import '../widgets/admin_overview_dashboard.dart';
 
 /// Standalone dashboard page (also embedded via [PortalHomeShell]).
 class DashboardPage extends StatelessWidget {
@@ -14,76 +13,30 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return BlocBuilder<ConnectivityCubit, ConnectivityState>(
       builder: (context, connectivity) {
         return BlocBuilder<DashboardCubit, DashboardState>(
           builder: (context, dashboard) {
-            final gymTitle = dashboard.gymName.isEmpty
-                ? 'dashboard.gym_fallback'.tr()
-                : dashboard.gymName;
+            final approved =
+                dashboard.lastScanMessageKey == 'dashboard.scan.approved';
+            final rejected =
+                dashboard.lastScanMessageKey == 'dashboard.scan.rejected';
 
             return Scaffold(
-              backgroundColor: KineticTokens.deepCharcoal,
+              backgroundColor: KineticTokens.stitchBackground,
               body: Column(
                 children: [
                   SafeModeBanner(visible: connectivity.isOffline),
                   Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsetsDirectional.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            gymTitle,
-                            textAlign: TextAlign.start,
-                            style: textTheme.titleLarge?.copyWith(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: KineticTokens.pureWhite,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            connectivity.isOnline
-                                ? 'dashboard.status.online'.tr()
-                                : 'dashboard.status.offline'.tr(),
-                            textAlign: TextAlign.start,
-                            style: textTheme.bodyMedium?.copyWith(
-                              fontSize: 13,
-                              color: KineticTokens.zincGray,
-                            ),
-                          ),
-                          if (dashboard.statusMessageKey != null) ...[
-                            const SizedBox(height: 12),
-                            Text(
-                              dashboard.statusMessageKey!.tr(),
-                              textAlign: TextAlign.start,
-                              style: textTheme.bodyMedium?.copyWith(
-                                fontSize: 12,
-                                color: KineticTokens.electricLime,
-                              ),
-                            ),
-                          ],
-                          const SizedBox(height: 24),
-                          LiveOccupancyGauge(
-                            current: dashboard.currentOccupancy,
-                            capacity: dashboard.capacityLimit,
-                          ),
-                          if (dashboard.lastScanMessageKey != null) ...[
-                            const SizedBox(height: 24),
-                            Text(
-                              _scanMessage(dashboard),
-                              textAlign: TextAlign.start,
-                              style: textTheme.bodyMedium?.copyWith(
-                                fontSize: 13,
-                                color: KineticTokens.electricLime,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
+                    child: AdminOverviewDashboard(
+                      currentOccupancy: dashboard.currentOccupancy,
+                      capacityLimit: dashboard.capacityLimit,
+                      onOpenScanner: () {},
+                      statusMessageKey: dashboard.statusMessageKey,
+                      lastScanApproved: approved,
+                      lastScanMemberName: dashboard.lastScanMemberName,
+                      lastScanRejectReason:
+                          rejected ? dashboard.lastScanRejectReason : null,
                     ),
                   ),
                 ],
@@ -93,19 +46,5 @@ class DashboardPage extends StatelessWidget {
         );
       },
     );
-  }
-
-  String _scanMessage(DashboardState dashboard) {
-    if (dashboard.lastScanMessageKey == 'dashboard.scan.approved') {
-      return 'dashboard.scan.approved'.tr(
-        namedArgs: {'name': dashboard.lastScanMemberName ?? ''},
-      );
-    }
-    if (dashboard.lastScanMessageKey == 'dashboard.scan.rejected') {
-      return 'dashboard.scan.rejected'.tr(
-        namedArgs: {'reason': dashboard.lastScanRejectReason ?? ''},
-      );
-    }
-    return dashboard.lastScanMessageKey?.tr() ?? '';
   }
 }

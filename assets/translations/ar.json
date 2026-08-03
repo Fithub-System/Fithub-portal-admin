@@ -43,6 +43,12 @@
       "locale_ar": "العربية",
       "gym_settings": "إعدادات الصالة",
       "command_center": "مركز القيادة",
+      "admin_console": "لوحة المسؤول",
+      "brand": "KINETIC MONOLITH",
+      "brand_subtitle": "إدارة الأداء للنخبة",
+      "search_hint": "ابحث عن الرياضيين...",
+      "notifications": "الإشعارات",
+      "start_workout": "ابدأ التمرين",
       "role": "الدور: {role}",
       "tenant": "المستأجر: {tenant}",
       "em_dash": "—"
@@ -124,6 +130,34 @@
       "timeline_start": "05:00 ص",
       "timeline_peak": "ساعة الذروة: 06:00 م",
       "timeline_end": "11:00 م"
+    },
+    "yield": {
+      "title": "العائد\nاليومي",
+      "subtitle": "تدفق إيرادات اليوم",
+      "delta_placeholder": "الإيرادات المباشرة قريبًا"
+    },
+    "expiring": {
+      "title": "عضويات تنتهي قريبًا",
+      "subtitle": "يلزم اتخاذ إجراء خلال 48 ساعة",
+      "renew_all": "تجديد الكل",
+      "col_member": "العضو",
+      "col_plan": "نوع الخطة",
+      "col_expiration": "الانتهاء",
+      "empty": "لا عضويات تنتهي خلال 48 ساعة."
+    },
+    "access_gate": {
+      "title": "بوابة الدخول 1",
+      "waiting": "بانتظار المسح...",
+      "status_label": "الحالة",
+      "ready": "جاهز",
+      "active_member": "عضو نشط",
+      "granted": "تم منح الدخول"
+    },
+    "stats": {
+      "total_active": "النشطون إجماليًا",
+      "classes_today": "حصص اليوم",
+      "guest_passes": "تصاريح الضيوف",
+      "incidents": "بلاغات الحوادث"
     },
     "scan": {
       "approved": "مقبول: {name}",
