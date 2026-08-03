@@ -280,31 +280,58 @@
   },
   
   "members": {
-    "title": "إدارة الأعضاء",
-    "subtitle": "الرياضيون المسجّلون وأنواع الخطط وعمليات العضوية.",
+    "title": "القائمة النشطة",
+    "subtitle": "إدارة الرياضيين عاليي الأداء والأعضاء النخبة. حافظ على سلامة بيانات التتبع الحركي.",
     "tab": {
       "roster": "القائمة",
       "plans": "الخطط"
     },
     "column": {
-      "name": "الاسم",
+      "name": "اسم العضو",
       "plan_type": "نوع الخطة",
+      "xp_level": "مستوى XP",
       "status": "الحالة",
       "actions": "إجراءات"
     },
     "plan_type": {
-      "none": "—"
+      "none": "قياسي"
+    },
+    "plan_chip": {
+      "elite": "نخبة",
+      "standard": "قياسي",
+      "basic": "أساسي"
+    },
+    "stats": {
+      "elite_tier": "طبقة النخبة",
+      "avg_xp": "متوسط مستوى XP",
+      "active_sessions": "جلسات نشطة",
+      "system_health": "صحة النظام",
+      "system_health_value": "ممتاز"
+    },
+    "cta": {
+      "filter_type": "تصفية النوع"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من",
+      "members": "أعضاء"
+    },
+    "footer": {
+      "sync_active": "المزامنة نشطة",
+      "api_version": "API V2.4",
+      "copyright": "© 2024 أنظمة كينيتك مونوليث. جميع الحقوق محفوظة."
     },
     "status": {
       "none": "لا عضوية"
     },
     "action": {
       "freeze": "تجميد",
-      "renew": "تجديد"
+      "renew": "تجديد",
+      "full_evaluation": "تقييم كامل"
     },
     "empty_roster": "لا أعضاء مخزّنين — زامِن القائمة من تبويب المسح أو سجّل حضورًا أونلاين.",
     "error": {
-      "roster": "تعذّر تحميل القائمة المخزّنة."
+      "roster": "تعذّر تحميل القائمة — عرض عيّنة Stitch."
     }
   },
   "add_member": {

@@ -232,7 +232,7 @@ void main() {
       when(() => rosterCubit.load()).thenAnswer((_) async {});
     });
 
-    testWidgets('Admin sees Add New Member CTA', (tester) async {
+    testWidgets('Admin sees Add New Member CTA enabled', (tester) async {
       await pumpLocalizedApp(
         tester,
         MultiBlocProvider(
@@ -247,9 +247,15 @@ void main() {
         ),
       );
       expect(find.text('Add New Member'), findsOneWidget);
+      final button = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Add New Member'),
+      );
+      expect(button.onPressed, isNotNull);
     });
 
-    testWidgets('Receptionist does not see Add New Member CTA', (tester) async {
+    testWidgets('Receptionist sees Add New Member chrome disabled', (
+      tester,
+    ) async {
       await pumpLocalizedApp(
         tester,
         MultiBlocProvider(
@@ -263,7 +269,11 @@ void main() {
           ),
         ),
       );
-      expect(find.text('Add New Member'), findsNothing);
+      expect(find.text('Add New Member'), findsOneWidget);
+      final button = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Add New Member'),
+      );
+      expect(button.onPressed, isNull);
     });
   });
 }

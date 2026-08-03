@@ -94,7 +94,7 @@ void main() {
       when(() => rosterCubit.load()).thenAnswer((_) async {});
     });
 
-    testWidgets('renders roster tab with Plan Type column', (tester) async {
+    testWidgets('renders Active Roster with Plan Type column', (tester) async {
       await pumpLocalizedApp(
         tester,
         MultiBlocProvider(
@@ -104,18 +104,24 @@ void main() {
           ],
           child: const MemberManagementScreen(canWrite: true),
         ),
-        waitFor: find.text('MEMBER MANAGEMENT'),
+        waitFor: find.text('ACTIVE ROSTER'),
       );
 
-      expect(find.text('MEMBER MANAGEMENT'), findsOneWidget);
+      expect(find.text('ACTIVE ROSTER'), findsOneWidget);
       expect(find.text('Plan Type'), findsOneWidget);
       expect(find.text('Ada'), findsOneWidget);
-      expect(find.text('Monthly'), findsOneWidget);
-      expect(find.text('Freeze'), findsOneWidget);
-      expect(find.text('Renew'), findsOneWidget);
+      expect(find.text('STANDARD'), findsOneWidget);
+      expect(find.text('FREEZE'), findsOneWidget);
+      expect(find.text('RENEW'), findsOneWidget);
+      expect(find.byType(TabBar), findsNothing);
     });
 
-    testWidgets('Plans tab shows embedded memberships panel', (tester) async {
+    testWidgets('Filter Type opens plans sheet (FEAT-07, no freehand tab)', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(1200, 900));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
       await pumpLocalizedApp(
         tester,
         MultiBlocProvider(
@@ -123,18 +129,17 @@ void main() {
             BlocProvider<MembershipsCubit>.value(value: membershipsCubit),
             BlocProvider<MemberRosterCubit>.value(value: rosterCubit),
           ],
-          child: const MemberManagementScreen(canWrite: false),
+          child: const Scaffold(
+            body: MemberManagementScreen(canWrite: false),
+          ),
         ),
-        waitFor: find.text('Plans'),
+        waitFor: find.text('Filter Type'),
       );
 
-      final tabController = DefaultTabController.of(
-        tester.element(find.byType(TabBar)),
-      );
-      tabController.animateTo(1);
+      await tester.tap(find.text('Filter Type'));
       await tester.pumpAndSettle();
 
-      expect(find.text('PLANS'), findsOneWidget);
+      expect(find.text('PLANS'), findsWidgets);
       expect(
         find.text(
           'Receptionist view — only Admins can create or assign memberships.',
