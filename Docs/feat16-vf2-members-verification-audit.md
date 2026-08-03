@@ -11,7 +11,8 @@
 **Visual Spec Card:** `Docs/feat16-vf2-visual-spec-9b35dd57.md`  
 **Region checklist:** `Docs/feat16-vf2-region-checklist.md`  
 **Manual Test Guide:** `Fithub-documentation/manual-tests/PHASE-FEAT-16-VF2-manual-test.md`  
-**PR:** _(filled after open)_
+**PR:** https://github.com/Fithub-System/Fithub-portal-admin/pull/21  
+**Manual guide PR:** https://github.com/Fithub-System/Fithub-documentation/pull/50
 
 ## Status
 
@@ -87,5 +88,5 @@ flutter test \
 - [x] Full artboard + §4.1 fixtures
 - [x] Side-by-side / region evidence
 - [x] Tests green
-- [ ] PR URL
+- [x] PR URL — https://github.com/Fithub-System/Fithub-portal-admin/pull/21
 - [ ] BizDev final PASS
