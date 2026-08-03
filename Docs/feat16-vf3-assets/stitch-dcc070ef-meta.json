@@ -1,0 +1,13 @@
+{
+  "screenId": "dcc070ef2b1e45058b3e042ad70140e3",
+  "title": "Staff Management",
+  "fetchedAt": "2026-08-03T20:40:00Z",
+  "mcpPath": "HTTP JSON-RPC tools/call list_screens+get_screen via gcloud OAuth Bearer + X-Goog-User-Project fithub-503813",
+  "arTwin": "6388be3944bb49aa854b41cfaab32135",
+  "rtlLtrTwin": "64dc0add064d40bfa9ee7d4b2612bd2a",
+  "screenshotFile": "projects/13435235862240753621/files/549171b3494740e5a706727b2edbb089",
+  "htmlFile": "projects/13435235862240753621/files/36e55a1667bb4756a7a05877bbc000a6",
+  "width": 2560,
+  "height": 3312,
+  "deviceType": "DESKTOP"
+}
