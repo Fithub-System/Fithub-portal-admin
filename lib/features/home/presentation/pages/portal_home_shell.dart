@@ -15,7 +15,7 @@ import '../../../members/presentation/screens/member_management_screen.dart';
 import '../../../members/inject_members.dart' as members_di;
 import '../../../billing/presentation/screens/marketing_promotions_screen.dart';
 import '../../../gym_sku_settings/presentation/screens/gym_sku_settings_screen.dart';
-import '../../../staff_invite/presentation/screens/staff_invite_screen.dart';
+import '../../../staff_invite/presentation/screens/staff_management_screen.dart';
 import '../widgets/access_scanner_focus_host.dart';
 import '../widgets/kinetic_coming_soon_empty.dart';
 import 'portal_shell_destinations.dart';
@@ -638,13 +638,12 @@ class _DashboardDestination extends StatelessWidget {
   }
 }
 
-/// Staff destination — invite preserved from former Account rail (FEAT-05 / AC-D1).
+/// Staff destination — Staff Profile Creator artboard (FEAT-16 VF3).
 ///
 /// Stitch Staff Management `dcc070ef2b1e45058b3e042ad70140e3`.
+/// FEAT-05 invite preserved when [UserProfile.canInviteStaff].
 class _StaffDestination extends StatelessWidget {
   const _StaffDestination();
-
-  static const String stitchScreenId = 'dcc070ef2b1e45058b3e042ad70140e3';
 
   @override
   Widget build(BuildContext context) {
@@ -653,50 +652,11 @@ class _StaffDestination extends StatelessWidget {
           ? (b.state as AuthAuthenticated).profile
           : null,
     );
-    final textTheme = Theme.of(context).textTheme;
     final canInvite = profile?.canInviteStaff ?? false;
 
-    return ListView(
-      padding: const EdgeInsetsDirectional.all(24),
-      children: [
-        Text(
-          'staff.shell.title'.tr(),
-          textAlign: TextAlign.start,
-          style: textTheme.titleLarge?.copyWith(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            color: KineticTokens.pureWhite,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'staff.shell.subtitle'.tr(),
-          textAlign: TextAlign.start,
-          style: textTheme.bodyMedium?.copyWith(
-            fontSize: 13,
-            color: KineticTokens.zincGray,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'home.coming_soon.stitch_ref'.tr(
-            namedArgs: {'id': stitchScreenId},
-          ),
-          textAlign: TextAlign.start,
-          style: textTheme.labelSmall?.copyWith(
-            fontSize: 10,
-            color: KineticTokens.zincGray.withValues(alpha: 0.7),
-          ),
-        ),
-        const SizedBox(height: 24),
-        if (canInvite)
-          BlocProvider(
-            create: (_) => InjectionContainer.createStaffInviteBloc(),
-            child: const StaffInviteScreen(),
-          )
-        else
-          const StaffInviteDeniedView(),
-      ],
+    return BlocProvider(
+      create: (_) => InjectionContainer.createStaffInviteBloc(),
+      child: StaffManagementScreen(canInvite: canInvite),
     );
   }
 }

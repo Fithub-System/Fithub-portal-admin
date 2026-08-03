@@ -199,6 +199,7 @@
   "staff_invite": {
     "title": "إنشاء ملف الموظف",
     "subtitle": "إضافة موظفين جدد وإدارة التشغيل.",
+    "active_shifts": "الورديات النشطة",
     "identity_section": "الهوية وبيانات الدخول",
     "protocol_section": "بروتوكول الوصول",
     "cta": "تهيئة الملف",
@@ -209,7 +210,10 @@
       "name_required": "اسم العرض مطلوب",
       "email_label": "البريد المهني",
       "email_hint": "j.wick@kinetic.com",
-      "email_required": "البريد الإلكتروني مطلوب"
+      "email_required": "البريد الإلكتروني مطلوب",
+      "emergency_label": "جهة اتصال للطوارئ",
+      "emergency_hint": "+1 (555) 000-0000",
+      "specialization_label": "التخصص"
     },
     "role": {
       "admin": {
@@ -221,9 +225,30 @@
         "description": "إدارة الجلسات"
       },
       "receptionist": {
-        "title": "استقبال",
+        "title": "الاستقبال",
         "description": "تسجيل الحضور ونقاط البيع"
       }
+    },
+    "shift_log": {
+      "title": "سجل الورديات: بث مباشر",
+      "export": "تصدير CSV",
+      "filter": "تصفية الفترة",
+      "col": {
+        "member": "الموظف",
+        "role": "الدور",
+        "clock_in": "تسجيل الدخول",
+        "clock_out": "تسجيل الخروج",
+        "hours": "إجمالي الساعات",
+        "status": "الحالة"
+      }
+    },
+    "audit": {
+      "title": "إجراءات التدقيق الأخيرة"
+    },
+    "security": {
+      "title": "الأمان\nوالامتثال",
+      "body": "تُسجَّل جميع التغييرات الإدارية وتُشفَّر وفق معايير ISO-27001.",
+      "badge": "النظام آمن"
     },
     "error": {
       "forbidden": "دعوة الموظفين للمسؤول فقط.",

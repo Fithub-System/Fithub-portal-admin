@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#abd600",
+              "surface-container-highest": "#353534",
+              "on-tertiary-fixed-variant": "#374956",
+              "secondary-fixed": "#d8e2ff",
+              "inverse-surface": "#e5e2e1",
+              "tertiary-fixed-dim": "#b6c9d8",
+              "on-secondary-fixed": "#001a41",
+              "on-secondary-fixed-variant": "#004493",
+              "surface": "#131313",
+              "on-secondary": "#002e68",
+              "on-surface": "#e5e2e1",
+              "secondary-fixed-dim": "#adc7ff",
+              "primary-container": "#c3f400",
+              "inverse-primary": "#506600",
+              "inverse-on-surface": "#313030",
+              "on-tertiary-fixed": "#0b1d29",
+              "outline-variant": "#444933",
+              "background": "#131313",
+              "tertiary-container": "#d2e5f5",
+              "surface-bright": "#393939",
+              "on-primary-fixed": "#161e00",
+              "on-error": "#690005",
+              "tertiary": "#ffffff",
+              "error-container": "#93000a",
+              "secondary-container": "#4a8eff",
+              "primary": "#ffffff",
+              "surface-container-low": "#1c1b1b",
+              "on-primary-fixed-variant": "#3c4d00",
+              "surface-container-lowest": "#0e0e0e",
+              "on-error-container": "#ffdad6",
+              "on-secondary-container": "#00285b",
+              "error": "#ffb4ab",
+              "secondary": "#adc7ff",
+              "outline": "#8e9379",
+              "on-surface-variant": "#c4c9ac",
+              "on-primary": "#283500",
+              "surface-container": "#201f1f",
+              "surface-tint": "#abd600",
+              "tertiary-fixed": "#d2e5f5",
+              "on-primary-container": "#556d00",
+              "primary-fixed": "#c3f400",
+              "surface-variant": "#353534",
+              "surface-dim": "#131313",
+              "on-tertiary": "#21323e",
+              "on-tertiary-container": "#556774",
+              "on-background": "#e5e2e1",
+              "surface-container-high": "#2a2a2a"
+            },
+            fontFamily: {
+              "headline": ["Lexend"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .glass-card {
+            background: rgba(42, 42, 42, 0.6);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-full sticky top-0 h-screen w-64 border-r border-neutral-800 bg-neutral-950">
+<div class="p-8">
+<h1 class="text-2xl font-black text-[#CCFF00] tracking-tighter font-lexend">KINETIC MONOLITH</h1>
+<p class="font-lexend tracking-tight uppercase label-sm text-neutral-400 mt-1">Elite Performance Admin</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 font-lexend tracking-tight uppercase label-sm text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Home
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 font-lexend tracking-tight uppercase label-sm text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+                    Members
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 font-lexend tracking-tight uppercase label-sm text-[#CCFF00] bg-neutral-900/50 border-r-4 border-[#CCFF00]" href="#">
+<span class="material-symbols-outlined">badge</span>
+                    Staff
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 font-lexend tracking-tight uppercase label-sm text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+                    Classes
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 font-lexend tracking-tight uppercase label-sm text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">campaign</span>
+                    Marketing
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 font-lexend tracking-tight uppercase label-sm text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                    Reports
+                </a>
+</nav>
+<div class="p-6">
+<button class="w-full bg-primary-container text-on-primary-container font-lexend font-bold py-3 rounded-md active:scale-95 duration-150 shadow-[0_0_20px_rgba(195,244,0,0.2)]">
+                    Start Workout
+                </button>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex justify-between items-center px-8 w-full h-16 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur-xl shadow-2xl shadow-black/50">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary-container rounded-md pl-10 py-2 text-sm text-on-surface" placeholder="Search staff members..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-8">
+<span class="material-symbols-outlined text-neutral-300 hover:text-[#CCFF00] cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-neutral-300 hover:text-[#CCFF00] cursor-pointer">qr_code_scanner</span>
+<div class="flex items-center gap-3 cursor-pointer group">
+<span class="material-symbols-outlined text-neutral-300 group-hover:text-[#CCFF00]">account_circle</span>
+<span class="font-lexend text-sm text-on-surface font-bold uppercase tracking-wider">Admin Console</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<div class="p-12 space-y-12 max-w-7xl mx-auto w-full">
+<!-- Page Title & Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-l-4 border-primary-container pl-8 py-2">
+<div>
+<h2 class="font-headline text-5xl font-black tracking-tighter text-primary uppercase">Staff Profile Creator</h2>
+<p class="text-on-surface-variant font-body mt-2 text-lg">Onboard new personnel and manage operational logistics.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container-high px-6 py-3 rounded-md flex items-center gap-4">
+<span class="label-sm uppercase tracking-widest text-on-surface-variant">Active Shifts</span>
+<span class="font-headline text-2xl font-bold text-primary-container">14</span>
+</div>
+</div>
+</div>
+<!-- Create Profile Form: Bento Layout -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left: Identity Info -->
+<div class="lg:col-span-8 bg-surface-container-low rounded-xl p-8 border-l border-t border-white/5 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-8 opacity-10">
+<span class="material-symbols-outlined text-9xl">person_add</span>
+</div>
+<h3 class="font-headline text-xl font-bold mb-8 uppercase tracking-wide">Identity &amp; Credentials</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+<div class="space-y-1">
+<label class="label-sm text-on-surface-variant uppercase tracking-widest block">Full Legal Name</label>
+<input class="w-full bg-transparent border-b-2 border-outline-variant focus:border-primary-fixed focus:ring-0 px-0 py-2 text-lg outline-none transition-all" placeholder="Johnathan Wick" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="label-sm text-on-surface-variant uppercase tracking-widest block">Professional Email</label>
+<input class="w-full bg-transparent border-b-2 border-outline-variant focus:border-primary-fixed focus:ring-0 px-0 py-2 text-lg outline-none transition-all" placeholder="j.wick@kinetic.com" type="email"/>
+</div>
+<div class="space-y-1">
+<label class="label-sm text-on-surface-variant uppercase tracking-widest block">Emergency Contact</label>
+<input class="w-full bg-transparent border-b-2 border-outline-variant focus:border-primary-fixed focus:ring-0 px-0 py-2 text-lg outline-none transition-all" placeholder="+1 (555) 000-0000" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="label-sm text-on-surface-variant uppercase tracking-widest block">Specialization</label>
+<select class="w-full bg-transparent border-b-2 border-outline-variant focus:border-primary-fixed focus:ring-0 px-0 py-2 text-lg outline-none transition-all appearance-none cursor-pointer">
+<option class="bg-surface-container-high">Hypertrophy Specialist</option>
+<option class="bg-surface-container-high">Front Desk Operations</option>
+<option class="bg-surface-container-high">Executive Management</option>
+<option class="bg-surface-container-high">Physiotherapist</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Right: Permissions & Role -->
+<div class="lg:col-span-4 space-y-8">
+<div class="bg-surface-container-low rounded-xl p-8 border-l border-t border-white/5">
+<h3 class="font-headline text-xl font-bold mb-6 uppercase tracking-wide">Access Protocol</h3>
+<div class="space-y-4">
+<!-- Admin Toggle -->
+<div class="flex items-center justify-between p-4 bg-surface-container-highest/30 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-on-secondary-container/10 rounded group-hover:bg-on-secondary-container/20">
+<span class="material-symbols-outlined text-secondary-container">admin_panel_settings</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Admin</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Full System Control</p>
+</div>
+</div>
+<div class="w-12 h-6 bg-surface-container-highest rounded-full p-1 transition-all">
+<div class="w-4 h-4 bg-on-surface-variant rounded-full"></div>
+</div>
+</div>
+<!-- Trainer Toggle -->
+<div class="flex items-center justify-between p-4 bg-surface-container-highest/30 rounded-lg hover:bg-primary-container/10 transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-primary-container/10 rounded group-hover:bg-primary-container/20">
+<span class="material-symbols-outlined text-primary-fixed">fitness_center</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Trainer</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Session Management</p>
+</div>
+</div>
+<div class="w-12 h-6 bg-primary-container rounded-full p-1 transition-all flex justify-end">
+<div class="w-4 h-4 bg-on-primary-container rounded-full"></div>
+</div>
+</div>
+<!-- Front Desk Toggle -->
+<div class="flex items-center justify-between p-4 bg-surface-container-highest/30 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-tertiary-container/10 rounded group-hover:bg-tertiary-container/20">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">meeting_room</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Front Desk</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Check-in &amp; POS</p>
+</div>
+</div>
+<div class="w-12 h-6 bg-surface-container-highest rounded-full p-1 transition-all">
+<div class="w-4 h-4 bg-on-surface-variant rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full py-4 bg-primary text-on-primary font-headline font-bold uppercase tracking-[0.2em] rounded-md shadow-2xl hover:bg-primary-container hover:text-on-primary-container transition-all">
+                            Initialize Profile
+                        </button>
+</div>
+</section>
+<!-- Attendance & Shift Log: High-Performance Table -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-container">schedule</span>
+<h3 class="font-headline text-2xl font-bold uppercase">Shift Log: Real-Time Stream</h3>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container-high text-xs font-bold uppercase rounded hover:bg-surface-bright transition-colors">Export CSV</button>
+<button class="px-4 py-2 bg-surface-container-high text-xs font-bold uppercase rounded hover:bg-surface-bright transition-colors">Filter Range</button>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl overflow-hidden border border-white/5 shadow-2xl">
+<div class="overflow-x-auto no-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high">
+<th class="px-8 py-5 label-sm uppercase tracking-widest text-on-surface-variant font-bold">Staff Member</th>
+<th class="px-8 py-5 label-sm uppercase tracking-widest text-on-surface-variant font-bold">Role</th>
+<th class="px-8 py-5 label-sm uppercase tracking-widest text-on-surface-variant font-bold text-center">Clock-In</th>
+<th class="px-8 py-5 label-sm uppercase tracking-widest text-on-surface-variant font-bold text-center">Clock-Out</th>
+<th class="px-8 py-5 label-sm uppercase tracking-widest text-on-surface-variant font-bold text-right">Total Hours</th>
+<th class="px-8 py-5 label-sm uppercase tracking-widest text-on-surface-variant font-bold text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-surface-container-highest/50 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-primary-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional headshot of a female fitness trainer with athletic build and focused expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX8mSXdtyfpb8isrJ2pFaVEoGlN6QH4U-gQhMPYc2jyrKT9W3xrhracFEXJOovaVR8EFkIq3Nm5goIfy8pczGL5qfqRGehSzNAEjPBjhefei7sztRAFzKjlCUAPea5GbFMQSfSu_4mL5SmbO1naK0tzNH6idfSBchb6-KdSTCA0_Ku2qYWtxIemJTlYZ_6gsc_wGFn9oZlIz4opOddnwb5lqG6cTtgozLrYE_yj60VroIhoruy1447kUGB7VR6QwVHTYSGFJjs_Ay0"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Elena Rodriguez</p>
+<p class="text-xs text-on-surface-variant">elena.r@kinetic.com</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-secondary-container/10 text-secondary-container text-[10px] font-bold uppercase rounded-full">Trainer</span>
+</td>
+<td class="px-8 py-6 text-center font-mono text-sm">05:54 AM</td>
+<td class="px-8 py-6 text-center font-mono text-sm">02:15 PM</td>
+<td class="px-8 py-6 text-right font-headline font-bold text-lg">8.35h</td>
+<td class="px-8 py-6 text-right">
+<span class="inline-block w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest/50 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="portrait of a male gym manager in black athletic apparel standing against a modern dark wall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfOWDqov0Pn2YSiZ0NTTEGlM0g_aiw3LVfDC1P_pIlozyz_TtRdgDysDvkBULgKAUdaJv8AG0QjMJb8QZsRgIhDoDz0vAqroT1ecJ3808EDrr7Qb2yPtDuN9JlzGk7gHAMDk7t8EkGwYICIA6XffnW8cgbhcxHC9_CH8FbpLXCtZTI2hyaADcSDLxx5wjWR0l7vtyrI3aGZF9t2AoEVIlRpxunhbEGO2t0PMFnmuKbeYot94d6exaLR9AEjGHB6jUaOdP1ZU8KYx9z"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Marcus Thorne</p>
+<p class="text-xs text-on-surface-variant">m.thorne@kinetic.com</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant text-[10px] font-bold uppercase rounded-full">Admin</span>
+</td>
+<td class="px-8 py-6 text-center font-mono text-sm">08:00 AM</td>
+<td class="px-8 py-6 text-center font-mono text-sm">--:--</td>
+<td class="px-8 py-6 text-right font-headline font-bold text-lg">6.00h</td>
+<td class="px-8 py-6 text-right">
+<span class="inline-block w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest/50 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="headshot of professional business woman smiling, representing front desk staff in luxury environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrAsbH2OllIWyV825n0S84iJSDCFSxrqGak5c_bFyvUjBWNZwGPkF3H1jrNb0_B6xnNyUCfikILj39e_AT3PPsTwvDPShQWH_Opil66Jx0COqu9VBjSKiQbM0TURRWaOSQnFEsd-sjM9LpttOwVKprKiFEACVZEXuX7x5Ky0lkQFKFAVs966Q6SldwW3WJwcxfwqSaDs8oFGNQLbkJZCdjVNJmf2Da0ALd_LdXcfNSHUa49GwsD4tuyyqlb8iFaR_dfDLuvsvlrFss"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Sarah Jenkins</p>
+<p class="text-xs text-on-surface-variant">s.jenkins@kinetic.com</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-tertiary-container/10 text-tertiary-fixed-dim text-[10px] font-bold uppercase rounded-full">Front Desk</span>
+</td>
+<td class="px-8 py-6 text-center font-mono text-sm">04:00 AM</td>
+<td class="px-8 py-6 text-center font-mono text-sm">12:00 PM</td>
+<td class="px-8 py-6 text-right font-headline font-bold text-lg">8.00h</td>
+<td class="px-8 py-6 text-right">
+<span class="inline-block w-2 h-2 rounded-full bg-surface-container-highest"></span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest/50 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="energetic male fitness instructor with short hair and modern beard looking at camera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5MZIIYlh_Sc-Xh1u3frU-Og8y3yZkeNaEiz1WKlo_bbE-1Zk_wUqSjiBMIs35hhxDc1UrBE6vzMgH8Ys5iBNyAn31Vv8-6HppUNFWH_6n0ywd5JbHbWQK0EYTQaSudR282ZR5AgktnJuXNjwpmqzWpYqNnp70iZaJvKNr3RJ_BETWOltxmPbVZRDMMyk8ilOIn79PC1SoAarCam2K0K61Vv6Bojkeatfa-KPbh5-Z0EyRpKBgEge0kUfeN6goV7EeL_VfZQGMYny2"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Alex Chen</p>
+<p class="text-xs text-on-surface-variant">a.chen@kinetic.com</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-secondary-container/10 text-secondary-container text-[10px] font-bold uppercase rounded-full">Trainer</span>
+</td>
+<td class="px-8 py-6 text-center font-mono text-sm">10:00 AM</td>
+<td class="px-8 py-6 text-center font-mono text-sm">--:--</td>
+<td class="px-8 py-6 text-right font-headline font-bold text-lg">4.00h</td>
+<td class="px-8 py-6 text-right">
+<span class="inline-block w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Activity Feed / Notes (Bento Style Sub-section) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-surface-container-low p-8 rounded-xl border-l border-t border-white/5 space-y-4">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary">history</span>
+<h4 class="font-headline font-bold uppercase tracking-widest text-sm">Recent Audit Actions</h4>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4 border-l border-outline-variant pl-4 relative">
+<div class="absolute -left-[4.5px] top-1 w-2 h-2 rounded-full bg-outline-variant"></div>
+<div>
+<p class="text-xs font-bold text-on-surface">Updated Permissions: Elena Rodriguez</p>
+<p class="text-[10px] text-on-surface-variant uppercase mt-1">2 hours ago • Admin Admin</p>
+</div>
+</div>
+<div class="flex gap-4 border-l border-outline-variant pl-4 relative">
+<div class="absolute -left-[4.5px] top-1 w-2 h-2 rounded-full bg-outline-variant"></div>
+<div>
+<p class="text-xs font-bold text-on-surface">New Profile Created: Sarah Jenkins</p>
+<p class="text-[10px] text-on-surface-variant uppercase mt-1">Yesterday • System Automated</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-primary-container p-8 rounded-xl flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute -right-12 -bottom-12 opacity-10 group-hover:scale-110 transition-transform duration-700">
+<span class="material-symbols-outlined text-[200px] text-on-primary-container" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+<div>
+<h4 class="font-headline font-black text-on-primary-container text-2xl uppercase leading-tight">Security<br/>Compliance</h4>
+<p class="text-on-primary-container/80 text-sm mt-4 font-medium max-w-[200px]">All administrative changes are logged and encrypted per ISO-27001 standards.</p>
+</div>
+<div class="flex items-center gap-2 mt-8">
+<span class="material-symbols-outlined text-on-primary-container text-sm">verified</span>
+<span class="label-sm font-bold uppercase tracking-widest text-on-primary-container">System Secure</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

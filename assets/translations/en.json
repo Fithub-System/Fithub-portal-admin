@@ -199,8 +199,9 @@
   "staff_invite": {
     "title": "STAFF PROFILE CREATOR",
     "subtitle": "Onboard new personnel and manage operational logistics.",
-    "identity_section": "Identity & Credentials",
-    "protocol_section": "Access Protocol",
+    "active_shifts": "ACTIVE SHIFTS",
+    "identity_section": "IDENTITY & CREDENTIALS",
+    "protocol_section": "ACCESS PROTOCOL",
     "cta": "INITIALIZE PROFILE",
     "success": "Staff invited successfully.",
     "field": {
@@ -209,7 +210,10 @@
       "name_required": "Display name is required",
       "email_label": "PROFESSIONAL EMAIL",
       "email_hint": "j.wick@kinetic.com",
-      "email_required": "Email is required"
+      "email_required": "Email is required",
+      "emergency_label": "EMERGENCY CONTACT",
+      "emergency_hint": "+1 (555) 000-0000",
+      "specialization_label": "SPECIALIZATION"
     },
     "role": {
       "admin": {
@@ -217,13 +221,34 @@
         "description": "FULL SYSTEM CONTROL"
       },
       "coach": {
-        "title": "Coach",
+        "title": "Trainer",
         "description": "SESSION MANAGEMENT"
       },
       "receptionist": {
-        "title": "Receptionist",
+        "title": "Front Desk",
         "description": "CHECK-IN & POS"
       }
+    },
+    "shift_log": {
+      "title": "SHIFT LOG: REAL-TIME STREAM",
+      "export": "EXPORT CSV",
+      "filter": "FILTER RANGE",
+      "col": {
+        "member": "STAFF MEMBER",
+        "role": "ROLE",
+        "clock_in": "CLOCK-IN",
+        "clock_out": "CLOCK-OUT",
+        "hours": "TOTAL HOURS",
+        "status": "STATUS"
+      }
+    },
+    "audit": {
+      "title": "RECENT AUDIT ACTIONS"
+    },
+    "security": {
+      "title": "SECURITY\nCOMPLIANCE",
+      "body": "All administrative changes are logged and encrypted per ISO-27001 standards.",
+      "badge": "SYSTEM SECURE"
     },
     "error": {
       "forbidden": "Only Admins can invite staff.",
