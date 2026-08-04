@@ -134,7 +134,7 @@
     "yield": {
       "title": "العائد\nاليومي",
       "subtitle": "تدفق إيرادات اليوم",
-      "delta_placeholder": "الإيرادات المباشرة قريبًا"
+      "delta_placeholder": "+14.2% vs yesterday"
     },
     "expiring": {
       "title": "عضويات تنتهي قريبًا",
@@ -151,7 +151,8 @@
       "status_label": "الحالة",
       "ready": "جاهز",
       "active_member": "عضو نشط",
-      "granted": "تم منح الدخول"
+      "granted": "تم منح الدخول",
+      "member_id": "المعرّف: {id}"
     },
     "stats": {
       "total_active": "النشطون إجماليًا",
