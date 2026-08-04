@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="ltr" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gym Connect - Portal Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Lexend:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#c3f400",
+                        "background": "#131313",
+                        "on-secondary-fixed-variant": "#004493",
+                        "on-primary-fixed-variant": "#3c4d00",
+                        "surface-container-high": "#2a2a2a",
+                        "secondary-fixed": "#d8e2ff",
+                        "tertiary-fixed": "#d2e5f5",
+                        "surface-tint": "#abd600",
+                        "inverse-on-surface": "#313030",
+                        "primary-fixed": "#c3f400",
+                        "tertiary-fixed-dim": "#b6c9d8",
+                        "on-surface": "#e5e2e1",
+                        "primary": "#ffffff",
+                        "surface": "#131313",
+                        "on-primary": "#283500",
+                        "error": "#ffb4ab",
+                        "surface-container": "#201f1f",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#00285b",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#353534",
+                        "on-primary-fixed": "#161e00",
+                        "on-secondary-fixed": "#001a41",
+                        "on-primary-container": "#556d00",
+                        "on-background": "#e5e2e1",
+                        "surface-container-lowest": "#0e0e0e",
+                        "tertiary": "#ffffff",
+                        "on-secondary": "#002e68",
+                        "on-surface-variant": "#c4c9ac",
+                        "secondary-container": "#4a8eff",
+                        "tertiary-container": "#d2e5f5",
+                        "inverse-primary": "#506600",
+                        "on-tertiary-fixed-variant": "#374956",
+                        "outline": "#8e9379",
+                        "secondary-fixed-dim": "#adc7ff",
+                        "on-tertiary": "#21323e",
+                        "on-tertiary-fixed": "#0b1d29",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-bright": "#393939",
+                        "surface-dim": "#131313",
+                        "on-error": "#690005",
+                        "secondary": "#adc7ff",
+                        "outline-variant": "#444933",
+                        "on-tertiary-container": "#556774",
+                        "surface-variant": "#353534",
+                        "primary-fixed-dim": "#abd600"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Lexend"],
+                        "display": ["Lexend"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    "fontSize": {}
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .kinetic-gradient {
+            background: linear-gradient(135deg, theme('colors.primary-container'), theme('colors.primary-fixed-dim'));
+        }
+        .ambient-glow {
+            box-shadow: 0 0 60px 4px rgba(216, 226, 255, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col items-center justify-center p-6 antialiased relative overflow-hidden">
+<!-- Ambient Background Lighting Effect -->
+<div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-30">
+<div class="w-[800px] h-[800px] bg-primary-container rounded-full blur-[150px] opacity-10"></div>
+</div>
+<!-- Main Content Container -->
+<main class="w-full max-w-md relative z-10">
+<!-- Header -->
+<header class="text-center mb-12">
+<h1 class="font-display font-black text-primary text-5xl tracking-tighter uppercase mb-2">Gym Connect</h1>
+<p class="font-body text-on-surface-variant text-sm tracking-widest uppercase">Command Center Login</p>
+</header>
+<!-- Login Card -->
+<div class="bg-surface-container-low rounded-lg p-8 ambient-glow relative">
+<!-- Top Edge Highlight -->
+<div class="absolute top-0 inset-x-0 h-0.5 kinetic-gradient rounded-t-lg"></div>
+<form action="#" class="flex flex-col gap-6" method="POST">
+<!-- Credential Identifier -->
+<div class="flex flex-col gap-2">
+<label class="font-label text-label-sm uppercase tracking-widest text-on-surface-variant" for="identifier">Credential Identifier</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute inset-y-0 start-0 flex items-center ps-3 text-outline pointer-events-none" data-icon="person">person</span>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 ps-10 pe-3 text-primary font-body text-base placeholder-on-surface-variant/50 focus:ring-0 focus:border-primary-fixed transition-colors" id="identifier" name="identifier" placeholder="Email or Username" required="" type="text"/>
+</div>
+</div>
+<!-- Access Key -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label text-label-sm uppercase tracking-widest text-on-surface-variant" for="accessKey">Access Key</label>
+<a class="font-body text-xs text-secondary hover:text-secondary-fixed transition-colors underline underline-offset-2" href="#">Recover Key</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute inset-y-0 start-0 flex items-center ps-3 text-outline pointer-events-none" data-icon="lock">lock</span>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 ps-10 pe-3 text-primary font-body text-base placeholder-on-surface-variant/50 focus:ring-0 focus:border-primary-fixed transition-colors" id="accessKey" name="accessKey" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Submit Action -->
+<button class="w-full kinetic-gradient text-on-primary-container font-headline font-bold py-4 rounded-md uppercase tracking-wide mt-4 hover:brightness-110 active:scale-[0.98] transition-all relative overflow-hidden group" type="submit">
+<span class="relative z-10 flex items-center justify-center gap-2">
+                        Initialize Session
+                        <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</span>
+<!-- Inner glow simulation -->
+<div class="absolute top-0 inset-x-0 h-[2px] bg-white/30"></div>
+</button>
+</form>
+<!-- Social Entry Divider -->
+<div class="relative mt-10 mb-8">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-surface-container-highest"></div>
+</div>
+<div class="relative flex justify-center text-xs font-label uppercase tracking-widest">
+<span class="bg-surface-container-low px-4 text-on-surface-variant">Or via social link</span>
+</div>
+</div>
+<!-- Social Entry Options -->
+<div class="flex flex-col gap-3">
+<button class="w-full flex items-center justify-center gap-3 py-3 border border-outline-variant/15 rounded-md text-primary font-body text-sm hover:bg-surface-bright transition-colors bg-surface-container" type="button">
+<!-- Placeholder for Google Icon to avoid complex inline SVG -->
+<span class="material-symbols-outlined text-base" data-icon="login">login</span>
+                    Continue with Google
+                </button>
+<button class="w-full flex items-center justify-center gap-3 py-3 border border-outline-variant/15 rounded-md text-primary font-body text-sm hover:bg-surface-bright transition-colors bg-surface-container" type="button">
+<!-- Placeholder for Apple Icon -->
+<span class="material-symbols-outlined text-base" data-icon="devices">devices</span>
+                    Continue with Apple
+                </button>
+</div>
+</div>
+</main>
+<!-- Footer Area (JSON Definition Override - Suppressed full footer per rules, showing minimalistic links) -->
+<footer class="mt-12 text-center relative z-10">
+<div class="flex gap-6 justify-center">
+<a class="font-body text-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Protocol</a>
+<a class="font-body text-xs text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Access</a>
+</div>
+<p class="font-body text-[10px] text-surface-container-highest mt-6 uppercase tracking-widest">
+            © 2024 Kinetic Performance Systems. All Rights Reserved.
+        </p>
+</footer>
+</body></html>
