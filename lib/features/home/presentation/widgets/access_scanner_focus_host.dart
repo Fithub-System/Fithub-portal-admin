@@ -1,21 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../access_scanner/presentation/screens/access_scanner_screen.dart';
-import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
+import '../../../access_scanner/presentation/widgets/check_in_gate_layout.dart';
 
-/// Fullscreen / focus Check-in Gate under Home (FEAT-12 Install I2).
+/// Fullscreen / focus Check-in Gate under Home (FEAT-12 + FEAT-16 VF4).
 ///
 /// Stitch G1 EN `3629845f7f1e402697f46cf5575e86da` ·
 /// AR `bec9356e2cb941798e66fa804ac78854`.
-/// Shell SafeMode zinc banner remains above this host (parent column).
+/// Shell SafeMode zinc banner + 6-rail remain outside this host.
 class AccessScannerFocusHost extends StatelessWidget {
   const AccessScannerFocusHost({
     super.key,
     required this.onClose,
-    this.scanner = const AccessScannerScreen(),
+    this.scanner = const AccessScannerScreen(embedded: true),
     this.occupancyCurrent,
     this.occupancyCapacity,
   });
@@ -38,22 +37,17 @@ class AccessScannerFocusHost extends StatelessWidget {
   Widget build(BuildContext context) {
     final isAr = context.locale.languageCode == 'ar';
     final stitchId = isAr ? stitchScreenIdAr : stitchScreenIdEn;
-    final hasOverride =
-        occupancyCurrent != null && occupancyCapacity != null;
 
     return ColoredBox(
-      color: KineticTokens.deepCharcoal,
+      color: KineticTokens.stitchBackground,
       child: Column(
         children: [
           Material(
-            color: KineticTokens.gunmetalCard,
+            color: KineticTokens.stitchBackground,
             child: SafeArea(
               bottom: false,
               child: Padding(
-                padding: const EdgeInsetsDirectional.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 24, 8),
                 child: Row(
                   children: [
                     IconButton(
@@ -66,76 +60,57 @@ class AccessScannerFocusHost extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: Text(
-                        'home.coming_soon.stitch_ref'.tr(
-                          namedArgs: {'id': stitchId},
-                        ),
-                        textAlign: TextAlign.start,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          fontSize: 10,
-                          color: KineticTokens.zincGray.withValues(alpha: 0.7),
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'access_scanner.gate.brand'.tr(),
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.8,
+                              color: KineticTokens.pureWhite,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'access_scanner.gate.eyebrow'.tr(),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: KineticTokens.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'home.coming_soon.stitch_ref'.tr(
+                              namedArgs: {'id': stitchId},
+                            ),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: KineticTokens.zincGray.withValues(
+                                alpha: 0.7,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    if (hasOverride)
-                      _OccupancyChip(
-                        current: occupancyCurrent!,
-                        capacity: occupancyCapacity!,
-                      )
-                    else
-                      BlocBuilder<DashboardCubit, DashboardState>(
-                        builder: (context, dashboard) {
-                          return _OccupancyChip(
-                            current: dashboard.currentOccupancy,
-                            capacity: dashboard.capacityLimit,
-                          );
-                        },
-                      ),
                   ],
                 ),
               ),
             ),
           ),
-          Expanded(child: scanner),
+          Expanded(
+            child: CheckInGateLayout(
+              scannerViewport: scanner,
+              occupancyCurrent: occupancyCurrent,
+              occupancyCapacity: occupancyCapacity,
+            ),
+          ),
         ],
-      ),
-    );
-  }
-}
-
-class _OccupancyChip extends StatelessWidget {
-  const _OccupancyChip({required this.current, required this.capacity});
-
-  final int current;
-  final int capacity;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      key: const Key('access-scanner-occupancy-chip'),
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: 10,
-        vertical: 6,
-      ),
-      decoration: BoxDecoration(
-        color: KineticTokens.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: KineticTokens.secondaryContainer.withValues(alpha: 0.5),
-        ),
-      ),
-      child: Text(
-        'home.scanner.occupancy_chip'.tr(
-          namedArgs: {
-            'current': '$current',
-            'capacity': '$capacity',
-          },
-        ),
-        style: const TextStyle(
-          color: KineticTokens.secondaryContainer,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
       ),
     );
   }

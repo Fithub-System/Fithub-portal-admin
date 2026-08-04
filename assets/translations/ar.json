@@ -167,6 +167,24 @@
   "access_scanner": {
     "title": "بوابة تسجيل الدخول",
     "subtitle": "وجّه الكاميرا نحو رمز QR الخاص بالعضو",
+    "gate": {
+      "brand": "KINETIC MONOLITH",
+      "eyebrow": "وحدة الإدارة // بوابة الوصول الآمن",
+      "ready_waiting": "Ready - Waiting for Scan",
+      "confirm": "تأكيد تسجيل الدخول",
+      "access_granted": "تم منح الدخول",
+      "system_id": "معرّف النظام: {id}",
+      "encryption": "التشفير: {algo}",
+      "peak_intensity": "ذروة الشدة",
+      "avg_dwell": "متوسط البقاء",
+      "guest_passes": "تصاريح الضيوف",
+      "live_occupancy": "الإشغال المباشر",
+      "occupancy_limit": "/ {limit} الحد",
+      "power_score": "درجة القوة",
+      "last_check_in": "آخر تسجيل دخول",
+      "total_visits": "إجمالي الزيارات",
+      "system_log": "سجل النظام"
+    },
     "success": {
       "active_badge": "نشط",
       "expired_badge": "منتهية",

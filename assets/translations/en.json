@@ -167,6 +167,24 @@
   "access_scanner": {
     "title": "Check-in Gate",
     "subtitle": "Point the camera at the member QR code",
+    "gate": {
+      "brand": "KINETIC MONOLITH",
+      "eyebrow": "ADMIN CONSOLE // SECURE ACCESS GATE",
+      "ready_waiting": "Ready - Waiting for Scan",
+      "confirm": "CONFIRM CHECK-IN",
+      "access_granted": "ACCESS GRANTED",
+      "system_id": "System ID: {id}",
+      "encryption": "Encryption: {algo}",
+      "peak_intensity": "Peak Intensity",
+      "avg_dwell": "Avg Dwell",
+      "guest_passes": "Guest Passes",
+      "live_occupancy": "Live Occupancy",
+      "occupancy_limit": "/ {limit} LIMIT",
+      "power_score": "Power Score",
+      "last_check_in": "Last Check-in",
+      "total_visits": "Total Visits",
+      "system_log": "System Log"
+    },
     "success": {
       "active_badge": "Active",
       "expired_badge": "Expired",
