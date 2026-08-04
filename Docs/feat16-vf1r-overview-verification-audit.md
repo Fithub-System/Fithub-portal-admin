@@ -11,7 +11,8 @@
 **Visual Spec Card:** `Docs/feat16-vf1r-visual-spec-216e0407.md` (amends VF1 card)  
 **Region checklist:** `Docs/feat16-vf1r-region-checklist.md`  
 **Manual Test Guide:** `Fithub-documentation/manual-tests/PHASE-FEAT-16-VF1-R-manual-test.md`  
-**PR:** _(filled after open)_
+**PR:** https://github.com/Fithub-System/Fithub-portal-admin/pull/25  
+**Docs PR:** https://github.com/Fithub-System/Fithub-documentation/pull/60
 
 ## Status
 
@@ -77,5 +78,5 @@ flutter test \
 - [x] §4.1 content (no bare `—` shells)
 - [x] Side-by-side / region evidence
 - [x] Tests green
-- [ ] PR URL
+- [x] PR URL — https://github.com/Fithub-System/Fithub-portal-admin/pull/25
 - [ ] BizDev final PASS
