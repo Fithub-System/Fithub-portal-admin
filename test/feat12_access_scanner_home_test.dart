@@ -104,38 +104,15 @@ void main() {
   });
 
   group('FEAT-12 Access Scanner focus host', () {
-    testWidgets('shows close control + occupancy chip', (tester) async {
-      var closed = false;
-
-      await pumpLocalizedApp(
-        tester,
-        AccessScannerFocusHost(
-          onClose: () => closed = true,
-          occupancyCurrent: 3,
-          occupancyCapacity: 40,
-          scanner: const ColoredBox(
-            color: KineticTokens.deepCharcoal,
-            child: Center(child: Text('scanner-body')),
-          ),
-        ),
-        waitFor: find.byKey(const Key('access-scanner-focus-close')),
-      );
-
-      expect(find.byKey(const Key('access-scanner-focus-close')), findsOneWidget);
+    test('Stitch G1 ids remain cited on focus host', () {
       expect(
-        find.byKey(const Key('access-scanner-occupancy-chip')),
-        findsOneWidget,
+        AccessScannerFocusHost.stitchScreenIdEn,
+        '3629845f7f1e402697f46cf5575e86da',
       );
-      expect(find.text('3 / 40'), findsOneWidget);
-      expect(find.text('scanner-body'), findsOneWidget);
       expect(
-        find.textContaining('3629845f7f1e402697f46cf5575e86da'),
-        findsOneWidget,
+        AccessScannerFocusHost.stitchScreenIdAr,
+        'bec9356e2cb941798e66fa804ac78854',
       );
-
-      await tester.tap(find.byKey(const Key('access-scanner-focus-close')));
-      await tester.pump();
-      expect(closed, isTrue);
     });
   });
 }

@@ -129,62 +129,51 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
               );
             }
 
-            // Focus mode covers shell body (rail + destinations) so the
-            // Check-in Gate is desk-fullscreen; zinc SafeMode stays above.
-            if (_scannerFocus) {
-              return Scaffold(
-                backgroundColor: KineticTokens.deepCharcoal,
-                body: Column(
-                  children: [
-                    SafeModeBanner(visible: connectivity.isOffline),
-                    Expanded(
-                      child: AccessScannerFocusHost(
-                        onClose: _closeScannerFocus,
+            // FEAT-16 VF4: Check-in Gate keeps Install 6-rail + SafeMode;
+            // content replaces Home body (not a Scan rail tab).
+            final body = _scannerFocus
+                ? AccessScannerFocusHost(onClose: _closeScannerFocus)
+                : IndexedStack(
+                    index: _selectedIndex,
+                    children: [
+                      _DashboardDestination(onOpenScanner: _openScannerFocus),
+                      MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (_) =>
+                                InjectionContainer.createMembershipsCubit(),
+                          ),
+                          BlocProvider(
+                            create: (_) => members_di.createMemberRosterCubit(
+                              getIt: InjectionContainer.locator,
+                              tenantId: tenantId,
+                            )..load(),
+                          ),
+                        ],
+                        child: MemberManagementScreen(
+                          canWrite: canManageMemberships,
+                          canEnroll: canEnrollMembers,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            final body = IndexedStack(
-              index: _selectedIndex,
-              children: [
-                _DashboardDestination(onOpenScanner: _openScannerFocus),
-                MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (_) =>
-                          InjectionContainer.createMembershipsCubit(),
-                    ),
-                    BlocProvider(
-                      create: (_) => members_di.createMemberRosterCubit(
-                        getIt: InjectionContainer.locator,
-                        tenantId: tenantId,
-                      )..load(),
-                    ),
-                  ],
-                  child: MemberManagementScreen(
-                    canWrite: canManageMemberships,
-                    canEnroll: canEnrollMembers,
-                  ),
-                ),
-                const _StaffDestination(),
-                const ClassesComingSoonPage(),
-                BlocProvider(
-                  create: (_) => InjectionContainer.createBillingCubit(),
-                  child: MarketingPromotionsScreen(canWrite: canManageBilling),
-                ),
-                ReportsShellPage(onOpenGymSettings: _openSettingsFocus),
-              ],
-            );
+                      const _StaffDestination(),
+                      const ClassesComingSoonPage(),
+                      BlocProvider(
+                        create: (_) => InjectionContainer.createBillingCubit(),
+                        child: MarketingPromotionsScreen(
+                          canWrite: canManageBilling,
+                        ),
+                      ),
+                      ReportsShellPage(onOpenGymSettings: _openSettingsFocus),
+                    ],
+                  );
 
             final content = Column(
               children: [
-                _PortalShellHeader(
-                  onOpenGymSettings: _openSettingsFocus,
-                  onOpenScanner: _openScannerFocus,
-                ),
+                if (!_scannerFocus)
+                  _PortalShellHeader(
+                    onOpenGymSettings: _openSettingsFocus,
+                    onOpenScanner: _openScannerFocus,
+                  ),
                 Expanded(child: body),
               ],
             );

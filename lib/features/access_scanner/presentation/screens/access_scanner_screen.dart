@@ -16,7 +16,10 @@ import '../widgets/scanner_target_overlay.dart';
 /// EN: [stitchScreenId] · AR: [stitchScreenIdAr]
 /// Entry: Home → Open scanner (not a rail tab). Kinetic `#121212` / `#CCFF00`.
 class AccessScannerScreen extends StatefulWidget {
-  const AccessScannerScreen({super.key});
+  const AccessScannerScreen({super.key, this.embedded = false});
+
+  /// When true, chrome titles are omitted — FEAT-16 VF4 G1 host supplies them.
+  final bool embedded;
 
   /// Stitch G1 Check-in Gate (EN).
   static const String stitchScreenId = KineticTokens.stitchAccessScannerScreenId;
@@ -130,95 +133,99 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                 ),
               ),
             ),
-            PositionedDirectional(
-              top: 16,
-              start: 24,
-              end: 24,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'access_scanner.title'.tr(),
-                    style: textTheme.titleLarge?.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: KineticTokens.pureWhite,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'access_scanner.subtitle'.tr(),
-                    style: textTheme.bodyMedium?.copyWith(
-                      fontSize: 13,
-                      color: KineticTokens.zincGray,
-                    ),
-                  ),
-                  if (state.rosterStatus == AccessScannerRosterStatus.syncing)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        'access_scanner.roster.syncing'.tr(),
-                        style: textTheme.bodySmall?.copyWith(
-                          color: KineticTokens.electricLime,
-                        ),
+            if (!widget.embedded)
+              PositionedDirectional(
+                top: 16,
+                start: 24,
+                end: 24,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'access_scanner.title'.tr(),
+                      style: textTheme.titleLarge?.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: KineticTokens.pureWhite,
                       ),
                     ),
-                  if (state.rosterStatus == AccessScannerRosterStatus.synced &&
-                      state.rosterCount != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        'access_scanner.roster.synced'.tr(
-                          namedArgs: {'count': '${state.rosterCount}'},
-                        ),
-                        style: textTheme.bodySmall?.copyWith(
-                          color: KineticTokens.electricLime,
-                        ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'access_scanner.subtitle'.tr(),
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontSize: 13,
+                        color: KineticTokens.zincGray,
                       ),
                     ),
-                  if (state.rosterStatus == AccessScannerRosterStatus.failed &&
-                      state.rosterErrorKey != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            state.rosterErrorKey!.tr(),
-                            style: textTheme.bodySmall?.copyWith(
-                              color: Colors.orangeAccent,
-                            ),
+                    if (state.rosterStatus == AccessScannerRosterStatus.syncing)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'access_scanner.roster.syncing'.tr(),
+                          style: textTheme.bodySmall?.copyWith(
+                            color: KineticTokens.electricLime,
                           ),
-                          if (state.rosterCount != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(
-                                'access_scanner.roster.synced'.tr(
-                                  namedArgs: {'count': '${state.rosterCount}'},
-                                ),
-                                style: textTheme.bodySmall?.copyWith(
-                                  color: KineticTokens.zincGray,
-                                ),
+                        ),
+                      ),
+                    if (state.rosterStatus == AccessScannerRosterStatus.synced &&
+                        state.rosterCount != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'access_scanner.roster.synced'.tr(
+                            namedArgs: {'count': '${state.rosterCount}'},
+                          ),
+                          style: textTheme.bodySmall?.copyWith(
+                            color: KineticTokens.electricLime,
+                          ),
+                        ),
+                      ),
+                    if (state.rosterStatus == AccessScannerRosterStatus.failed &&
+                        state.rosterErrorKey != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              state.rosterErrorKey!.tr(),
+                              style: textTheme.bodySmall?.copyWith(
+                                color: Colors.orangeAccent,
                               ),
                             ),
-                          const SizedBox(height: 8),
-                          TextButton(
-                            onPressed: () =>
-                                context.read<AccessScannerCubit>().syncRoster(),
-                            style: TextButton.styleFrom(
-                              foregroundColor: KineticTokens.electricLime,
-                              padding: EdgeInsets.zero,
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            if (state.rosterCount != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  'access_scanner.roster.synced'.tr(
+                                    namedArgs: {
+                                      'count': '${state.rosterCount}',
+                                    },
+                                  ),
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: KineticTokens.zincGray,
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(height: 8),
+                            TextButton(
+                              onPressed: () => context
+                                  .read<AccessScannerCubit>()
+                                  .syncRoster(),
+                              style: TextButton.styleFrom(
+                                foregroundColor: KineticTokens.electricLime,
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text('access_scanner.roster.retry'.tr()),
                             ),
-                            child: Text('access_scanner.roster.retry'.tr()),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
-            ),
             if (state.isProcessing)
               const Positioned.fill(
                 child: ColoredBox(
@@ -226,7 +233,7 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ),
-            if (state.success != null)
+            if (!widget.embedded && state.success != null)
               Positioned(
                 top: 0,
                 left: 0,
