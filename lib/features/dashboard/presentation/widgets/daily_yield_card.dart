@@ -2,21 +2,26 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
+import '../fixtures/overview_stitch_fixtures.dart';
 
 /// Stitch Daily Yield card (`#C3F400`) — Admin Overview hero col-span-5.
 ///
-/// Revenue stream has no FEAT-16 Backend contract; amount shows em-dash
-/// placeholder while layout matches Visual Spec Card.
+/// §4.1: ships Stitch sample amount/delta when unbound (`fixture`). Live
+/// amount replaces the fixture when Backend binds — same chrome.
 class DailyYieldCard extends StatelessWidget {
-  const DailyYieldCard({super.key, this.amountLabel});
+  const DailyYieldCard({super.key, this.amountLabel, this.deltaLabel});
 
-  /// Live amount when bound; null → placeholder.
+  /// Live amount when bound; null → Stitch fixture `$12,482`.
   final String? amountLabel;
+
+  /// Live delta when bound; null → Stitch fixture `+14.2% vs yesterday`.
+  final String? deltaLabel;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final amount = amountLabel ?? 'home.shell.em_dash'.tr();
+    final amount = amountLabel ?? OverviewStitchFixtures.yieldAmount;
+    final delta = deltaLabel ?? OverviewStitchFixtures.yieldDelta;
 
     return Container(
       width: double.infinity,
@@ -88,7 +93,7 @@ class DailyYieldCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'dashboard.yield.delta_placeholder'.tr(),
+                    delta,
                     style: textTheme.labelMedium?.copyWith(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,

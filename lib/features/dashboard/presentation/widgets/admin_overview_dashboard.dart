@@ -8,12 +8,12 @@ import 'expiring_memberships_card.dart';
 import 'live_occupancy_gauge.dart';
 import 'overview_footer_stats.dart';
 
-/// FEAT-16 VF1 — Stitch Admin Overview Dashboard composition.
+/// FEAT-16 VF1 / VF1-R — Stitch Admin Overview Dashboard composition.
 ///
 /// Screen `216e0407184f4c39bd501ed436c1e88b`. Regions match Visual Spec Card
-/// `Docs/feat16-vf1-visual-spec-216e0407.md`. Live occupancy + Access Gate →
-/// scanner preserved (FEAT-04 / FEAT-12). Yield / expirations / footer metrics
-/// are layout chrome until Backend contracts exist.
+/// (+ VF1-R §4.1 fixtures). Live occupancy + Access Gate → scanner preserved
+/// (FEAT-04 / FEAT-12). Yield / expirations / footer / Access Granted ship
+/// Stitch sample fixtures when unbound.
 class AdminOverviewDashboard extends StatelessWidget {
   const AdminOverviewDashboard({
     super.key,

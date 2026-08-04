@@ -1,0 +1,349 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Kinetic Monolith - Admin Console</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;800;900&amp;family=Inter:wght@300;400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#abd600",
+              "surface-container-highest": "#353534",
+              "on-tertiary-fixed-variant": "#374956",
+              "secondary-fixed": "#d8e2ff",
+              "inverse-surface": "#e5e2e1",
+              "tertiary-fixed-dim": "#b6c9d8",
+              "on-secondary-fixed": "#001a41",
+              "on-secondary-fixed-variant": "#004493",
+              "surface": "#131313",
+              "on-secondary": "#002e68",
+              "on-surface": "#e5e2e1",
+              "secondary-fixed-dim": "#adc7ff",
+              "primary-container": "#c3f400",
+              "inverse-primary": "#506600",
+              "inverse-on-surface": "#313030",
+              "on-tertiary-fixed": "#0b1d29",
+              "outline-variant": "#444933",
+              "background": "#131313",
+              "tertiary-container": "#d2e5f5",
+              "surface-bright": "#393939",
+              "on-primary-fixed": "#161e00",
+              "on-error": "#690005",
+              "tertiary": "#ffffff",
+              "error-container": "#93000a",
+              "secondary-container": "#4a8eff",
+              "primary": "#ffffff",
+              "surface-container-low": "#1c1b1b",
+              "on-primary-fixed-variant": "#3c4d00",
+              "surface-container-lowest": "#0e0e0e",
+              "on-error-container": "#ffdad6",
+              "on-secondary-container": "#00285b",
+              "error": "#ffb4ab",
+              "secondary": "#adc7ff",
+              "outline": "#8e9379",
+              "on-surface-variant": "#c4c9ac",
+              "on-primary": "#283500",
+              "surface-container": "#201f1f",
+              "surface-tint": "#abd600",
+              "tertiary-fixed": "#d2e5f5",
+              "on-primary-container": "#556d00",
+              "primary-fixed": "#c3f400",
+              "surface-variant": "#353534",
+              "surface-dim": "#131313",
+              "on-tertiary": "#21323e",
+              "on-tertiary-container": "#556774",
+              "on-background": "#e5e2e1",
+              "surface-container-high": "#2a2a2a"
+            },
+            fontFamily: {
+              "headline": ["Lexend"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(57, 57, 57, 0.6);
+        backdrop-filter: blur(20px);
+      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body overflow-x-hidden">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-full sticky top-0 bg-neutral-950 text-[#CCFF00] font-lexend tracking-tight uppercase label-sm h-screen w-64 border-r border-neutral-800 shrink-0">
+<div class="p-8">
+<h1 class="text-2xl font-black text-[#CCFF00] tracking-tighter">KINETIC MONOLITH</h1>
+<p class="text-[10px] text-neutral-500 mt-1">Elite Performance Admin</p>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-[#CCFF00] bg-neutral-900/50 border-r-4 border-[#CCFF00] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Home</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Members</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span>Staff</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span>Classes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span>Marketing</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-400 hover:bg-neutral-900 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Reports</span>
+</a>
+</nav>
+<div class="p-6">
+<button class="w-full bg-primary-container text-on-primary-container font-black py-4 rounded-md flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span>Start Workout</span>
+</button>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex justify-between items-center px-8 w-full bg-neutral-950/80 backdrop-blur-xl h-16 border-b border-neutral-800 shadow-2xl shadow-black/50">
+<div class="flex items-center gap-4">
+<span class="text-neutral-500 font-headline uppercase text-xs tracking-widest">Admin Console</span>
+<div class="relative group">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
+<span class="material-symbols-outlined text-sm" data-icon="search">search</span>
+</span>
+<input class="bg-neutral-900 border-none rounded-md pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-[#CCFF00] transition-all" placeholder="Search athletes..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-neutral-300 hover:text-[#CCFF00] cursor-pointer">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-neutral-300 hover:text-[#CCFF00] cursor-pointer">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+</button>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="material-symbols-outlined text-neutral-300 group-hover:text-[#CCFF00]" data-icon="account_circle">account_circle</span>
+<span class="text-xs font-semibold text-neutral-300 group-hover:text-[#CCFF00]">MASTER ADMIN</span>
+</div>
+</div>
+</header>
+<div class="p-10 space-y-10">
+<!-- Hero Data Section -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Live Crowd Gauge -->
+<div class="col-span-12 lg:col-span-7 bg-surface-container-low p-8 rounded-xl border-l-4 border-secondary-container">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h2 class="font-headline text-3xl font-black tracking-tighter uppercase italic text-on-surface">Live Occupancy</h2>
+<p class="text-secondary font-label text-xs uppercase tracking-widest mt-1">Real-time gym floor status</p>
+</div>
+<div class="text-right">
+<span class="text-secondary-container text-5xl font-black font-headline">80<span class="text-xl text-neutral-600">/100</span></span>
+</div>
+</div>
+<!-- Visual Gauge / Trend -->
+<div class="h-48 flex items-end gap-2 relative">
+<!-- Simple SVG Trend Visualization -->
+<div class="absolute inset-0 flex items-end">
+<div class="w-full h-full flex items-end gap-1 opacity-20">
+<div class="w-full bg-secondary-container" style="height: 20%"></div>
+<div class="w-full bg-secondary-container" style="height: 35%"></div>
+<div class="w-full bg-secondary-container" style="height: 55%"></div>
+<div class="w-full bg-secondary-container" style="height: 45%"></div>
+<div class="w-full bg-secondary-container" style="height: 80%"></div>
+<div class="w-full bg-secondary-container" style="height: 90%"></div>
+<div class="w-full bg-secondary-container" style="height: 85%"></div>
+<div class="w-full bg-secondary-container" style="height: 70%"></div>
+<div class="w-full bg-secondary-container" style="height: 60%"></div>
+<div class="w-full bg-secondary-container" style="height: 40%"></div>
+<div class="w-full bg-secondary-container" style="height: 30%"></div>
+<div class="w-full bg-secondary-container" style="height: 25%"></div>
+</div>
+</div>
+<!-- Active Gauge Overlay -->
+<div class="z-10 w-full flex flex-col gap-4">
+<div class="w-full h-4 bg-neutral-800 rounded-full overflow-hidden">
+<div class="h-full w-[80%] bg-gradient-to-r from-secondary-container to-[#007BFF] relative">
+<div class="absolute inset-0 animate-pulse bg-white/20"></div>
+</div>
+</div>
+<div class="flex justify-between text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
+<span>05:00 AM</span>
+<span>PEAK HOUR: 06:00 PM</span>
+<span>11:00 PM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Revenue Card -->
+<div class="col-span-12 lg:col-span-5 bg-primary-container p-8 rounded-xl flex flex-col justify-between relative overflow-hidden group">
+<div class="z-10">
+<h2 class="font-headline text-3xl font-black tracking-tighter uppercase italic text-on-primary-container leading-none">Daily<br>Yield</h2>
+<p class="text-on-primary-container/60 font-label text-xs uppercase tracking-widest mt-2">Today's Revenue Stream</p>
+</div>
+<div class="z-10 mt-12">
+<span class="text-6xl font-black font-headline text-on-primary-container tracking-tighter">$12,482</span>
+<div class="flex items-center gap-2 mt-2 text-on-primary-container font-bold text-sm">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span>+14.2% vs yesterday</span>
+</div>
+</div>
+<!-- Abstract design element -->
+<div class="absolute -right-8 -bottom-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-[12rem]" data-icon="monetization_on">monetization_on</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Expiring Memberships -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-low rounded-xl overflow-hidden">
+<div class="p-8 border-b border-white/5 flex justify-between items-center">
+<div>
+<h3 class="font-headline text-xl font-bold uppercase tracking-tight">Expiring Memberships</h3>
+<p class="text-neutral-500 text-xs font-label">Action required within 48 hours</p>
+</div>
+<button class="text-primary-container text-xs font-bold border border-primary-container/20 px-4 py-2 hover:bg-primary-container hover:text-on-primary-container transition-all">RENEW ALL</button>
+</div>
+<div class="p-4">
+<table class="w-full text-left">
+<thead class="text-[10px] text-neutral-500 uppercase tracking-widest">
+<tr>
+<th class="px-4 py-3 font-medium">Member</th>
+<th class="px-4 py-3 font-medium text-center">Plan Type</th>
+<th class="px-4 py-3 font-medium text-right">Expiration</th>
+<th class="px-4 py-3"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-4 py-4 flex items-center gap-3">
+<img class="w-10 h-10 rounded-lg object-cover grayscale" data-alt="portrait of a determined male athlete in gym setting with dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2r0q87KHydqUuhrQnXwLEv-PFHqz5aIEIwJAq47Y-86BaUEehoLLQiufP_k7WMp9p_BV2ri0atKn1ZoglOeE-rGJ8X35nf4p9Tz5wqp2zsFR439liA8cqML9LyxdJbv6zBKtyUk50845yJVk2aqXvaAf2xnvR21mH57S6vk_wW4dR-XZAjZKbxHRD-yA2rAXINhp5LyuHF8naZVOaawgWg8id-kqWajbvmRj7theMjq8G6y5XSrA9diX4MrZTn8gRZLs2EgwHJMOC">
+<div>
+<div class="font-bold text-sm">Marcus Thorne</div>
+<div class="text-xs text-neutral-500">m.thorne@example.com</div>
+</div>
+</td>
+<td class="px-4 py-4 text-center">
+<span class="text-[10px] px-2 py-1 bg-neutral-800 rounded text-neutral-300">ELITE PERFORMANCE</span>
+</td>
+<td class="px-4 py-4 text-right">
+<div class="font-bold text-sm text-error">May 24, 2024</div>
+<div class="text-[10px] text-error/60">Tomorrow</div>
+</td>
+<td class="px-4 py-4 text-right">
+<span class="material-symbols-outlined text-neutral-600 group-hover:text-primary-container cursor-pointer" data-icon="more_vert">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-4 py-4 flex items-center gap-3">
+<img class="w-10 h-10 rounded-lg object-cover grayscale" data-alt="professional athletic woman posing in high-tech gym environment with moody lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgxagzoE6UpGCjiiRgPIKPXjLbdfHItW8tFPgYooCfW1ElJ2_Ui9upatoSx2fMq6PNhRE-TXwVNNwHHSpnr82CkmD3qPsjhaY5QxOiTEYYIgQd2f9N9my9ZFTGKEYP8Av95FEIQEt3Tyx25dpIY29ojxNs2mF7HSD9OyjkljiJiMtezaKlTJ8F_2i8ETBcee1W82aiEF7X_cOVEqeC1q9QkpfZL1KBHI_YUyhwhf78QHFXL1vo3ZwWcO35rjj78UrJhVEKRWK8s76x">
+<div>
+<div class="font-bold text-sm">Elena Rodriguez</div>
+<div class="text-xs text-neutral-500">elena.r@example.com</div>
+</div>
+</td>
+<td class="px-4 py-4 text-center">
+<span class="text-[10px] px-2 py-1 bg-neutral-800 rounded text-neutral-300">FOUNDRY BASIC</span>
+</td>
+<td class="px-4 py-4 text-right">
+<div class="font-bold text-sm text-on-surface">May 25, 2024</div>
+<div class="text-[10px] text-neutral-500">In 2 days</div>
+</td>
+<td class="px-4 py-4 text-right">
+<span class="material-symbols-outlined text-neutral-600 group-hover:text-primary-container cursor-pointer" data-icon="more_vert">more_vert</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- QR Validation Console -->
+<div class="col-span-12 lg:col-span-4 space-y-8">
+<!-- Scanning UI -->
+<div class="bg-surface-container-low p-8 rounded-xl border border-neutral-800 relative overflow-hidden">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline text-lg font-bold uppercase tracking-tight">Access Gate 1</h3>
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-neutral-700"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-neutral-700"></div>
+</div>
+</div>
+<div class="aspect-square bg-neutral-900 rounded-lg flex flex-col items-center justify-center border-2 border-dashed border-neutral-800 relative group cursor-pointer">
+<div class="absolute inset-0 bg-primary-container/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-symbols-outlined text-5xl text-neutral-700 mb-4" data-icon="qr_code_2">qr_code_2</span>
+<p class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Waiting for scan...</p>
+<!-- Scanning line simulation -->
+<div class="absolute top-0 left-0 right-0 h-[2px] bg-primary-container/40 animate-[bounce_3s_infinite]"></div>
+</div>
+<div class="mt-6 flex items-center justify-between text-xs font-bold">
+<span class="text-neutral-500 uppercase">Status</span>
+<span class="text-primary-container uppercase tracking-widest flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-primary-container rounded-full animate-pulse"></span>
+                                    Ready
+                                </span>
+</div>
+</div>
+<!-- Validation Success Overlay (Static representation of the popup) -->
+<div class="bg-surface-container-high rounded-xl p-6 ring-2 ring-primary-container shadow-[0_0_50px_rgba(195,244,0,0.1)] relative">
+<div class="flex items-start gap-4">
+<div class="relative">
+<img class="w-16 h-16 rounded-lg object-cover border-2 border-primary-container" data-alt="professional male portrait for id card athletic build soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9eyyfyM6_jDLvVqlf9y-1kpCxiLbaxRUfvPUQtIIsksucB4CWhF0qjDbnfW_eEWVRK1rZxKBAGfyzEseTMmQmeq8xl16VTvHz5GUe3g2qlcKsWGD2kZo6OVnkk2ShZCeyIZK1qPj612jnUYvi-RBooIYhFNMSV_nTDhmBod0KlPaogzIlpKGSpSnJ-sAl5rlwYkFCVkdvgCLRmY4lMpclriOwF4J41z0CxfP6zuNMkgaV9Nj4F4gQycAxzhwhYKzMTxzx23WSF4U_">
+<div class="absolute -bottom-2 -right-2 bg-primary-container text-on-primary-container rounded-full p-0.5">
+<span class="material-symbols-outlined text-lg" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-headline font-black text-xl leading-none">John Smith</h4>
+<p class="text-neutral-500 text-xs mt-1">ID: #KM-88219</p>
+<div class="mt-3 inline-block px-2 py-0.5 bg-primary-container/10 border border-primary-container/20 text-primary-container text-[10px] font-black uppercase tracking-tighter rounded">Active Member</div>
+</div>
+</div>
+<div class="mt-6 bg-primary-container py-3 rounded-lg text-center">
+<span class="text-on-primary-container font-headline font-black text-sm tracking-widest">ACCESS GRANTED</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Stats Cluster -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-neutral-900">
+<p class="text-neutral-500 text-[10px] uppercase font-bold tracking-widest mb-1">Total Active</p>
+<h4 class="font-headline text-2xl font-black">2,841</h4>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-neutral-900">
+<p class="text-neutral-500 text-[10px] uppercase font-bold tracking-widest mb-1">Classes Today</p>
+<h4 class="font-headline text-2xl font-black">42</h4>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-neutral-900">
+<p class="text-neutral-500 text-[10px] uppercase font-bold tracking-widest mb-1">Guest Passes</p>
+<h4 class="font-headline text-2xl font-black">12</h4>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg border border-neutral-900">
+<p class="text-neutral-500 text-[10px] uppercase font-bold tracking-widest mb-1">Incident Reports</p>
+<h4 class="font-headline text-2xl font-black text-neutral-400">0</h4>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

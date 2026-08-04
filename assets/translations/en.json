@@ -134,7 +134,7 @@
     "yield": {
       "title": "DAILY\nYIELD",
       "subtitle": "TODAY'S REVENUE STREAM",
-      "delta_placeholder": "Live revenue pending"
+      "delta_placeholder": "+14.2% vs yesterday"
     },
     "expiring": {
       "title": "EXPIRING MEMBERSHIPS",
@@ -151,7 +151,8 @@
       "status_label": "STATUS",
       "ready": "READY",
       "active_member": "ACTIVE MEMBER",
-      "granted": "ACCESS GRANTED"
+      "granted": "ACCESS GRANTED",
+      "member_id": "ID: {id}"
     },
     "stats": {
       "total_active": "TOTAL ACTIVE",

@@ -2,35 +2,46 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
+import '../fixtures/overview_stitch_fixtures.dart';
 
 /// Stitch footer stats cluster (4 tiles) — Admin Overview.
 ///
-/// Counts are placeholders (em-dash) until analytics contracts exist.
+/// §4.1: ships artboard fixture counts when analytics unbound.
 class OverviewFooterStats extends StatelessWidget {
-  const OverviewFooterStats({super.key});
+  const OverviewFooterStats({
+    super.key,
+    this.totalActive,
+    this.classesToday,
+    this.guestPasses,
+    this.incidentReports,
+  });
+
+  final String? totalActive;
+  final String? classesToday;
+  final String? guestPasses;
+  final String? incidentReports;
 
   @override
   Widget build(BuildContext context) {
-    final dash = 'home.shell.em_dash'.tr();
     return LayoutBuilder(
       builder: (context, constraints) {
         final cols = constraints.maxWidth >= 720 ? 4 : 2;
         final tiles = [
           _StatTile(
             label: 'dashboard.stats.total_active'.tr(),
-            value: dash,
+            value: totalActive ?? OverviewStitchFixtures.totalActive,
           ),
           _StatTile(
             label: 'dashboard.stats.classes_today'.tr(),
-            value: dash,
+            value: classesToday ?? OverviewStitchFixtures.classesToday,
           ),
           _StatTile(
             label: 'dashboard.stats.guest_passes'.tr(),
-            value: dash,
+            value: guestPasses ?? OverviewStitchFixtures.guestPasses,
           ),
           _StatTile(
             label: 'dashboard.stats.incidents'.tr(),
-            value: dash,
+            value: incidentReports ?? OverviewStitchFixtures.incidentReports,
             muted: true,
           ),
         ];
