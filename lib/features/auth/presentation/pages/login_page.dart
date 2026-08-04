@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +13,14 @@ import 'package:fithub_portal_admin/features/auth/presentation/widgets/stitch_au
 /// (`projects/.../screens/c12b687f1538452ebaf8d0adb89a9489`).
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  /// EN DESKTOP artboard — FEAT-16 VF7 primary.
+  static const String stitchScreenIdEn =
+      'c12b687f1538452ebaf8d0adb89a9489';
+
+  /// AR RTL twin from `list_screens`.
+  static const String stitchScreenIdAr =
+      '0f33f7463ca543c7b85bcb8637249f65';
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -64,6 +74,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       },
       child: Scaffold(
+        key: const Key('login-page'),
         backgroundColor: AppColors.background,
         body: Stack(
           children: [
@@ -92,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Text(
                             'auth.login.brand'.tr(),
+                            key: const Key('login-brand'),
                             textAlign: TextAlign.center,
                             style: textTheme.displayLarge?.copyWith(
                               fontSize: 48,
@@ -104,11 +116,12 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 8),
                           Text(
                             'auth.login.subtitle'.tr(),
+                            key: const Key('login-subtitle'),
                             textAlign: TextAlign.center,
                             style: textTheme.labelLarge?.copyWith(
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              letterSpacing: 2.4,
+                              letterSpacing: 2.8,
                               color: AppColors.onSurfaceVariant,
                             ),
                           ),
@@ -147,6 +160,7 @@ class _LocaleToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     final isEn = locale.languageCode == 'en';
     return Row(
+      key: const Key('login-locale-toggle'),
       mainAxisSize: MainAxisSize.min,
       children: [
         _LocaleChip(
@@ -204,6 +218,7 @@ class _LocaleChip extends StatelessWidget {
   }
 }
 
+/// Stitch ambient: 800×800 primary-container orb, blur ~150, opacity ~0.10.
 class _AmbientGlow extends StatelessWidget {
   const _AmbientGlow();
 
@@ -211,12 +226,18 @@ class _AmbientGlow extends StatelessWidget {
   Widget build(BuildContext context) {
     return IgnorePointer(
       child: Center(
-        child: Container(
-          width: 800,
-          height: 800,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.primaryContainer.withValues(alpha: 0.03),
+        child: Opacity(
+          opacity: 0.30,
+            child: ImageFiltered(
+            imageFilter: ui.ImageFilter.blur(sigmaX: 75, sigmaY: 75),
+            child: Container(
+              width: 800,
+              height: 800,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primaryContainer.withValues(alpha: 0.10),
+              ),
+            ),
           ),
         ),
       ),
@@ -243,8 +264,10 @@ class _LoginCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final loading = context.select((AuthBloc b) => b.state is AuthLoading);
     final textTheme = Theme.of(context).textTheme;
+    final isRtl = Directionality.of(context) == ui.TextDirection.rtl;
 
     return Container(
+      key: const Key('login-card'),
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(4),
@@ -263,6 +286,7 @@ class _LoginCard extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
+              key: const Key('login-card-kinetic-edge'),
               height: 2,
               decoration: const BoxDecoration(
                 gradient: AppColors.kineticCta,
@@ -279,14 +303,15 @@ class _LoginCard extends StatelessWidget {
                   'auth.login.credential_label'.tr(),
                   textAlign: TextAlign.start,
                   style: textTheme.labelLarge?.copyWith(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 2,
+                    letterSpacing: 2.8,
                     color: AppColors.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
+                  key: const Key('login-credential-field'),
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
@@ -314,14 +339,15 @@ class _LoginCard extends StatelessWidget {
                         'auth.login.access_key_label'.tr(),
                         textAlign: TextAlign.start,
                         style: textTheme.labelLarge?.copyWith(
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: 2,
+                          letterSpacing: 2.8,
                           color: AppColors.onSurfaceVariant,
                         ),
                       ),
                     ),
                     TextButton(
+                      key: const Key('login-recover-key'),
                       onPressed: () => StitchAuthSnackbar.show(
                         context,
                         'auth.login.recover_key_unavailable'.tr(),
@@ -345,6 +371,7 @@ class _LoginCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
+                  key: const Key('login-access-key-field'),
                   controller: passwordController,
                   obscureText: obscure,
                   style: textTheme.bodyLarge?.copyWith(
@@ -356,6 +383,7 @@ class _LoginCard extends StatelessWidget {
                     hint: '••••••••',
                     prefix: Icons.lock_outline,
                     suffix: IconButton(
+                      key: const Key('login-toggle-obscure'),
                       onPressed: onToggleObscure,
                       icon: Icon(
                         obscure
@@ -374,7 +402,7 @@ class _LoginCard extends StatelessWidget {
                   },
                   onFieldSubmitted: (_) => onSubmit(),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
                 DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: AppColors.kineticCta,
@@ -383,41 +411,69 @@ class _LoginCard extends StatelessWidget {
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
+                      key: const Key('login-cta-initialize'),
                       onTap: loading ? null : onSubmit,
                       borderRadius: BorderRadius.circular(6),
-                      child: SizedBox(
-                        height: 52,
-                        child: Center(
-                          child: loading
-                              ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: AppColors.onPrimaryContainer,
-                                  ),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'auth.login.cta_initialize_session'.tr(),
-                                      style: textTheme.titleMedium?.copyWith(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 1.2,
+                      child: Stack(
+                        children: [
+                          SizedBox(
+                            height: 56,
+                            child: Center(
+                              child: loading
+                                  ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
                                         color: AppColors.onPrimaryContainer,
                                       ),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'auth.login.cta_initialize_session'
+                                              .tr(),
+                                          style: textTheme.titleMedium
+                                              ?.copyWith(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: 1.2,
+                                            color:
+                                                AppColors.onPrimaryContainer,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Transform.flip(
+                                          flipX: isRtl,
+                                          child: const Icon(
+                                            Icons.arrow_forward,
+                                            size: 18,
+                                            color:
+                                                AppColors.onPrimaryContainer,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 8),
-                                    const Icon(
-                                      Icons.arrow_forward,
-                                      size: 18,
-                                      color: AppColors.onPrimaryContainer,
-                                    ),
-                                  ],
+                            ),
+                          ),
+                          // Stitch inner glow: top white/30 hairline.
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 2,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.30),
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(6),
                                 ),
-                        ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -432,9 +488,10 @@ class _LoginCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
                         'auth.login.or_social'.tr(),
+                        key: const Key('login-or-social'),
                         style: textTheme.labelLarge?.copyWith(
-                          fontSize: 11,
-                          letterSpacing: 2,
+                          fontSize: 12,
+                          letterSpacing: 2.8,
                           color: AppColors.onSurfaceVariant,
                         ),
                       ),
@@ -446,6 +503,7 @@ class _LoginCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 _SocialButton(
+                  key: const Key('login-social-google'),
                   icon: Icons.login,
                   label: 'auth.login.continue_google'.tr(),
                   onTap: () => StitchAuthSnackbar.show(
@@ -455,6 +513,7 @@ class _LoginCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 _SocialButton(
+                  key: const Key('login-social-apple'),
                   icon: Icons.devices,
                   label: 'auth.login.continue_apple'.tr(),
                   onTap: () => StitchAuthSnackbar.show(
@@ -502,6 +561,7 @@ class _LoginCard extends StatelessWidget {
 
 class _SocialButton extends StatelessWidget {
   const _SocialButton({
+    super.key,
     required this.icon,
     required this.label,
     required this.onTap,
@@ -542,12 +602,14 @@ class _FooterLinks extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Column(
+      key: const Key('login-footer'),
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Flexible(
               child: TextButton(
+                key: const Key('login-privacy'),
                 onPressed: () {},
                 child: Text(
                   'auth.login.privacy'.tr(),
@@ -559,9 +621,10 @@ class _FooterLinks extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 24),
             Flexible(
               child: TextButton(
+                key: const Key('login-terms'),
                 onPressed: () {},
                 child: Text(
                   'auth.login.terms'.tr(),
@@ -575,9 +638,10 @@ class _FooterLinks extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 24),
         Text(
           'auth.login.copyright'.tr(),
+          key: const Key('login-copyright'),
           textAlign: TextAlign.center,
           style: textTheme.labelSmall?.copyWith(
             fontSize: 10,
