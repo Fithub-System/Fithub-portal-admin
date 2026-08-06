@@ -1,0 +1,462 @@
+<!DOCTYPE html><html class="dark" dir="rtl" lang="ar"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KINETIC MONOLITH - مدير الحصص</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&amp;family=Lexend:wght@300;400;600;800;900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#abd600",
+              "surface-container-highest": "#353534",
+              "on-tertiary-fixed-variant": "#374956",
+              "secondary-fixed": "#d8e2ff",
+              "inverse-surface": "#e5e2e1",
+              "tertiary-fixed-dim": "#b6c9d8",
+              "on-secondary-fixed": "#001a41",
+              "on-secondary-fixed-variant": "#004493",
+              "surface": "#131313",
+              "on-secondary": "#002e68",
+              "on-surface": "#e5e2e1",
+              "secondary-fixed-dim": "#adc7ff",
+              "primary-container": "#c3f400",
+              "inverse-primary": "#506600",
+              "inverse-on-surface": "#313030",
+              "on-tertiary-fixed": "#0b1d29",
+              "outline-variant": "#444933",
+              "background": "#131313",
+              "tertiary-container": "#d2e5f5",
+              "surface-bright": "#393939",
+              "on-primary-fixed": "#161e00",
+              "on-error": "#690005",
+              "tertiary": "#ffffff",
+              "error-container": "#93000a",
+              "secondary-container": "#4a8eff",
+              "primary": "#ffffff",
+              "surface-container-low": "#1c1b1b",
+              "on-primary-fixed-variant": "#3c4d00",
+              "surface-container-lowest": "#0e0e0e",
+              "on-error-container": "#ffdad6",
+              "on-secondary-container": "#00285b",
+              "error": "#ffb4ab",
+              "secondary": "#adc7ff",
+              "outline": "#8e9379",
+              "on-surface-variant": "#c4c9ac",
+              "on-primary": "#283500",
+              "surface-container": "#201f1f",
+              "surface-tint": "#abd600",
+              "tertiary-fixed": "#d2e5f5",
+              "on-primary-container": "#556d00",
+              "primary-fixed": "#c3f400",
+              "surface-variant": "#353534",
+              "surface-dim": "#131313",
+              "on-tertiary": "#21323e",
+              "on-tertiary-container": "#556774",
+              "on-background": "#e5e2e1",
+              "surface-container-high": "#2a2a2a"
+            },
+            fontFamily: {
+              "headline": ["Cairo", "Lexend"],
+              "body": ["Cairo", "Inter"],
+              "label": ["Cairo", "Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Cairo', sans-serif; background-color: #131313; color: #e5e2e1; }
+        .headline-font { font-family: 'Cairo', sans-serif; }
+        .glass-card {
+            background: rgba(42, 42, 42, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        [dir="rtl"] .material-symbols-outlined.flip-rtl {
+            transform: scaleX(-1);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-full sticky top-0 h-screen w-64 border-l border-neutral-800 bg-neutral-950">
+<div class="p-8">
+<h1 class="text-2xl font-black text-[#CCFF00] tracking-tighter headline-font">KINETIC MONOLITH</h1>
+<p class="font-bold tracking-tight uppercase text-[10px] text-neutral-400 mt-1">إدارة الأداء العالي</p>
+</div>
+<nav class="flex-1 mt-4 px-4 space-y-2">
+<div class="flex items-center gap-3 p-3 text-neutral-400 font-bold tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">dashboard</span>
+<span>الرئيسية</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-neutral-400 font-bold tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">group</span>
+<span>الأعضاء</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-neutral-400 font-bold tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">badge</span>
+<span>الموظفين</span>
+</div>
+<!-- Active State: Classes -->
+<div class="flex items-center gap-3 p-3 text-[#CCFF00] bg-neutral-900/50 border-l-4 border-[#CCFF00] font-bold tracking-tight uppercase text-xs cursor-pointer group">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">fitness_center</span>
+<span>الحصص التدريبية</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-neutral-400 font-bold tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">campaign</span>
+<span>التسويق</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-neutral-400 font-bold tracking-tight uppercase text-xs hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-active:scale-95 duration-150">analytics</span>
+<span>التقارير</span>
+</div>
+</nav>
+<div class="p-6">
+<button class="w-full py-4 bg-primary-container text-on-primary-container font-black headline-font uppercase tracking-widest text-sm rounded-md shadow-[0_0_20px_rgba(195,244,0,0.15)] hover:brightness-110 transition-all active:scale-95">
+                بدء التمرين
+            </button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 flex flex-col bg-surface min-h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex justify-between items-center px-8 w-full h-16 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur-xl">
+<div class="flex items-center gap-6 flex-1">
+<span class="font-bold headline-lg text-primary text-xl tracking-tight">لوحة التحكم</span>
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500">search</span>
+<input class="w-full bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary-fixed-dim text-sm py-2 pr-10 pl-3 rounded-md text-on-surface" placeholder="ابحث عن الجداول، المدربين..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-neutral-300 hover:text-[#CCFF00] cursor-pointer transition-all">notifications</span>
+<span class="material-symbols-outlined text-neutral-300 hover:text-[#CCFF00] cursor-pointer transition-all">qr_code_scanner</span>
+<div class="flex items-center gap-3 cursor-pointer group">
+<span class="material-symbols-outlined text-neutral-300 group-hover:text-[#CCFF00]">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Left Side: Calendar View -->
+<section class="flex-1 p-8 overflow-y-auto custom-scrollbar">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="font-headline text-4xl font-black text-primary tracking-tighter uppercase">الجدول الأسبوعي</h2>
+<p class="text-on-surface-variant font-label text-sm tracking-wide mt-1">23 أكتوبر — 29 أكتوبر 2023</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined flip-rtl">chevron_right</span>
+</button>
+<button class="px-4 py-2 bg-surface-container-high font-bold text-sm uppercase tracking-widest border border-outline-variant">اليوم</button>
+<button class="p-2 border border-outline-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined flip-rtl">chevron_left</span>
+</button>
+</div>
+</div>
+<!-- Calendar Grid -->
+<div class="grid grid-cols-8 border-r border-t border-outline-variant/20 rounded-lg overflow-hidden">
+<!-- Time Column -->
+<div class="bg-surface-container-lowest border-l border-b border-outline-variant/20">
+<div class="h-16 border-b border-outline-variant/20 flex items-center justify-center font-label text-[10px] uppercase text-on-surface-variant">الوقت</div>
+<div class="h-24 border-b border-outline-variant/20 flex items-center justify-center font-label text-xs text-on-surface-variant">06:00</div>
+<div class="h-24 border-b border-outline-variant/20 flex items-center justify-center font-label text-xs text-on-surface-variant">07:00</div>
+<div class="h-24 border-b border-outline-variant/20 flex items-center justify-center font-label text-xs text-on-surface-variant">08:00</div>
+<div class="h-24 border-b border-outline-variant/20 flex items-center justify-center font-label text-xs text-on-surface-variant">09:00</div>
+<div class="h-24 border-b border-outline-variant/20 flex items-center justify-center font-label text-xs text-on-surface-variant">10:00</div>
+<div class="h-24 border-b border-outline-variant/20 flex items-center justify-center font-label text-xs text-on-surface-variant">11:00</div>
+<div class="h-24 border-b border-outline-variant/20 flex items-center justify-center font-label text-xs text-on-surface-variant">12:00</div>
+</div>
+<!-- Days -->
+<!-- MON -->
+<div class="bg-surface border-l border-outline-variant/20">
+<div class="h-16 border-b border-outline-variant/20 flex flex-col items-center justify-center">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">الاثنين</span>
+<span class="font-headline text-lg font-bold">23</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair transition-colors">
+<div class="absolute inset-1 bg-secondary-container/20 border-r-4 border-secondary-container p-2 rounded-sm overflow-hidden select-none">
+<p class="text-[10px] font-bold text-secondary tracking-tighter uppercase">يوغا القوة</p>
+<p class="text-[9px] text-on-surface-variant mt-0.5">ماركوس ف.</p>
+</div>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+</div>
+<!-- TUE -->
+<div class="bg-surface border-l border-outline-variant/20">
+<div class="h-16 border-b border-outline-variant/20 flex flex-col items-center justify-center">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">الثلاثاء</span>
+<span class="font-headline text-lg font-bold">24</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair">
+<div class="absolute inset-1 bg-primary-container/20 border-r-4 border-primary-container p-2 rounded-sm ring-2 ring-primary-container ring-offset-2 ring-offset-surface z-10">
+<p class="text-[10px] font-bold text-primary-fixed tracking-tighter uppercase">تمارين HIIT</p>
+<p class="text-[9px] text-on-surface-variant mt-0.5">سارة ك.</p>
+<div class="mt-2 flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-primary-fixed animate-pulse"></span>
+<span class="text-[8px] text-primary-fixed uppercase font-bold">جارية الآن</span>
+</div>
+</div>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+</div>
+<!-- WED -->
+<div class="bg-surface border-l border-outline-variant/20">
+<div class="h-16 border-b border-outline-variant/20 flex flex-col items-center justify-center">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">الأربعاء</span>
+<span class="font-headline text-lg font-bold">25</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair flex items-center justify-center">
+<div class="absolute inset-1 bg-surface-container-high border border-dashed border-outline-variant flex flex-col items-center justify-center p-2">
+<span class="material-symbols-outlined text-primary-container mb-1">add</span>
+<span class="text-[8px] uppercase font-bold text-on-surface-variant">جدولة جديدة</span>
+</div>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+</div>
+</div>
+<!-- THU -->
+<div class="bg-surface border-l border-outline-variant/20">
+<div class="h-16 border-b border-outline-variant/20 flex flex-col items-center justify-center">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">الخميس</span>
+<span class="font-headline text-lg font-bold">26</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair">
+<div class="absolute inset-1 bg-on-tertiary-fixed-variant/40 border-r-4 border-tertiary-fixed-dim p-2 rounded-sm overflow-hidden">
+<p class="text-[10px] font-bold text-tertiary-fixed tracking-tighter uppercase">تمارين باري</p>
+<p class="text-[9px] text-on-surface-variant mt-0.5">إليزا س.</p>
+</div>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+</div>
+<!-- FRI -->
+<div class="bg-surface border-l border-outline-variant/20">
+<div class="h-16 border-b border-outline-variant/20 flex flex-col items-center justify-center">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">الجمعة</span>
+<span class="font-headline text-lg font-bold">27</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair">
+<div class="absolute inset-1 bg-secondary-container/20 border-r-4 border-secondary-container p-2 rounded-sm overflow-hidden">
+<p class="text-[10px] font-bold text-secondary tracking-tighter uppercase">كيك بوكسينغ</p>
+<p class="text-[9px] text-on-surface-variant mt-0.5">تايرون ج.</p>
+</div>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+</div>
+<!-- SAT -->
+<div class="bg-surface border-l border-outline-variant/20">
+<div class="h-16 border-b border-outline-variant/20 flex flex-col items-center justify-center">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">السبت</span>
+<span class="font-headline text-lg font-bold">28</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+</div>
+<!-- SUN -->
+<div class="bg-surface">
+<div class="h-16 border-b border-outline-variant/20 flex flex-col items-center justify-center">
+<span class="font-label text-[10px] uppercase text-on-surface-variant">الأحد</span>
+<span class="font-headline text-lg font-bold">29</span>
+</div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+<div class="h-24 border-b border-outline-variant/10 relative group hover:bg-surface-container-low cursor-crosshair"></div>
+</div>
+</div>
+<!-- Add New Class Form -->
+<div class="mt-12 glass-card p-8 rounded-xl border border-outline-variant/10 shadow-2xl">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">event_note</span>
+</div>
+<div>
+<h3 class="font-headline text-xl font-bold uppercase tracking-tight">إضافة جلسة جديدة</h3>
+<p class="font-label text-xs text-on-surface-variant uppercase tracking-wider">تهيئة الموعد والمدرب</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="flex flex-col gap-2">
+<label class="label-sm font-label uppercase text-on-surface-variant tracking-widest mr-1">نوع الحصة</label>
+<input class="bg-transparent border-b border-outline-variant focus:border-primary-fixed-dim outline-none py-2 text-primary headline-font" placeholder="مثلاً: تمارين HIIT" type="text">
+</div>
+<div class="flex flex-col gap-2">
+<label class="label-sm font-label uppercase text-on-surface-variant tracking-widest mr-1">المدرب</label>
+<select class="bg-transparent border-b border-outline-variant focus:border-primary-fixed-dim outline-none py-2 text-primary font-body appearance-none">
+<option class="bg-surface-container-highest">اختر المدرب</option>
+<option class="bg-surface-container-highest">سارة كونيج</option>
+<option class="bg-surface-container-highest">ماركوس فين</option>
+<option class="bg-surface-container-highest">إليزا ستيرلينغ</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="label-sm font-label uppercase text-on-surface-variant tracking-widest mr-1">السعة القصوى</label>
+<input class="bg-transparent border-b border-outline-variant focus:border-primary-fixed-dim outline-none py-2 text-primary font-body" type="number" value="25">
+</div>
+<div class="flex items-end">
+<button class="w-full py-2 bg-white text-black font-black headline-font uppercase tracking-widest text-sm hover:bg-primary-container transition-all">
+                                إنشاء حصة
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Panel: Attendee List -->
+<aside class="w-96 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col">
+<div class="p-8 border-b border-outline-variant/10">
+<div class="flex items-center justify-between mb-4">
+<span class="px-3 py-1 bg-primary-container text-on-primary-container font-black text-[10px] tracking-widest uppercase rounded-full">نشط الآن</span>
+<button class="text-on-surface-variant hover:text-white"><span class="material-symbols-outlined">more_horiz</span></button>
+</div>
+<h4 class="font-headline text-2xl font-black text-primary uppercase tracking-tighter">تمارين HIIT</h4>
+<div class="mt-2 space-y-1">
+<div class="flex items-center gap-2 text-on-surface-variant text-xs">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>07:00 صباحاً — 08:00 صباحاً</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant text-xs">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-primary-fixed">سارة كونيج</span>
+</div>
+</div>
+<div class="mt-8">
+<div class="flex justify-between items-end mb-2">
+<span class="font-label text-xs uppercase tracking-widest text-on-surface-variant">السعة الاستيعابية</span>
+<span class="font-headline text-lg font-bold">21 / 25</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary-container" style="width: 84%;"></div>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+<div class="flex items-center justify-between mb-6">
+<h5 class="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant">قائمة الحضور</h5>
+<button class="text-secondary text-[10px] font-bold uppercase tracking-widest hover:underline">+ إضافة سريعة</button>
+</div>
+<div class="space-y-6">
+<!-- Attendee -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="professional portrait of a young woman with athletic build and focused expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBE3wOj-sJz_zq8jObLDwe6aZkRaMr989Cai3-B1CWvcuTliVuvAwfGcDJNo2a5Xly7CkBA6D9R_BQGm5h291ednDM6rEpC44tPKfxlUPjALPDEBgDGEdE-wwlRwphnqaB-n90soxCqMuxfKVvpCOhm3tO7dfRTW_vwTfKSb7yki_T1IsI936-N_nDU-ehlVQ3XXYG9nEQIc0pOeyqD7jw3iDxyl2LJaQ9Y_YZOA9--ij1naK_yWWToGlyY9WN_5EM-7SlnMdpiUlHZ">
+</div>
+<div>
+<p class="font-headline text-sm font-bold uppercase tracking-tight">أليكس ريفيرا</p>
+<p class="text-[10px] text-on-surface-variant font-label uppercase">عضو منذ 2021</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="close-up portrait of a fit middle-aged man with sharp features and stubble in gym lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0lybkLDwRBh6gFcHwtkDNbxa7EQsTE3oNmENHi3jd0Uo8unCX7-fFihZ9H6wgken62TDzkOAne6FcLNdDByMYQMGnJBRT5hVzIBDgoV6xVQn3NDxmdy6dvUk0mVOvW2CDNDaTZxtSjIxmyzA2CL2UWJWZGU-xWQyyBJEzVPGaEFFzrner18zUy_kg_UjENfbbNr-CtktkQOLAFpFDLIDa_ewhgzLzmT4V-KcZO0Q8k7Zpx3FMJEkbbww_Cjt531EaND3HPmayMRQf">
+</div>
+<div>
+<p class="font-headline text-sm font-bold uppercase tracking-tight">جوردان سميث</p>
+<p class="text-[10px] text-on-surface-variant font-label uppercase">الفئة الاحترافية</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between group opacity-60">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover grayscale" data-alt="candid portrait of a woman in workout attire looking away from the camera in a moody gym setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCq--vNwMpr0jS3pR_jPD04L4MAr9ZZIWcQmSL1IoQ4MQMLDFsD3XfZgQbJxeKw5cr2E-iEaOyIn3zSF_tHGJaAxNchXY3wcBMEulW1TpblP4mDKpMxqrvyuL_xkRzt076O7wkmdJ_56ToIzxjKQZM2FcYDBofZHK4u2Q-4YVSlQVNrjhI0-tXdBofiJqE3uAubALv03NY1_KTOpPvkxxdse4KeJOEaleoQCwpfQ38uGr62q1MuKV55k7kRlLfoPJrN4pY5kdjjnhM">
+</div>
+<div>
+<p class="font-headline text-sm font-bold uppercase tracking-tight text-on-surface-variant">تايلور هايز</p>
+<p class="text-[10px] font-label uppercase">في انتظار الوصول</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-sm">radio_button_unchecked</span>
+</div>
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="headshot of a young male athlete with short hair and intense gaze, soft gym lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOpoXSrqujCFV4RE92E46g7adkDVyPi1lx783_iLp8uja23RzPMn1yQPYY8hA83SHqhKwWlM5kfuNjJQygm0mQ62l3qaXTLXuRzhz-nCRsTWA32RIFP6xobq5wL6xxqsHLD9eTyxNkz1UQvdlr77U57Tdd7Y9UX7JCVZl8ref_SYQ0H0OwRhCP_LjH4EyPcWFr9derlV2PGgs3vUAwh57MvrlQp5Atp46DxqaBhrc6dpe5Jq48KbDGkmlE5jqRj_ZxFg72Y0Bc5CdD">
+</div>
+<div>
+<p class="font-headline text-sm font-bold uppercase tracking-tight">مورغان تشن</p>
+<p class="text-[10px] text-on-surface-variant font-label uppercase">فئة النخبة</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="focused portrait of a woman with braided hair wearing athletic gear in a high-contrast environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3JSlphSbBf7ipr5tA2k24uCbP29a0a3J2i_jft6e7ht-Czm2tfMEXPBzYSKyzs_UizGHaeAm4EGfG1xq9E0OGrumO4j8QANuEgHLEtkbUWTzMRTjYkmVJU25mxS5LzHgKhpy0duv2lP4WdHJETCFDsuO1chZ0A8IFAL3pKElH-1LccDnnfo6uhesUrw6asRa_zTEVC8lFgs3Sd-jc7pXLMAi6g0uz4y1GXwX-hQZHAChKl1jyThIk8YkVwR86xjlC89c3u0G2md2Y">
+</div>
+<div>
+<p class="font-headline text-sm font-bold uppercase tracking-tight">رايلي بروكس</p>
+<p class="text-[10px] text-on-surface-variant font-label uppercase">عضو جديد</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+<div class="p-8 bg-surface-container-low/50">
+<button class="w-full py-4 border-2 border-primary-fixed-dim text-primary-fixed-dim font-black headline-font uppercase tracking-widest text-xs hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-all">
+                        تسجيل حضور جماعي
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+</body></html>

@@ -105,5 +105,11 @@ abstract final class KineticTokens {
   static const String stitchGymSettingsScreenIdAr =
       '9541b6e764dd436daa91336b0ce2263b';
 
+  /// FEAT-18 Class Manager EN / AR (supersedes Coming soon ids).
+  static const String stitchClassManagerScreenIdEn =
+      '40cc7e5d1f27417f9e6681c0fe14b180';
+  static const String stitchClassManagerScreenIdAr =
+      '3f356939493b4a79980687040e5e4fa2';
+
   static const String stitchProjectId = '13435235862240753621';
 }
