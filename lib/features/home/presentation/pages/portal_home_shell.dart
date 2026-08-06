@@ -16,6 +16,7 @@ import '../../../members/inject_members.dart' as members_di;
 import '../../../billing/presentation/screens/marketing_promotions_screen.dart';
 import '../../../gym_sku_settings/presentation/screens/gym_sku_settings_screen.dart';
 import '../../../staff_invite/presentation/screens/staff_management_screen.dart';
+import '../../../class_sessions/presentation/screens/class_manager_screen.dart';
 import '../widgets/access_scanner_focus_host.dart';
 import '../widgets/kinetic_coming_soon_empty.dart';
 import 'portal_shell_destinations.dart';
@@ -97,6 +98,9 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     final canManageSkuSettings = authState is AuthAuthenticated
         ? authState.profile.canManageSkuSettings
         : false;
+    final canManageClassSessions = authState is AuthAuthenticated
+        ? authState.profile.canManageClassSessions
+        : false;
     final tenantId = authState is AuthAuthenticated
         ? authState.profile.tenantId
         : '';
@@ -156,7 +160,13 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                         ),
                       ),
                       const _StaffDestination(),
-                      const ClassesComingSoonPage(),
+                      BlocProvider(
+                        create: (_) =>
+                            InjectionContainer.createClassSessionsCubit(),
+                        child: ClassManagerScreen(
+                          canWrite: canManageClassSessions,
+                        ),
+                      ),
                       BlocProvider(
                         create: (_) => InjectionContainer.createBillingCubit(),
                         child: MarketingPromotionsScreen(

@@ -86,6 +86,47 @@
     "coming_soon": {
       "title": "Classes — Coming Soon",
       "body": "Class schedules and booking will land in a later release. No schedule management in this install."
+    },
+    "manager": {
+      "title": "Weekly Schedule",
+      "today": "Today",
+      "time": "Time",
+      "schedule_new": "Schedule New",
+      "in_session": "In Session"
+    },
+    "form": {
+      "add_title": "Add New Session",
+      "edit_title": "Edit Session",
+      "subtitle": "Configure time slot & instructor",
+      "class_type": "Class Type",
+      "class_type_hint": "e.g. Power Yoga",
+      "instructor": "Instructor",
+      "instructor_hint": "Select Instructor",
+      "max_capacity": "Max Capacity",
+      "create": "Create Class"
+    },
+    "detail": {
+      "empty": "Select a session to view capacity and attendees.",
+      "active_now": "Active Now",
+      "capacity": "Capacity",
+      "attendee_list": "Attendee List",
+      "quick_add": "+ Quick Add",
+      "bulk_check_in": "Bulk Check-In",
+      "edit": "Edit session",
+      "soft_cancel": "Cancel session"
+    },
+    "read_only_hint": "Receptionist view — only Admins can create or edit sessions.",
+    "retry": "Retry",
+    "success": {
+      "created": "Session created.",
+      "updated": "Session updated.",
+      "cancelled": "Session cancelled."
+    },
+    "error": {
+      "not_configured": "Class sessions are not configured for this build.",
+      "forbidden": "Only Admins can manage class sessions.",
+      "invalid": "Check title, time range, and capacity.",
+      "unknown": "Could not manage class sessions."
     }
   },
   "reports": {

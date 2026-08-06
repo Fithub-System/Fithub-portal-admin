@@ -33,6 +33,9 @@ class EmployeeProfile extends Equatable {
   /// FEAT-10 AC-D / US-D — only Admin may mutate SKU via set_gym_sku_settings.
   bool get canManageSkuSettings => role == 'Admin';
 
+  /// FEAT-18 AC-B2 — only Admin may upsert/cancel class sessions.
+  bool get canManageClassSessions => role == 'Admin';
+
   @override
   List<Object?> get props => [id, tenantId, userId, name, role];
 }
