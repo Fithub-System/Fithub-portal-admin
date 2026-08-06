@@ -21,6 +21,18 @@ abstract final class KineticTokens {
   /// Stitch surface container for Live Occupancy card.
   static const Color surfaceContainerLow = Color(0xFF1C1B1B);
 
+  /// Stitch `surface-container-lowest` — footer stat tiles.
+  static const Color surfaceContainerLowest = Color(0xFF0E0E0E);
+
+  /// Stitch `surface-container-high` — Access Granted panel.
+  static const Color surfaceContainerHigh = Color(0xFF2A2A2A);
+
+  /// Stitch rail / header near `neutral-950`.
+  static const Color railSurface = Color(0xFF0A0A0A);
+
+  /// Stitch `on-primary-container` — Daily Yield text on lime.
+  static const Color onPrimaryContainer = Color(0xFF556D00);
+
   static const Color zincGray = Color(0xFF6E6E73);
   static const Color cyberBlue = Color(0xFF007BFF);
 
@@ -33,6 +45,12 @@ abstract final class KineticTokens {
   static const Color onSurface = Color(0xFFE5E2E1);
   static const Color neutralTrack = Color(0xFF262626);
   static const Color pureWhite = Color(0xFFFFFFFF);
+
+  /// Stitch `error` — urgent expiration tint.
+  static const Color stitchError = Color(0xFFFFB4AB);
+
+  /// Stitch SideNavBar width (`w-64`).
+  static const double railWidth = 256;
 
   static const double safeModeBannerHeight = 24;
 
@@ -57,14 +75,35 @@ abstract final class KineticTokens {
   static const String stitchStaffInviteScreenId =
       'dcc070ef2b1e45058b3e042ad70140e3';
 
-  /// FEAT-01 Access Scanner visual companion.
+  /// FEAT-13 Add New Member (Stitch G4) — EN / AR.
+  static const String stitchAddMemberScreenIdEn =
+      'cd59a129a24449478a5249ccb41635fb';
+  static const String stitchAddMemberScreenIdAr =
+      '89fe5d7afb8d4d4384d7e6498bcdd065';
+
+  /// FEAT-12 / Install I2 — Stitch G1 Access Scanner / Check-in Gate (EN).
   ///
-  /// Stitch MCP `list_screens` on project `13435235862240753621`
-  /// (verified 2026-07-21): **no screen titled Access Scanner** among 80
-  /// screens. Closest companion: Admin Overview Dashboard (Live Occupancy).
-  /// UI tokens remain FEAT-01 §3 + Kinetic Monolith (charcoal / lime grid).
+  /// Locked in `@specs/FEAT-12-ACCESS-SCANNER-HOME.md` §3 and
+  /// `@specs/STITCH-BRIEF-PACK-INSTALL-MVP.md` G1.
+  /// Entry: Home → Open scanner (not a rail tab).
   static const String stitchAccessScannerScreenId =
-      '216e0407184f4c39bd501ed436c1e88b';
+      '3629845f7f1e402697f46cf5575e86da';
+
+  /// FEAT-12 / Install I2 — Stitch G1 Access Scanner AR twin.
+  static const String stitchAccessScannerScreenIdAr =
+      'bec9356e2cb941798e66fa804ac78854';
+
+  /// FEAT-10 / Install I3 — Stitch G2 Gym Settings / SKU & Marketplace (EN).
+  ///
+  /// Locked in `@specs/FEAT-10-MARKETPLACE-BOUNDARY.md` §3.2 and
+  /// `@specs/STITCH-BRIEF-PACK-INSTALL-MVP.md` G2.
+  /// Entry: avatar menu / Reports nest — not a rail tab.
+  static const String stitchGymSettingsScreenId =
+      '6cb93d6100314ce8a5d9c1af92c97723';
+
+  /// FEAT-10 / Install I3 — Stitch G2 Gym Settings AR twin.
+  static const String stitchGymSettingsScreenIdAr =
+      '9541b6e764dd436daa91336b0ce2263b';
 
   static const String stitchProjectId = '13435235862240753621';
 }

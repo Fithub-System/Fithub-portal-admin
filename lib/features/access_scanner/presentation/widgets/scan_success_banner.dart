@@ -9,12 +9,31 @@ class ScanSuccessBanner extends StatelessWidget {
     super.key,
     required this.memberName,
     this.avatarUrl,
+    this.membershipStatus,
     required this.onDismiss,
   });
 
   final String memberName;
   final String? avatarUrl;
+  /// Cached FEAT-07 status; null → fallback Active badge (offline unknown).
+  final String? membershipStatus;
   final VoidCallback onDismiss;
+
+  String get _badgeLabel {
+    final status = membershipStatus?.toLowerCase();
+    switch (status) {
+      case 'active':
+        return 'access_scanner.success.active_badge'.tr();
+      case 'expired':
+        return 'access_scanner.success.expired_badge'.tr();
+      case 'paused':
+        return 'access_scanner.success.paused_badge'.tr();
+      case 'cancelled':
+        return 'access_scanner.success.cancelled_badge'.tr();
+      default:
+        return 'access_scanner.success.active_badge'.tr();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +88,7 @@ class ScanSuccessBanner extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            'access_scanner.success.active_badge'.tr(),
+                            _badgeLabel,
                             style: const TextStyle(
                               color: KineticTokens.pureWhite,
                               fontSize: 11,

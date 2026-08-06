@@ -1,0 +1,21 @@
+{
+  "fetchedAt": "2026-08-04T08:03:19Z",
+  "mcpPath": "HTTP JSON-RPC tools/call list_screens+get_screen via gcloud OAuth Bearer + X-Goog-User-Project fithub-503813 (get_screen requires name=projects/{id}/screens/{sid})",
+  "screenId": "c12b687f1538452ebaf8d0adb89a9489",
+  "title": "Web Admin Login Portal",
+  "width": "2560",
+  "height": "2048",
+  "deviceType": "DESKTOP",
+  "screenshotFile": "projects/13435235862240753621/files/ea05c5791165461588b8463342f26104",
+  "htmlFile": "projects/13435235862240753621/files/5af75ce61917421e9fd28f329d4a425f",
+  "arTwin": "0f33f7463ca543c7b85bcb8637249f65",
+  "ar": {
+    "screenId": "0f33f7463ca543c7b85bcb8637249f65",
+    "title": "Web Admin Login Portal (RTL)",
+    "width": "2560",
+    "height": "2048",
+    "deviceType": "DESKTOP",
+    "screenshotFile": "projects/13435235862240753621/files/2a6ca738eae947ec8e5ad1898e7d95aa",
+    "htmlFile": "projects/13435235862240753621/files/3912690363564687782"
+  }
+}

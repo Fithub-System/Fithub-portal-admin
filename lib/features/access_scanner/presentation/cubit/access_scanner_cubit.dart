@@ -157,6 +157,7 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
     final result = await _processQrScan(
       tenantId: _tenantId,
       rawPayload: trimmed,
+      online: _isOnline(),
     );
 
     if (isClosed) return;
@@ -171,6 +172,7 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
             memberName: result.memberName ?? '',
             avatarUrl: result.avatarUrl,
             occupancy: result.occupancy ?? 0,
+            membershipStatus: result.membershipStatus,
           ),
         ),
       );

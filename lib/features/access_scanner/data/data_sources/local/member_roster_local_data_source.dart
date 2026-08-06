@@ -10,6 +10,8 @@ abstract class MemberRosterLocalDataSource {
   });
 
   Future<int> countCachedMembers({required String tenantId});
+
+  Future<List<MemberRosterEntry>> listCachedMembers({required String tenantId});
 }
 
 class MemberRosterDriftLocalDataSource implements MemberRosterLocalDataSource {
@@ -32,6 +34,9 @@ class MemberRosterDriftLocalDataSource implements MemberRosterLocalDataSource {
             powerScore: Value(member.powerScore),
             cryptoSalt: member.cryptoSalt,
             createdAt: member.createdAt,
+            membershipStatus: Value(member.membershipStatus),
+            membershipPlanName: Value(member.membershipPlanName),
+            membershipEndsAt: Value(member.membershipEndsAt),
           ),
         )
         .toList(growable: false);
@@ -42,5 +47,27 @@ class MemberRosterDriftLocalDataSource implements MemberRosterLocalDataSource {
   @override
   Future<int> countCachedMembers({required String tenantId}) {
     return _database.countMembersForTenant(tenantId);
+  }
+
+  @override
+  Future<List<MemberRosterEntry>> listCachedMembers({
+    required String tenantId,
+  }) async {
+    final rows = await _database.listMembersForTenant(tenantId);
+    return rows
+        .map(
+          (row) => MemberRosterEntry(
+            id: row.id,
+            fullName: row.fullName,
+            avatarUrl: row.avatarUrl,
+            powerScore: row.powerScore,
+            cryptoSalt: row.cryptoSalt,
+            createdAt: row.createdAt,
+            membershipStatus: row.membershipStatus,
+            membershipPlanName: row.membershipPlanName,
+            membershipEndsAt: row.membershipEndsAt,
+          ),
+        )
+        .toList(growable: false);
   }
 }

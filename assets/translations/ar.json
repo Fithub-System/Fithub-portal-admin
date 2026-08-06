@@ -4,23 +4,23 @@
   },
   "auth": {
     "login": {
-      "brand": "جيم كونيكت",
-      "subtitle": "تسجيل دخول مركز القيادة",
-      "credential_label": "معرّف الاعتماد",
+      "brand": "GYM CONNECT",
+      "subtitle": "مركز قيادة تسجيل الدخول",
+      "credential_label": "معرف الاعتماد",
       "credential_hint": "البريد الإلكتروني أو اسم المستخدم",
-      "credential_required": "معرّف الاعتماد مطلوب",
+      "credential_required": "معرف الاعتماد مطلوب",
       "access_key_label": "مفتاح الوصول",
       "access_key_required": "مفتاح الوصول مطلوب",
       "recover_key": "استعادة المفتاح",
       "recover_key_unavailable": "استعادة المفتاح غير متاحة في هذا الإصدار.",
       "cta_initialize_session": "بدء الجلسة",
-      "or_social": "أو عبر الحسابات الاجتماعية",
-      "continue_google": "المتابعة مع Google",
-      "continue_apple": "المتابعة مع Apple",
+      "or_social": "أو عبر الرابط الاجتماعي",
+      "continue_google": "المتابعة باستخدام Google",
+      "continue_apple": "المتابعة باستخدام Apple",
       "social_out_of_scope": "تسجيل الدخول الاجتماعي خارج نطاق المرحلة 1.1.",
       "privacy": "بروتوكول الخصوصية",
       "terms": "شروط الوصول",
-      "copyright": "© 2024 أنظمة كينيتك للأداء. جميع الحقوق محفوظة.",
+      "copyright": "© 2024 Kinetic Performance Systems. جميع الحقوق محفوظة.",
       "locale_en": "EN",
       "locale_ar": "AR"
     },
@@ -38,17 +38,67 @@
       "welcome": "مرحبًا، {name}",
       "admin_fallback": "المسؤول",
       "sign_out": "تسجيل الخروج",
+      "account_menu": "قائمة الحساب",
+      "locale_en": "English",
+      "locale_ar": "العربية",
+      "gym_settings": "إعدادات الصالة",
       "command_center": "مركز القيادة",
+      "admin_console": "لوحة المسؤول",
+      "brand": "KINETIC MONOLITH",
+      "brand_subtitle": "إدارة الأداء للنخبة",
+      "search_hint": "ابحث عن الرياضيين...",
+      "notifications": "الإشعارات",
+      "start_workout": "ابدأ التمرين",
       "role": "الدور: {role}",
       "tenant": "المستأجر: {tenant}",
       "em_dash": "—"
+    },
+    "coming_soon": {
+      "stitch_ref": "Stitch {id}"
+    },
+    "scanner": {
+      "panel_title": "بوابة تسجيل الدخول",
+      "panel_subtitle": "افتح ماسح الدخول لتسجيل حضور الأعضاء عبر QR.",
+      "open_cta": "فتح الماسح",
+      "close": "إغلاق الماسح",
+      "occupancy_chip": "{current} / {capacity}"
     }
   },
   "nav": {
-    "dashboard": "لوحة التحكم",
+    "home": "الرئيسية",
+    "dashboard": "الرئيسية",
     "scan": "مسح",
+    "members": "الأعضاء",
+    "staff": "الموظفون",
+    "classes": "الحصص",
+    "marketing": "التسويق",
+    "reports": "التقارير",
     "account": "الحساب",
     "coming_soon": "قريبًا في مرحلة لاحقة."
+  },
+  "staff": {
+    "shell": {
+      "title": "إدارة الموظفين",
+      "subtitle": "ادعُ موظفي الاستقبال والمدربين لصالتك."
+    }
+  },
+  "classes": {
+    "coming_soon": {
+      "title": "الحصص — قريبًا",
+      "body": "جداول الحصص والحجز ستتوفر في إصدار لاحق. لا إدارة جداول في هذا التثبيت."
+    }
+  },
+  "reports": {
+    "coming_soon": {
+      "title": "التقارير — قريبًا",
+      "body": "التحليلات والتقارير غير متاحة في هذا التثبيت.",
+      "hint": "الحضور والإيرادات قريبًا"
+    },
+    "settings_nest": {
+      "heading": "الإعدادات",
+      "gym_settings": "إعدادات الصالة",
+      "gym_settings_body": "وضع SKU والاشتراك في Marketplace لهذه الصالة."
+    }
   },
   "connectivity": {
     "safe_mode": {
@@ -81,16 +131,66 @@
       "timeline_peak": "ساعة الذروة: 06:00 م",
       "timeline_end": "11:00 م"
     },
+    "yield": {
+      "title": "العائد\nاليومي",
+      "subtitle": "تدفق إيرادات اليوم",
+      "delta_placeholder": "+14.2% vs yesterday"
+    },
+    "expiring": {
+      "title": "عضويات تنتهي قريبًا",
+      "subtitle": "يلزم اتخاذ إجراء خلال 48 ساعة",
+      "renew_all": "تجديد الكل",
+      "col_member": "العضو",
+      "col_plan": "نوع الخطة",
+      "col_expiration": "الانتهاء",
+      "empty": "لا عضويات تنتهي خلال 48 ساعة."
+    },
+    "access_gate": {
+      "title": "بوابة الدخول 1",
+      "waiting": "بانتظار المسح...",
+      "status_label": "الحالة",
+      "ready": "جاهز",
+      "active_member": "عضو نشط",
+      "granted": "تم منح الدخول",
+      "member_id": "المعرّف: {id}"
+    },
+    "stats": {
+      "total_active": "النشطون إجماليًا",
+      "classes_today": "حصص اليوم",
+      "guest_passes": "تصاريح الضيوف",
+      "incidents": "بلاغات الحوادث"
+    },
     "scan": {
       "approved": "مقبول: {name}",
       "rejected": "مرفوض: {reason}"
     }
   },
   "access_scanner": {
-    "title": "ماسح الدخول",
+    "title": "بوابة تسجيل الدخول",
     "subtitle": "وجّه الكاميرا نحو رمز QR الخاص بالعضو",
+    "gate": {
+      "brand": "KINETIC MONOLITH",
+      "eyebrow": "وحدة الإدارة // بوابة الوصول الآمن",
+      "ready_waiting": "Ready - Waiting for Scan",
+      "confirm": "تأكيد تسجيل الدخول",
+      "access_granted": "تم منح الدخول",
+      "system_id": "معرّف النظام: {id}",
+      "encryption": "التشفير: {algo}",
+      "peak_intensity": "ذروة الشدة",
+      "avg_dwell": "متوسط البقاء",
+      "guest_passes": "تصاريح الضيوف",
+      "live_occupancy": "الإشغال المباشر",
+      "occupancy_limit": "/ {limit} الحد",
+      "power_score": "درجة القوة",
+      "last_check_in": "آخر تسجيل دخول",
+      "total_visits": "إجمالي الزيارات",
+      "system_log": "سجل النظام"
+    },
     "success": {
-      "active_badge": "نشط"
+      "active_badge": "نشط",
+      "expired_badge": "منتهية",
+      "paused_badge": "موقوفة",
+      "cancelled_badge": "ملغاة"
     },
     "scan": {
       "rejected": "تم رفض المسح: {reason}"
@@ -118,6 +218,7 @@
   "staff_invite": {
     "title": "إنشاء ملف الموظف",
     "subtitle": "إضافة موظفين جدد وإدارة التشغيل.",
+    "active_shifts": "الورديات النشطة",
     "identity_section": "الهوية وبيانات الدخول",
     "protocol_section": "بروتوكول الوصول",
     "cta": "تهيئة الملف",
@@ -128,7 +229,10 @@
       "name_required": "اسم العرض مطلوب",
       "email_label": "البريد المهني",
       "email_hint": "j.wick@kinetic.com",
-      "email_required": "البريد الإلكتروني مطلوب"
+      "email_required": "البريد الإلكتروني مطلوب",
+      "emergency_label": "جهة اتصال للطوارئ",
+      "emergency_hint": "+1 (555) 000-0000",
+      "specialization_label": "التخصص"
     },
     "role": {
       "admin": {
@@ -140,15 +244,248 @@
         "description": "إدارة الجلسات"
       },
       "receptionist": {
-        "title": "استقبال",
+        "title": "الاستقبال",
         "description": "تسجيل الحضور ونقاط البيع"
       }
+    },
+    "shift_log": {
+      "title": "سجل الورديات: بث مباشر",
+      "export": "تصدير CSV",
+      "filter": "تصفية الفترة",
+      "col": {
+        "member": "الموظف",
+        "role": "الدور",
+        "clock_in": "تسجيل الدخول",
+        "clock_out": "تسجيل الخروج",
+        "hours": "إجمالي الساعات",
+        "status": "الحالة"
+      }
+    },
+    "audit": {
+      "title": "إجراءات التدقيق الأخيرة"
+    },
+    "security": {
+      "title": "الأمان\nوالامتثال",
+      "body": "تُسجَّل جميع التغييرات الإدارية وتُشفَّر وفق معايير ISO-27001.",
+      "badge": "النظام آمن"
     },
     "error": {
       "forbidden": "دعوة الموظفين للمسؤول فقط.",
       "invalid_body": "البريد والدور والاسم مطلوبة.",
       "not_configured": "دعوة الموظفين غير مُعدّة لهذا البناء.",
       "unknown": "فشلت دعوة الموظف."
+    }
+  },
+  "memberships": {
+    "title": "خطط العضوية",
+    "subtitle": "عرّف الخطط وعيّن عضويات نشطة للرياضيين المسجّلين.",
+    "plans_heading": "الخطط",
+    "empty_plans": "لا توجد خطط بعد — أنشئ أول خطة لهذه الصالة.",
+    "read_only_hint": "عرض الاستقبال — إنشاء وتعيين العضويات للمسؤول فقط.",
+    "retry": "إعادة المحاولة",
+    "create_title": "إنشاء خطة",
+    "assign_title": "تعيين عضوية",
+    "plan_meta": "{days} يوم · {price} {currency}",
+    "status": {
+      "active": "نشطة",
+      "inactive": "غير نشطة"
+    },
+    "cta": {
+      "create_plan": "إنشاء خطة",
+      "assign": "تعيين عضوية",
+      "save_plan": "حفظ الخطة",
+      "confirm_assign": "تأكيد التعيين",
+      "deactivate": "إلغاء التفعيل"
+    },
+    "field": {
+      "name": "اسم الخطة",
+      "description": "الوصف (اختياري)",
+      "duration_days": "المدة (أيام)",
+      "price_cents": "السعر (سنتات)",
+      "plan": "الخطة",
+      "athlete": "الرياضي"
+    },
+    "validation": {
+      "duration": "يجب أن تكون المدة يومًا واحدًا على الأقل",
+      "price": "يجب أن يكون السعر 0 أو أكثر"
+    },
+    "success": {
+      "plan_created": "تم إنشاء الخطة.",
+      "plan_deactivated": "تم إلغاء تفعيل الخطة.",
+      "assigned": "تم تعيين العضوية."
+    },
+    "error": {
+      "not_configured": "العضويات غير مُعدّة لهذا البناء.",
+      "forbidden": "إدارة العضويات للمسؤول فقط.",
+      "invalid": "مدخلات عضوية غير صالحة.",
+      "unknown": "فشل طلب العضويات.",
+      "assign_prereq": "يلزم خطة نشطة ورياضي مسجّل للتعيين."
+    }
+  },
+  
+  "members": {
+    "title": "القائمة النشطة",
+    "subtitle": "إدارة الرياضيين عاليي الأداء والأعضاء النخبة. حافظ على سلامة بيانات التتبع الحركي.",
+    "tab": {
+      "roster": "القائمة",
+      "plans": "الخطط"
+    },
+    "column": {
+      "name": "اسم العضو",
+      "plan_type": "نوع الخطة",
+      "xp_level": "مستوى XP",
+      "status": "الحالة",
+      "actions": "إجراءات"
+    },
+    "plan_type": {
+      "none": "قياسي"
+    },
+    "plan_chip": {
+      "elite": "نخبة",
+      "standard": "قياسي",
+      "basic": "أساسي"
+    },
+    "stats": {
+      "elite_tier": "طبقة النخبة",
+      "avg_xp": "متوسط مستوى XP",
+      "active_sessions": "جلسات نشطة",
+      "system_health": "صحة النظام",
+      "system_health_value": "ممتاز"
+    },
+    "cta": {
+      "filter_type": "تصفية النوع"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من",
+      "members": "أعضاء"
+    },
+    "footer": {
+      "sync_active": "المزامنة نشطة",
+      "api_version": "API V2.4",
+      "copyright": "© 2024 أنظمة كينيتك مونوليث. جميع الحقوق محفوظة."
+    },
+    "status": {
+      "none": "لا عضوية"
+    },
+    "action": {
+      "freeze": "تجميد",
+      "renew": "تجديد",
+      "full_evaluation": "تقييم كامل"
+    },
+    "empty_roster": "لا أعضاء مخزّنين — زامِن القائمة من تبويب المسح أو سجّل حضورًا أونلاين.",
+    "error": {
+      "roster": "تعذّر تحميل القائمة — عرض عيّنة Stitch."
+    }
+  },
+  "add_member": {
+    "title": "إضافة عضو جديد",
+    "subtitle": "اربط رياضيًا موجودًا بهذه الصالة، مع إمكانية تعيين خطة اختياريًا.",
+    "tab": {
+      "link": "ربط موجود",
+      "invite": "دعوة"
+    },
+    "link_heading": "البحث عن رياضي",
+    "match_heading": "الرياضي المطابق",
+    "invite_heading": "إرسال دعوة",
+    "invite_body": "إنشاء مستخدم Auth جديد من البوابة غير متاح في هذا التثبيت. استخدم ربط موجود للرياضيين الذين لديهم حساب، أو أرسل دعوة لاحقًا.",
+    "cta": {
+      "add_new": "إضافة عضو جديد",
+      "find": "البحث عن رياضي",
+      "enroll": "تسجيل العضو",
+      "send_invite_later": "إرسال الدعوة لاحقًا"
+    },
+    "field": {
+      "email": "بريد الرياضي",
+      "email_hint": "athlete@example.com",
+      "plan_optional": "خطة العضوية (اختياري)"
+    },
+    "plan": {
+      "none": "بدون خطة الآن"
+    },
+    "validation": {
+      "email": "أدخل بريدًا إلكترونيًا صالحًا للرياضي."
+    },
+    "success": {
+      "enrolled": "تم تسجيل العضو.",
+      "already_enrolled": "الرياضي مسجّل مسبقًا في هذه الصالة."
+    },
+    "error": {
+      "not_configured": "إضافة عضو غير مُعدّة لهذا البناء.",
+      "forbidden": "تسجيل الأعضاء للمسؤول فقط.",
+      "not_found": "لا يوجد رياضي بهذا البريد.",
+      "invalid": "إدخال تسجيل غير صالح.",
+      "unknown": "تعذّر تسجيل العضو."
+    }
+  },
+  "billing": {
+    "marketing_title": "التسويق والعروض",
+    "marketing_subtitle": "الفوترة والعروض لهذا النادي.",
+    "section_heading": "الفوترة",
+    "subtitle": "أحدث رسوم العضوية لمستأجرك.",
+    "empty": "لا توجد رسوم بعد — عيّن عضوية لإنشاء أول رسم.",
+    "read_only_hint": "عرض الاستقبال — تحديث حالة الرسوم للمسؤول فقط.",
+    "retry": "إعادة المحاولة",
+    "charge_meta": "{plan} · {price} {currency} · الاستحقاق {due}",
+    "status": {
+      "pending": "قيد الانتظار",
+      "paid": "مدفوع",
+      "failed": "فشل",
+      "waived": "معفى"
+    },
+    "cta": {
+      "mark_paid": "تعليم كمدفوع",
+      "mark_waived": "تعليم كمعفى",
+      "mark_failed": "تعليم كفاشل",
+      "apply_freeze": "تطبيق تجميد الفوترة"
+    },
+    "success": {
+      "marked_paid": "تم تعليم الرسم كمدفوع.",
+      "marked_waived": "تم تعليم الرسم كمعفى.",
+      "marked_failed": "تم تعليم الرسم كفاشل.",
+      "updated": "تم تحديث الرسم.",
+      "freeze_applied": "تم تطبيق تجميد الفوترة — تم إيقاف {count} عضوية."
+    },
+    "error": {
+      "not_configured": "الفوترة غير مُعدّة لهذا البناء.",
+      "forbidden": "تحديث رسوم الفوترة للمسؤول فقط.",
+      "invalid": "تحديث فوترة غير صالح.",
+      "unknown": "فشل طلب الفوترة."
+    }
+  },
+  "gym_settings": {
+    "title": "إعدادات الصالة",
+    "subtitle": "وضع SKU وحدود Marketplace لهذه الصالة.",
+    "close": "إغلاق الإعدادات",
+    "retry": "إعادة المحاولة",
+    "read_only_hint": "عرض الاستقبال — تغيير إعدادات SKU للمسؤول فقط.",
+    "sku_heading": "وضع SKU",
+    "marketplace_heading": "MARKETPLACE",
+    "marketplace_hint": "السحابة الخاصة لا تُدرج هذه الصالة أبدًا. الشبكة يمكنها الاشتراك.",
+    "marketplace_toggle": "الاشتراك في Marketplace",
+    "marketplace_network_note": "مسموح في وضع الشبكة.",
+    "marketplace_private_note": "مُعطّل إجباريًا للسحابة الخاصة.",
+    "sku": {
+      "private_cloud": {
+        "title": "سحابة خاصة",
+        "body": "عزل المستأجر — بدون إدراج Marketplace عبر الصالات."
+      },
+      "network": {
+        "title": "شبكة",
+        "body": "يمكن الاشتراك في Marketplace عند الجاهزية."
+      }
+    },
+    "cta": {
+      "save": "حفظ الإعدادات"
+    },
+    "success": {
+      "saved": "تم حفظ إعدادات SKU للصالة."
+    },
+    "error": {
+      "not_configured": "إعدادات الصالة غير مُعدّة لهذا البناء.",
+      "forbidden": "تغيير إعدادات SKU للمسؤول فقط.",
+      "invalid": "إعدادات SKU غير صالحة.",
+      "unknown": "تعذّر تحديث إعدادات الصالة."
     }
   },
   "router": {

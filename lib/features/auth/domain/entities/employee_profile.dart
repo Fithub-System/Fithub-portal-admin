@@ -21,6 +21,18 @@ class EmployeeProfile extends Equatable {
   /// FEAT-05 AC-B4 — only Admin may invite staff (UI gate; Backend enforces).
   bool get canInviteStaff => role == 'Admin';
 
+  /// FEAT-07 AC-A3 / AC-B4 — only Admin may create/assign memberships.
+  bool get canManageMemberships => role == 'Admin';
+
+  /// FEAT-13 AC-B4 — only Admin may enroll members (Receptionist denied).
+  bool get canEnrollMembers => role == 'Admin';
+
+  /// FEAT-08 AC-B1 — only Admin may update charge status / apply freeze.
+  bool get canManageBilling => role == 'Admin';
+
+  /// FEAT-10 AC-D / US-D — only Admin may mutate SKU via set_gym_sku_settings.
+  bool get canManageSkuSettings => role == 'Admin';
+
   @override
   List<Object?> get props => [id, tenantId, userId, name, role];
 }

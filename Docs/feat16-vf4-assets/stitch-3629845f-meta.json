@@ -1,0 +1,21 @@
+{
+  "fetchedAt": "2026-08-03T21:00:18Z",
+  "mcpPath": "HTTP JSON-RPC tools/call list_screens+get_screen via gcloud OAuth Bearer + X-Goog-User-Project fithub-503813",
+  "screenId": "3629845f7f1e402697f46cf5575e86da",
+  "title": "Access Scanner / Check-in Gate",
+  "width": "2560",
+  "height": "2096",
+  "deviceType": "DESKTOP",
+  "screenshotFile": "projects/13435235862240753621/files/cdba5bfccace467289d3ab832a5bbfe3",
+  "htmlFile": "projects/13435235862240753621/files/6e83d2629ccb428294fb1397c0f6418b",
+  "arTwin": "bec9356e2cb941798e66fa804ac78854",
+  "ar": {
+    "screenId": "bec9356e2cb941798e66fa804ac78854",
+    "title": "Access Scanner / Check-in Gate (Arabic RTL)",
+    "width": "2560",
+    "height": "2112",
+    "deviceType": "DESKTOP",
+    "screenshotFile": "projects/13435235862240753621/files/4f561561f2584ca1b515c3228c76d15b",
+    "htmlFile": "projects/13435235862240753621/files/8f3e05004362454381cfacb7fec263bc"
+  }
+}

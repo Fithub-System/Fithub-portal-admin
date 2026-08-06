@@ -25,10 +25,10 @@ void main() {
             AuthBloc(authRepository: repository)..add(const AuthStarted()),
         child: const LoginPage(),
       ),
-      waitFor: find.text('Gym Connect'),
+      waitFor: find.text('GYM CONNECT'),
     );
 
-    expect(find.text('Gym Connect'), findsOneWidget);
+    expect(find.text('GYM CONNECT'), findsOneWidget);
     expect(find.text('COMMAND CENTER LOGIN'), findsOneWidget);
     expect(find.text('INITIALIZE SESSION'), findsOneWidget);
     expect(find.text('EN'), findsOneWidget);
@@ -50,10 +50,10 @@ void main() {
         child: const LoginPage(),
       ),
       locale: AppLocales.ar,
-      waitFor: find.text('جيم كونيكت'),
+      waitFor: find.text('بدء الجلسة'),
     );
 
-    expect(find.text('جيم كونيكت'), findsOneWidget);
+    expect(find.text('GYM CONNECT'), findsOneWidget);
     expect(find.text('بدء الجلسة'), findsOneWidget);
     expect(find.text('EN'), findsOneWidget);
     expect(find.text('AR'), findsOneWidget);

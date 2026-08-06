@@ -28,6 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Camera access is required to scan member QR codes for gym check-in.</string>
+	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
 </plist>
