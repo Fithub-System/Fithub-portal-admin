@@ -31,11 +31,14 @@ import 'package:fithub_portal_admin/features/add_member/inject_add_member.dart'
     as add_member_di;
 import 'package:fithub_portal_admin/features/gym_sku_settings/inject_gym_sku_settings.dart'
     as gym_sku_settings_di;
+import 'package:fithub_portal_admin/features/class_sessions/inject_class_sessions.dart'
+    as class_sessions_di;
 import 'package:fithub_portal_admin/features/staff_invite/presentation/bloc/staff_invite_bloc.dart';
 import 'package:fithub_portal_admin/features/memberships/presentation/cubit/memberships_cubit.dart';
 import 'package:fithub_portal_admin/features/billing/presentation/cubit/billing_cubit.dart';
 import 'package:fithub_portal_admin/features/add_member/presentation/bloc/add_member_bloc.dart';
 import 'package:fithub_portal_admin/features/gym_sku_settings/presentation/bloc/gym_sku_settings_bloc.dart';
+import 'package:fithub_portal_admin/features/class_sessions/presentation/cubit/class_sessions_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -59,6 +62,7 @@ class InjectionContainer {
     members_di.registerMembersDependencies(getIt);
     add_member_di.registerAddMemberDependencies(getIt);
     gym_sku_settings_di.registerGymSkuSettingsDependencies(getIt);
+    class_sessions_di.registerClassSessionsDependencies(getIt);
 
     if (!getIt.isRegistered<ScanRepository>()) {
       getIt.registerLazySingleton<ScanRepository>(
@@ -77,6 +81,9 @@ class InjectionContainer {
 
   static GymSkuSettingsBloc createGymSkuSettingsBloc() =>
       getIt<GymSkuSettingsBloc>();
+
+  static ClassSessionsCubit createClassSessionsCubit() =>
+      getIt<ClassSessionsCubit>();
 
   static GetIt get locator => getIt;
 
