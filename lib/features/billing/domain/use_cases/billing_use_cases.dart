@@ -1,3 +1,5 @@
+import '../../../../core/network/cloud_mutation_guard.dart';
+import '../billing_failure.dart';
 import '../entities/membership_charge.dart';
 import '../repositories/billing_repository.dart';
 
@@ -11,20 +13,38 @@ class ListMembershipChargesUseCase {
 }
 
 class UpdateMembershipChargeStatusUseCase {
-  const UpdateMembershipChargeStatusUseCase(this._repository);
+  UpdateMembershipChargeStatusUseCase(
+    this._repository, {
+    required CloudMutationGuard cloudGuard,
+  }) : _cloudGuard = cloudGuard;
+
   final BillingRepository _repository;
+  final CloudMutationGuard _cloudGuard;
 
   Future<MembershipCharge> call({
     required String chargeId,
     required MembershipChargeStatus status,
   }) {
+    if (!_cloudGuard.isOnline) {
+      throw const BillingOfflineFailure();
+    }
     return _repository.updateChargeStatus(chargeId: chargeId, status: status);
   }
 }
 
 class ApplyBillingFreezeUseCase {
-  const ApplyBillingFreezeUseCase(this._repository);
-  final BillingRepository _repository;
+  ApplyBillingFreezeUseCase(
+    this._repository, {
+    required CloudMutationGuard cloudGuard,
+  }) : _cloudGuard = cloudGuard;
 
-  Future<int> call() => _repository.applyBillingFreeze();
+  final BillingRepository _repository;
+  final CloudMutationGuard _cloudGuard;
+
+  Future<int> call() {
+    if (!_cloudGuard.isOnline) {
+      throw const BillingOfflineFailure();
+    }
+    return _repository.applyBillingFreeze();
+  }
 }

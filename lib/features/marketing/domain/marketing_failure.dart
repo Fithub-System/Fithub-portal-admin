@@ -25,3 +25,8 @@ final class MarketingValidationFailure extends MarketingFailure {
 final class MarketingUnknownFailure extends MarketingFailure {
   const MarketingUnknownFailure() : super('marketing.error.unknown');
 }
+
+/// FEAT-26 — campaign / promo upserts require live cloud.
+final class MarketingOfflineFailure extends MarketingFailure {
+  const MarketingOfflineFailure() : super('marketing.error.offline');
+}

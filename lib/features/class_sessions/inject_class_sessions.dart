@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/class_sessions/data/data_sources/remote/class_sessions_remote_data_source.dart';
 import 'package:fithub_portal_admin/features/class_sessions/data/repositories/class_sessions_repository_impl.dart';
 import 'package:fithub_portal_admin/features/class_sessions/domain/repositories/class_sessions_repository.dart';
@@ -27,7 +28,12 @@ void registerClassSessionsDependencies(GetIt getIt) {
     getIt.registerLazySingleton(() => ListClassCoachesUseCase(getIt()));
   }
   if (!getIt.isRegistered<UpsertClassSessionUseCase>()) {
-    getIt.registerLazySingleton(() => UpsertClassSessionUseCase(getIt()));
+    getIt.registerLazySingleton(
+      () => UpsertClassSessionUseCase(
+        getIt(),
+        cloudGuard: getIt<CloudMutationGuard>(),
+      ),
+    );
   }
 
   if (!getIt.isRegistered<ClassSessionsCubit>()) {

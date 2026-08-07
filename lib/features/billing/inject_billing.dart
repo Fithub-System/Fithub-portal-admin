@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/auth/domain/repositories/auth_repository.dart';
 import 'package:fithub_portal_admin/features/billing/data/data_sources/remote/billing_remote_data_source.dart';
 import 'package:fithub_portal_admin/features/billing/data/repositories/billing_repository_impl.dart';
@@ -35,11 +36,19 @@ void registerBillingDependencies(GetIt getIt) {
   }
   if (!getIt.isRegistered<UpdateMembershipChargeStatusUseCase>()) {
     getIt.registerLazySingleton(
-      () => UpdateMembershipChargeStatusUseCase(getIt()),
+      () => UpdateMembershipChargeStatusUseCase(
+        getIt(),
+        cloudGuard: getIt<CloudMutationGuard>(),
+      ),
     );
   }
   if (!getIt.isRegistered<ApplyBillingFreezeUseCase>()) {
-    getIt.registerLazySingleton(() => ApplyBillingFreezeUseCase(getIt()));
+    getIt.registerLazySingleton(
+      () => ApplyBillingFreezeUseCase(
+        getIt(),
+        cloudGuard: getIt<CloudMutationGuard>(),
+      ),
+    );
   }
 
   if (!getIt.isRegistered<BillingCubit>()) {

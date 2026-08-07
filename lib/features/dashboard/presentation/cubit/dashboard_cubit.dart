@@ -54,19 +54,24 @@ class DashboardCubit extends Cubit<DashboardState> {
 
     if (_isOnline()) {
       await _attachRemote();
+    } else {
+      // FEAT-26 — surface stale/offline occupancy indicator while SafeMode.
+      await loadFromCache();
     }
   }
 
   /// Prefer Drift [GymsOccupancyLocalDataSource] (SafeMode / offline).
   Future<void> loadFromCache() async {
     final gym = await _local.readCached(_tenantId);
+    final offline = !_isOnline();
     emit(
       state.copyWith(
         currentOccupancy: gym?.currentOccupancy ?? state.currentOccupancy,
         capacityLimit: gym?.capacityLimit ?? state.capacityLimit,
         gymName: gym?.name ?? state.gymName,
         source: OccupancySource.cache,
-        clearStatus: true,
+        statusMessageKey: offline ? 'dashboard.status.offline' : null,
+        clearStatus: !offline,
       ),
     );
   }

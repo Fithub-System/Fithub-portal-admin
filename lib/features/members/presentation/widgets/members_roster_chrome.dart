@@ -139,7 +139,10 @@ class _PageChrome extends StatelessWidget {
 
 /// Sync Active / API V2.4 / copyright footer strip.
 class MembersSyncFooter extends StatelessWidget {
-  const MembersSyncFooter({super.key});
+  const MembersSyncFooter({super.key, this.offline = false});
+
+  /// FEAT-26 — when true, show offline/stale footer label (no layout chrome change).
+  final bool offline;
 
   @override
   Widget build(BuildContext context) {
@@ -150,8 +153,12 @@ class MembersSyncFooter extends StatelessWidget {
         child: Row(
           children: [
             _DotLabel(
-              color: KineticTokens.primaryContainer,
-              label: 'members.footer.sync_active'.tr(),
+              color: offline
+                  ? KineticTokens.zincGray
+                  : KineticTokens.primaryContainer,
+              label: offline
+                  ? 'members.footer.sync_offline'.tr()
+                  : 'members.footer.sync_active'.tr(),
             ),
             const SizedBox(width: 32),
             _DotLabel(

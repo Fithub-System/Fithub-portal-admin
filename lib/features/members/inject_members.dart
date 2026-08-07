@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 
+import '../../core/network/connectivity_service.dart';
 import '../access_scanner/domain/repositories/member_roster_repository.dart';
 import '../access_scanner/domain/use_cases/sync_member_roster_use_case.dart';
 import 'domain/use_cases/list_cached_member_roster_use_case.dart';
@@ -24,5 +25,8 @@ MemberRosterCubit createMemberRosterCubit({
         ? getIt<SyncMemberRosterUseCase>()
         : null,
     tenantId: tenantId,
+    isOnline: getIt.isRegistered<ConnectivityService>()
+        ? () => getIt<ConnectivityService>().isOnline
+        : null,
   );
 }

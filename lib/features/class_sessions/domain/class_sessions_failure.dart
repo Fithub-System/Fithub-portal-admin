@@ -25,3 +25,8 @@ final class ClassSessionsValidationFailure extends ClassSessionsFailure {
 final class ClassSessionsUnknownFailure extends ClassSessionsFailure {
   const ClassSessionsUnknownFailure() : super('classes.error.unknown');
 }
+
+/// FEAT-26 — class upsert / cancel require live cloud.
+final class ClassSessionsOfflineFailure extends ClassSessionsFailure {
+  const ClassSessionsOfflineFailure() : super('classes.error.offline');
+}

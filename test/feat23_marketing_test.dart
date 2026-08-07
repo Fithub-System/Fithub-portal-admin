@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
 import 'package:fithub_portal_admin/features/billing/presentation/screens/marketing_promotions_screen.dart';
 import 'package:fithub_portal_admin/features/home/presentation/pages/portal_shell_destinations.dart';
@@ -36,8 +37,8 @@ void main() {
     return MarketingBloc(
       listCampaigns: ListMarketingCampaignsUseCase(marketingRepo),
       listPromoCodes: ListPromoCodesUseCase(marketingRepo),
-      upsertCampaign: UpsertMarketingCampaignUseCase(marketingRepo),
-      upsertPromoCode: UpsertPromoCodeUseCase(marketingRepo),
+      upsertCampaign: UpsertMarketingCampaignUseCase(marketingRepo, cloudGuard: CloudMutationGuard(isOnline: () => true)),
+      upsertPromoCode: UpsertPromoCodeUseCase(marketingRepo, cloudGuard: CloudMutationGuard(isOnline: () => true)),
     );
   }
 
