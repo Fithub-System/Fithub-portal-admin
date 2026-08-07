@@ -36,6 +36,9 @@ class EmployeeProfile extends Equatable {
   /// FEAT-18 AC-B2 — only Admin may upsert/cancel class sessions.
   bool get canManageClassSessions => role == 'Admin';
 
+  /// FEAT-23 AC-B2 / AC-C — only Admin may deploy campaigns / upsert promos.
+  bool get canManageMarketing => role == 'Admin';
+
   @override
   List<Object?> get props => [id, tenantId, userId, name, role];
 }

@@ -459,6 +459,67 @@
       "unknown": "تعذّر تسجيل العضو."
     }
   },
+  "marketing": {
+    "growth_engine": "محرك النمو",
+    "promotions": "العروض",
+    "reach": "الوصول",
+    "live_analysis": "• تحليل مباشر",
+    "fixture": "عنصر تجريبي من Stitch",
+    "retry": "إعادة المحاولة",
+    "cancel": "إلغاء",
+    "read_only_hint": "عرض الاستقبال — نشر الحملات وإنشاء أكواد الخصم للمسؤول فقط.",
+    "campaigns_heading": "الحملات",
+    "soft_end": "إنهاء الحملة",
+    "billing_secondary_title": "الفوترة / الرسوم",
+    "billing_secondary_subtitle": "رسوم العضوية (FEAT-08) كقسم ثانوي في التسويق.",
+    "flash_sale": {
+      "title": "عرض خاطف",
+      "subtitle": "صمّم حملات عاجلة عالية السرعة.",
+      "campaign_name": "اسم الحملة",
+      "campaign_name_hint": "مثال: صيف الذروة 24",
+      "start_window": "نافذة البدء",
+      "end_window": "نافذة الانتهاء",
+      "push_title": "إشعار فوري",
+      "push_subtitle": "نبّه المستخدمين النشطين فور البدء",
+      "deploy": "إطلاق الحملة"
+    },
+    "promos": {
+      "title": "الأكواد النشطة",
+      "create": "إنشاء كود جديد",
+      "code_label": "رمز الخصم",
+      "percent_label": "نسبة الخصم (1–100)",
+      "lifetime": "مدى الحياة (بدون انتهاء)",
+      "pick_expiry": "اختر تاريخ الانتهاء",
+      "no_expiry": "بدون انتهاء",
+      "expires_on": "ينتهي {date}",
+      "redeemed": "مستخدم"
+    },
+    "conversion": {
+      "title": "تدفق التحويل",
+      "subtitle": "تيار المعاملات لـ 7 أيام"
+    },
+    "asset": {
+      "title": "مكتبة الأصول",
+      "ready": "مرئيات جديدة جاهزة",
+      "caption": "مكتبة الأصول"
+    },
+    "metrics": {
+      "reach": "إجمالي الوصول",
+      "ctr": "متوسط النقر",
+      "revenue": "الإيراد المنسوب"
+    },
+    "success": {
+      "campaign_deployed": "تم إطلاق الحملة.",
+      "campaign_ended": "تم إنهاء الحملة.",
+      "promo_created": "تم إنشاء رمز الخصم."
+    },
+    "error": {
+      "not_configured": "التسويق غير مُعدّ لهذا البناء.",
+      "forbidden": "إنشاء الحملات وأكواد الخصم للمسؤول فقط.",
+      "invalid": "تفاصيل الحملة أو الكود غير صالحة.",
+      "unknown": "فشل طلب التسويق."
+    }
+  },
   "billing": {
     "marketing_title": "التسويق والعروض",
     "marketing_subtitle": "الفوترة والعروض لهذا النادي.",

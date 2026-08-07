@@ -95,6 +95,9 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     final canManageBilling = authState is AuthAuthenticated
         ? authState.profile.canManageBilling
         : false;
+    final canManageMarketing = authState is AuthAuthenticated
+        ? authState.profile.canManageMarketing
+        : false;
     final canManageSkuSettings = authState is AuthAuthenticated
         ? authState.profile.canManageSkuSettings
         : false;
@@ -167,10 +170,19 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                           canWrite: canManageClassSessions,
                         ),
                       ),
-                      BlocProvider(
-                        create: (_) => InjectionContainer.createBillingCubit(),
+                      MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (_) =>
+                                InjectionContainer.createMarketingBloc(),
+                          ),
+                          BlocProvider(
+                            create: (_) =>
+                                InjectionContainer.createBillingCubit(),
+                          ),
+                        ],
                         child: MarketingPromotionsScreen(
-                          canWrite: canManageBilling,
+                          canWrite: canManageMarketing || canManageBilling,
                         ),
                       ),
                       ReportsShellPage(onOpenGymSettings: _openSettingsFocus),
