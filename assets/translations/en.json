@@ -459,6 +459,67 @@
       "unknown": "Could not enroll member."
     }
   },
+  "marketing": {
+    "growth_engine": "GROWTH ENGINE",
+    "promotions": "PROMOTIONS",
+    "reach": "REACH",
+    "live_analysis": "• LIVE ANALYSIS",
+    "fixture": "Stitch fixture",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "read_only_hint": "Receptionist view — only Admins can deploy campaigns or create promo codes.",
+    "campaigns_heading": "CAMPAIGNS",
+    "soft_end": "End campaign",
+    "billing_secondary_title": "BILLING / CHARGES",
+    "billing_secondary_subtitle": "FEAT-08 membership charges for this gym (secondary on Marketing).",
+    "flash_sale": {
+      "title": "FLASH SALE",
+      "subtitle": "Engineer high-velocity urgency campaigns.",
+      "campaign_name": "CAMPAIGN NAME",
+      "campaign_name_hint": "e.g. SUMMER PEAK 24",
+      "start_window": "START WINDOW",
+      "end_window": "END WINDOW",
+      "push_title": "Push Notification",
+      "push_subtitle": "Alert active users instantly on start",
+      "deploy": "DEPLOY CAMPAIGN"
+    },
+    "promos": {
+      "title": "ACTIVE PROMOS",
+      "create": "Create New Code",
+      "code_label": "Promo code",
+      "percent_label": "Percent off (1–100)",
+      "lifetime": "Lifetime (no expiry)",
+      "pick_expiry": "Pick expiry date",
+      "no_expiry": "No expiry",
+      "expires_on": "Expires {date}",
+      "redeemed": "REDEEMED"
+    },
+    "conversion": {
+      "title": "CONVERSION FLOW",
+      "subtitle": "7-DAY TRANSACTIONAL STREAM"
+    },
+    "asset": {
+      "title": "ASSET LIBRARY",
+      "ready": "New Visuals Ready",
+      "caption": "Asset Library"
+    },
+    "metrics": {
+      "reach": "TOTAL REACH",
+      "ctr": "AVG CLICK-THROUGH",
+      "revenue": "REVENUE ATTRIBUTED"
+    },
+    "success": {
+      "campaign_deployed": "Campaign deployed.",
+      "campaign_ended": "Campaign ended.",
+      "promo_created": "Promo code created."
+    },
+    "error": {
+      "not_configured": "Marketing is not configured for this build.",
+      "forbidden": "Only Admins can create campaigns or promo codes.",
+      "invalid": "Invalid campaign or promo details.",
+      "unknown": "Marketing request failed."
+    }
+  },
   "billing": {
     "marketing_title": "MARKETING & PROMOTIONS",
     "marketing_subtitle": "Billing and promotions for this gym.",
