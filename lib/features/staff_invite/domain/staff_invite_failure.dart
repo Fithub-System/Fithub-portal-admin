@@ -32,3 +32,10 @@ final class StaffInviteServerFailure extends StaffInviteFailure {
     super.message = 'staff_invite.error.unknown',
   ]);
 }
+
+/// FEAT-26 — staff invite / password-recovery admin flows require live cloud.
+final class StaffInviteOfflineFailure extends StaffInviteFailure {
+  const StaffInviteOfflineFailure([
+    super.message = 'staff_invite.error.offline',
+  ]);
+}

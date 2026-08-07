@@ -131,6 +131,7 @@ void main() {
 
     expect(cubit.state.currentOccupancy, 60);
     expect(cubit.state.source, OccupancySource.cache);
+    expect(cubit.state.statusMessageKey, 'dashboard.status.offline');
 
     await cubit.close();
   });

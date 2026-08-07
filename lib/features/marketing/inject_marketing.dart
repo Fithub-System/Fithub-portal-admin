@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/marketing/data/data_sources/remote/marketing_remote_data_source.dart';
 import 'package:fithub_portal_admin/features/marketing/data/repositories/marketing_repository_impl.dart';
 import 'package:fithub_portal_admin/features/marketing/domain/repositories/marketing_repository.dart';
@@ -27,10 +28,20 @@ void registerMarketingDependencies(GetIt getIt) {
     getIt.registerLazySingleton(() => ListPromoCodesUseCase(getIt()));
   }
   if (!getIt.isRegistered<UpsertMarketingCampaignUseCase>()) {
-    getIt.registerLazySingleton(() => UpsertMarketingCampaignUseCase(getIt()));
+    getIt.registerLazySingleton(
+      () => UpsertMarketingCampaignUseCase(
+        getIt(),
+        cloudGuard: getIt<CloudMutationGuard>(),
+      ),
+    );
   }
   if (!getIt.isRegistered<UpsertPromoCodeUseCase>()) {
-    getIt.registerLazySingleton(() => UpsertPromoCodeUseCase(getIt()));
+    getIt.registerLazySingleton(
+      () => UpsertPromoCodeUseCase(
+        getIt(),
+        cloudGuard: getIt<CloudMutationGuard>(),
+      ),
+    );
   }
 
   if (!getIt.isRegistered<MarketingBloc>()) {

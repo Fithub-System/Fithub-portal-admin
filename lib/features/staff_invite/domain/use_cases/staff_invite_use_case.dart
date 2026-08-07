@@ -1,14 +1,22 @@
+import '../../../../core/network/cloud_mutation_guard.dart';
 import '../entities/staff_invite.dart';
 import '../repositories/staff_invite_repository.dart';
 import '../staff_invite_failure.dart';
 
 /// Invites staff via trusted Backend path (user JWT only).
 class InviteStaffUseCase {
-  InviteStaffUseCase(this._repository);
+  InviteStaffUseCase(
+    this._repository, {
+    required CloudMutationGuard cloudGuard,
+  }) : _cloudGuard = cloudGuard;
 
   final StaffInviteRepository _repository;
+  final CloudMutationGuard _cloudGuard;
 
   Future<StaffInviteResult> call(StaffInvite invite) {
+    if (!_cloudGuard.isOnline) {
+      throw const StaffInviteOfflineFailure();
+    }
     final email = invite.email.trim().toLowerCase();
     final name = invite.name.trim();
     if (email.isEmpty || name.isEmpty) {

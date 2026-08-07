@@ -126,7 +126,8 @@
       "not_configured": "Class sessions are not configured for this build.",
       "forbidden": "Only Admins can manage class sessions.",
       "invalid": "Check title, time range, and capacity.",
-      "unknown": "Could not manage class sessions."
+      "unknown": "Could not manage class sessions.",
+      "offline": "Cloud required — reconnect to save class changes. Not saved."
     }
   },
   "reports": {
@@ -144,6 +145,9 @@
   "connectivity": {
     "safe_mode": {
       "banner": "Pulse SafeMode: data is saved locally"
+    },
+    "cloud_required": {
+      "denied": "Cloud required — reconnect to complete this action. Changes were not saved."
     },
     "sync": {
       "error": {
@@ -314,7 +318,8 @@
       "forbidden": "Only Admins can invite staff.",
       "invalid_body": "Email, role, and name are required.",
       "not_configured": "Invite staff is not configured for this build.",
-      "unknown": "Staff invite failed."
+      "unknown": "Staff invite failed.",
+      "offline": "Cloud required — reconnect to invite staff. Invite was not sent."
     }
   },
   "memberships": {
@@ -403,11 +408,13 @@
     },
     "footer": {
       "sync_active": "SYNC ACTIVE",
+      "sync_offline": "OFFLINE — CACHED ROSTER",
       "api_version": "API V2.4",
       "copyright": "© 2024 KINETIC MONOLITH SYSTEMS. ALL RIGHTS RESERVED."
     },
     "status": {
-      "none": "No membership"
+      "none": "No membership",
+      "offline_stale": "Offline — showing last synced roster (may be stale)."
     },
     "action": {
       "freeze": "FREEZE",
@@ -517,7 +524,8 @@
       "not_configured": "Marketing is not configured for this build.",
       "forbidden": "Only Admins can create campaigns or promo codes.",
       "invalid": "Invalid campaign or promo details.",
-      "unknown": "Marketing request failed."
+      "unknown": "Marketing request failed.",
+      "offline": "Cloud required — reconnect to save marketing changes. Not saved."
     }
   },
   "billing": {
@@ -552,7 +560,8 @@
       "not_configured": "Billing is not configured for this build.",
       "forbidden": "Only Admins can update billing charges.",
       "invalid": "Invalid billing update.",
-      "unknown": "Billing request failed."
+      "unknown": "Billing request failed.",
+      "offline": "Cloud required — reconnect to update billing. Changes were not saved."
     }
   },
   "gym_settings": {

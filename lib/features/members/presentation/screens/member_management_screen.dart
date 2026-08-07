@@ -133,6 +133,15 @@ class MemberManagementScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                if (state.showingCachedOffline) ...[
+                  Text(
+                    'members.status.offline_stale'.tr(),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: KineticTokens.zincGray,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 if (showRetryBanner) ...[
                   Row(
                     children: [
@@ -194,7 +203,7 @@ class MemberManagementScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const MembersSyncFooter(),
+                MembersSyncFooter(offline: state.showingCachedOffline),
               ],
             ),
           ),
