@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
 import 'package:fithub_portal_admin/features/billing/domain/billing_failure.dart';
 import 'package:fithub_portal_admin/features/billing/domain/entities/membership_charge.dart';
@@ -109,8 +110,8 @@ void main() {
 
       final cubit = BillingCubit(
         listCharges: ListMembershipChargesUseCase(repository),
-        updateStatus: UpdateMembershipChargeStatusUseCase(repository),
-        applyFreeze: ApplyBillingFreezeUseCase(repository),
+        updateStatus: UpdateMembershipChargeStatusUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true)),
+        applyFreeze: ApplyBillingFreezeUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true)),
       );
 
       await cubit.load();
@@ -129,8 +130,8 @@ void main() {
 
       final cubit = BillingCubit(
         listCharges: ListMembershipChargesUseCase(repository),
-        updateStatus: UpdateMembershipChargeStatusUseCase(repository),
-        applyFreeze: ApplyBillingFreezeUseCase(repository),
+        updateStatus: UpdateMembershipChargeStatusUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true)),
+        applyFreeze: ApplyBillingFreezeUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true)),
       );
 
       await cubit.markStatus(
@@ -178,8 +179,8 @@ void main() {
 
       final cubit = BillingCubit(
         listCharges: ListMembershipChargesUseCase(repository),
-        updateStatus: UpdateMembershipChargeStatusUseCase(repository),
-        applyFreeze: ApplyBillingFreezeUseCase(repository),
+        updateStatus: UpdateMembershipChargeStatusUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true)),
+        applyFreeze: ApplyBillingFreezeUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true)),
       );
 
       await cubit.markStatus(
@@ -196,8 +197,8 @@ void main() {
 
       final cubit = BillingCubit(
         listCharges: ListMembershipChargesUseCase(repository),
-        updateStatus: UpdateMembershipChargeStatusUseCase(repository),
-        applyFreeze: ApplyBillingFreezeUseCase(repository),
+        updateStatus: UpdateMembershipChargeStatusUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true)),
+        applyFreeze: ApplyBillingFreezeUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true)),
       );
 
       await cubit.applyFreeze();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/config/theme/kinetic_tokens.dart';
 import 'package:fithub_portal_admin/features/home/presentation/pages/portal_shell_destinations.dart';
 import 'package:fithub_portal_admin/features/staff_invite/domain/entities/staff_invite.dart';
@@ -68,7 +69,7 @@ void main() {
           message: 'ok',
         ),
       );
-      bloc = StaffInviteBloc(inviteStaffUseCase: InviteStaffUseCase(repo));
+      bloc = StaffInviteBloc(inviteStaffUseCase: InviteStaffUseCase(repo, cloudGuard: CloudMutationGuard(isOnline: () => true)));
     });
 
     tearDown(() async {

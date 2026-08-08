@@ -22,3 +22,8 @@ final class BillingValidationFailure extends BillingFailure {
 final class BillingUnknownFailure extends BillingFailure {
   const BillingUnknownFailure() : super('billing.error.unknown');
 }
+
+/// FEAT-26 — mark paid / waive / freeze require live cloud.
+final class BillingOfflineFailure extends BillingFailure {
+  const BillingOfflineFailure() : super('billing.error.offline');
+}

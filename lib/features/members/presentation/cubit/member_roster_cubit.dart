@@ -12,14 +12,17 @@ class MemberRosterCubit extends Cubit<MemberRosterState> {
     required ListCachedMemberRosterUseCase listCachedRoster,
     required String tenantId,
     SyncMemberRosterUseCase? syncRoster,
+    bool Function()? isOnline,
   }) : _listCachedRoster = listCachedRoster,
        _syncRoster = syncRoster,
        _tenantId = tenantId,
+       _isOnline = isOnline ?? (() => true),
        super(const MemberRosterState());
 
   final ListCachedMemberRosterUseCase _listCachedRoster;
   final SyncMemberRosterUseCase? _syncRoster;
   final String _tenantId;
+  final bool Function() _isOnline;
 
   Future<void> load() async {
     emit(state.copyWith(status: MemberRosterStatus.loading));
@@ -29,17 +32,25 @@ class MemberRosterCubit extends Cubit<MemberRosterState> {
         state.copyWith(
           status: MemberRosterStatus.ready,
           members: members,
+          showingCachedOffline: !_isOnline(),
         ),
       );
     } catch (_) {
-      emit(state.copyWith(status: MemberRosterStatus.failure));
+      emit(
+        state.copyWith(
+          status: MemberRosterStatus.failure,
+          showingCachedOffline: !_isOnline(),
+        ),
+      );
     }
   }
 
   /// Cloud sync then reload cache (FEAT-13 after enroll).
+  ///
+  /// Offline: reload Drift only — never pretend cloud refresh succeeded.
   Future<void> refreshFromCloud() async {
     final sync = _syncRoster;
-    if (sync != null) {
+    if (sync != null && _isOnline()) {
       try {
         await sync(tenantId: _tenantId);
       } catch (_) {

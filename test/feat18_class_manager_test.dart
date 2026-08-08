@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
 import 'package:fithub_portal_admin/features/class_sessions/domain/class_sessions_failure.dart';
 import 'package:fithub_portal_admin/features/class_sessions/domain/entities/class_session.dart';
@@ -33,7 +34,7 @@ void main() {
     return ClassSessionsCubit(
       listSessions: ListClassSessionsUseCase(repository),
       listCoaches: ListClassCoachesUseCase(repository),
-      upsertSession: UpsertClassSessionUseCase(repository),
+      upsertSession: UpsertClassSessionUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true)),
       clock: () => fixedNow,
     );
   }

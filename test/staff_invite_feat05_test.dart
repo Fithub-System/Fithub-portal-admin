@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/config/theme/kinetic_tokens.dart';
 import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
 import 'package:fithub_portal_admin/features/staff_invite/domain/entities/staff_invite.dart';
@@ -27,7 +28,7 @@ void main() {
 
   setUp(() {
     repository = _MockRepo();
-    useCase = InviteStaffUseCase(repository);
+    useCase = InviteStaffUseCase(repository, cloudGuard: CloudMutationGuard(isOnline: () => true));
   });
 
   group('FEAT-05 AC-B4 — Admin gate on profile', () {

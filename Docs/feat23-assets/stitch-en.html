@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Marketing &amp; Promotion | KINETIC MONOLITH</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;800;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary-fixed-dim": "#abd600",
+            "surface-container-highest": "#353534",
+            "on-tertiary-fixed-variant": "#374956",
+            "secondary-fixed": "#d8e2ff",
+            "inverse-surface": "#e5e2e1",
+            "tertiary-fixed-dim": "#b6c9d8",
+            "on-secondary-fixed": "#001a41",
+            "on-secondary-fixed-variant": "#004493",
+            "surface": "#131313",
+            "on-secondary": "#002e68",
+            "on-surface": "#e5e2e1",
+            "secondary-fixed-dim": "#adc7ff",
+            "primary-container": "#c3f400",
+            "inverse-primary": "#506600",
+            "inverse-on-surface": "#313030",
+            "on-tertiary-fixed": "#0b1d29",
+            "outline-variant": "#444933",
+            "background": "#131313",
+            "tertiary-container": "#d2e5f5",
+            "surface-bright": "#393939",
+            "on-primary-fixed": "#161e00",
+            "on-error": "#690005",
+            "tertiary": "#ffffff",
+            "error-container": "#93000a",
+            "secondary-container": "#4a8eff",
+            "primary": "#ffffff",
+            "surface-container-low": "#1c1b1b",
+            "on-primary-fixed-variant": "#3c4d00",
+            "surface-container-lowest": "#0e0e0e",
+            "on-error-container": "#ffdad6",
+            "on-secondary-container": "#00285b",
+            "error": "#ffb4ab",
+            "secondary": "#adc7ff",
+            "outline": "#8e9379",
+            "on-surface-variant": "#c4c9ac",
+            "on-primary": "#283500",
+            "surface-container": "#201f1f",
+            "surface-tint": "#abd600",
+            "tertiary-fixed": "#d2e5f5",
+            "on-primary-container": "#556d00",
+            "primary-fixed": "#c3f400",
+            "surface-variant": "#353534",
+            "surface-dim": "#131313",
+            "on-tertiary": "#21323e",
+            "on-tertiary-container": "#556774",
+            "on-background": "#e5e2e1",
+            "surface-container-high": "#2a2a2a"
+          },
+          fontFamily: {
+            "headline": ["Lexend"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-effect {
+      background: rgba(57, 57, 57, 0.6);
+      backdrop-filter: blur(20px);
+    }
+    .kinetic-glow {
+      box-shadow: 0 0 40px 0 rgba(216, 226, 255, 0.04);
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #131313; }
+    ::-webkit-scrollbar-thumb { background: #353534; border-radius: 10px; }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-full sticky top-0 h-screen w-64 border-r border-neutral-800 bg-neutral-950">
+<div class="p-8">
+<h1 class="text-2xl font-black text-[#CCFF00] tracking-tighter font-headline">KINETIC MONOLITH</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-neutral-500 mt-1">Elite Performance Admin</p>
+</div>
+<nav class="flex-1 mt-4">
+<ul class="space-y-1 px-4">
+<li>
+<a class="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-neutral-900 hover:text-white text-neutral-400 font-lexend tracking-tight uppercase label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Home</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-neutral-900 hover:text-white text-neutral-400 font-lexend tracking-tight uppercase label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Members</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-neutral-900 hover:text-white text-neutral-400 font-lexend tracking-tight uppercase label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span>Staff</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-neutral-900 hover:text-white text-neutral-400 font-lexend tracking-tight uppercase label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span>Classes</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 text-[#CCFF00] bg-neutral-900/50 border-r-4 border-[#CCFF00] font-lexend tracking-tight uppercase label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="campaign" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span>Marketing</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-neutral-900 hover:text-white text-neutral-400 font-lexend tracking-tight uppercase label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Reports</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="p-6 mt-auto border-t border-neutral-900">
+<button class="w-full py-3 bg-primary-container text-on-primary-container font-black uppercase text-xs tracking-widest rounded-md transition-transform active:scale-95 shadow-[0_0_20px_rgba(195,244,0,0.2)]">
+          Start Workout
+        </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-surface">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex justify-between items-center px-8 w-full h-16 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur-xl shadow-2xl shadow-black/50">
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 material-symbols-outlined group-focus-within:text-[#CCFF00]">search</span>
+<input class="bg-neutral-900 border-none rounded-full pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-[#CCFF00] transition-all" placeholder="Search campaigns..." type="text"/>
+</div>
+<h2 class="font-lexend headline-lg text-[#CCFF00] ml-4">Admin Console</h2>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-neutral-300 hover:text-[#CCFF00] transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-[#CCFF00] rounded-full"></span>
+</button>
+<button class="text-neutral-300 hover:text-[#CCFF00] transition-colors">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-neutral-800">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-bold text-white leading-none">Alex Rivera</p>
+<p class="text-[10px] text-neutral-500 uppercase tracking-tighter">Marketing Lead</p>
+</div>
+<span class="material-symbols-outlined text-3xl text-neutral-300 hover:text-[#CCFF00] cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-8 space-y-10 max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="space-y-2">
+<span class="label-sm uppercase tracking-[0.3em] text-secondary font-bold">Growth Engine</span>
+<h1 class="font-headline text-5xl font-black tracking-tighter leading-none">PROMOTIONS <span class="text-secondary-container">&amp;</span> REACH</h1>
+</div>
+<div class="flex gap-2">
+<div class="px-4 py-2 bg-surface-container-high rounded-lg flex items-center gap-3 kinetic-glow border border-neutral-800/50">
+<div class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></div>
+<span class="text-xs font-bold uppercase tracking-widest text-secondary-fixed-dim">Live Analysis</span>
+</div>
+</div>
+</div>
+<!-- Main Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Column 1: Flash Sale Creation -->
+<section class="lg:col-span-5 space-y-6">
+<div class="bg-surface-container-low p-8 rounded-xl border-l-4 border-primary-container kinetic-glow">
+<div class="mb-8">
+<h3 class="font-headline text-2xl font-bold tracking-tight mb-1 italic">FLASH SALE</h3>
+<p class="text-on-surface-variant text-sm font-medium">Engineer high-velocity urgency campaigns.</p>
+</div>
+<form class="space-y-6">
+<div class="space-y-1">
+<label class="label-sm text-on-surface-variant uppercase font-bold tracking-widest block">Campaign Name</label>
+<input class="w-full bg-transparent border-b border-outline-variant focus:border-primary-fixed focus:ring-0 transition-all py-2 font-headline text-xl placeholder:text-neutral-800" placeholder="e.g. SUMMER PEAK 24" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="space-y-1">
+<label class="label-sm text-on-surface-variant uppercase font-bold tracking-widest block">Start Window</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest/30 border-none rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-primary-container" type="datetime-local"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="label-sm text-on-surface-variant uppercase font-bold tracking-widest block">End Window</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest/30 border-none rounded-md py-3 px-4 text-sm focus:ring-1 focus:ring-primary-container text-error" type="datetime-local"/>
+</div>
+</div>
+</div>
+<div class="space-y-4 pt-4">
+<div class="flex items-center justify-between p-4 bg-surface-container-highest/50 rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="notifications_active">notifications_active</span>
+<div>
+<p class="text-sm font-bold">Push Notification</p>
+<p class="text-[10px] text-on-surface-variant">Alert active users instantly on start</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+<button class="group relative w-full overflow-hidden bg-primary-container py-4 rounded-md mt-4 transition-all hover:scale-[1.02] active:scale-95" type="submit">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary-container to-primary-fixed-dim opacity-50"></div>
+<div class="relative flex items-center justify-center gap-2 text-on-primary-container font-black uppercase tracking-widest text-sm">
+<span class="material-symbols-outlined text-xl" data-icon="bolt">bolt</span>
+                    Deploy Campaign
+                  </div>
+</button>
+</form>
+</div>
+<!-- Ad Creative Card -->
+<div class="relative group overflow-hidden rounded-xl h-48 surface-container-low border border-neutral-800">
+<img class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700" data-alt="dramatic wide shot of professional gym equipment in low light with neon accents and atmospheric haze" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWX4p4lRGVBNm2Ta7VSxpU2UcRhKzcSEdptIDss-2LaEUoQ5TcnmTsqLS1bs9TQOYGCqZuQXTqwAsYgrGeBC-gr1GQ1WFlSeHY6QNYryrM-hVD_Eymrun6BoqoTuFkdIunTwml_1QLWuixn6nHfuZjLCOiPuM2UiKjLmPaHsUNxSCchLgBgdgp-LR1GoOk3iLRo3MAmYW9ODhjwpOX2P9SFm_rHQupGJG75qaaDLhRjl85JoxORUPX00IPhlHol8K5JpleKLszP-4j"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<p class="text-[10px] font-black tracking-widest text-primary-fixed uppercase mb-1">Asset Library</p>
+<h4 class="font-headline text-lg font-bold">New Visuals Ready</h4>
+</div>
+<button class="absolute bottom-6 right-6 p-2 rounded-full glass-effect border border-white/10 hover:bg-white/20">
+<span class="material-symbols-outlined text-white" data-icon="arrow_outward">arrow_outward</span>
+</button>
+</div>
+</section>
+<!-- Column 2: Promo Codes & Analytics -->
+<section class="lg:col-span-7 space-y-8">
+<!-- Conversion Analytics (Cyber Blue) -->
+<div class="bg-surface-container-low p-8 rounded-xl border border-neutral-800/50 kinetic-glow">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-lexend text-xl font-bold tracking-tight text-secondary">CONVERSION FLOW</h3>
+<p class="text-on-surface-variant text-xs font-medium uppercase tracking-widest mt-1">7-Day Transactional Stream</p>
+</div>
+<div class="flex items-center gap-1">
+<span class="text-3xl font-lexend font-black text-white">42.8<span class="text-secondary">%</span></span>
+<span class="material-symbols-outlined text-primary-fixed text-lg" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<!-- Simple SVG Line Chart -->
+<div class="h-48 w-full relative group">
+<svg class="w-full h-full drop-shadow-[0_0_10px_rgba(74,142,255,0.3)]" viewbox="0 0 400 100">
+<defs>
+<lineargradient id="blueGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#4a8eff" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#4a8eff" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0 80 Q 40 70, 80 85 T 160 40 T 240 60 T 320 20 T 400 30" fill="none" stroke="#4a8eff" stroke-linecap="round" stroke-width="3"></path>
+<path d="M0 80 Q 40 70, 80 85 T 160 40 T 240 60 T 320 20 T 400 30 V 100 H 0 Z" fill="url(#blueGradient)"></path>
+<!-- Data Points -->
+<circle cx="80" cy="85" fill="#ffffff" r="3"></circle>
+<circle cx="160" cy="40" fill="#ffffff" r="3"></circle>
+<circle cx="320" cy="20" fill="#ffffff" r="3"></circle>
+</svg>
+<!-- Grid Labels -->
+<div class="absolute bottom-0 left-0 right-0 flex justify-between px-2 pt-4 border-t border-neutral-800/50">
+<span class="text-[10px] text-neutral-600 font-bold">MON</span>
+<span class="text-[10px] text-neutral-600 font-bold">WED</span>
+<span class="text-[10px] text-neutral-600 font-bold">FRI</span>
+<span class="text-[10px] text-secondary font-bold">SUN (TODAY)</span>
+</div>
+</div>
+</div>
+<!-- Promo Codes Management -->
+<div class="space-y-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="font-lexend text-xl font-bold tracking-tight">ACTIVE PROMOS</h3>
+<button class="flex items-center gap-2 text-xs font-bold text-secondary uppercase tracking-widest hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add_circle">add_circle</span>
+                  Create New Code
+                </button>
+</div>
+<!-- Promo Code Table/List -->
+<div class="space-y-3">
+<!-- Item 1 -->
+<div class="bg-surface-container hover:bg-surface-container-high transition-colors p-5 rounded-lg flex items-center justify-between group">
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 rounded bg-surface-container-highest flex items-center justify-center border border-neutral-700">
+<span class="material-symbols-outlined text-secondary" data-icon="confirmation_number">confirmation_number</span>
+</div>
+<div>
+<h4 class="font-black text-lg tracking-widest text-white">ALPHA30</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="px-2 py-0.5 rounded-full bg-primary-container/10 text-primary-fixed-dim text-[9px] font-bold uppercase border border-primary-container/20">30% OFF</span>
+<span class="text-[10px] text-on-surface-variant font-medium">Expires in 4 days</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12">
+<div class="text-right">
+<p class="text-2xl font-black leading-none">1,248</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Redeemed</p>
+</div>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-neutral-500 hover:text-white">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container hover:bg-surface-container-high transition-colors p-5 rounded-lg flex items-center justify-between group">
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 rounded bg-surface-container-highest flex items-center justify-center border border-neutral-700">
+<span class="material-symbols-outlined text-secondary" data-icon="local_activity">local_activity</span>
+</div>
+<div>
+<h4 class="font-black text-lg tracking-widest text-white">FOUNDER2024</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/10 text-secondary-fixed-dim text-[9px] font-bold uppercase border border-secondary-container/20">LIFETIME</span>
+<span class="text-[10px] text-on-surface-variant font-medium">No expiry</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12">
+<div class="text-right">
+<p class="text-2xl font-black leading-none">84</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Redeemed</p>
+</div>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-neutral-500 hover:text-white">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container hover:bg-surface-container-high transition-colors p-5 rounded-lg flex items-center justify-between group">
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 rounded bg-surface-container-highest flex items-center justify-center border border-neutral-700">
+<span class="material-symbols-outlined text-neutral-500" data-icon="sell">sell</span>
+</div>
+<div>
+<h4 class="font-black text-lg tracking-widest text-neutral-500">BOLT_SPRING</h4>
+<div class="flex items-center gap-3 mt-1">
+<span class="px-2 py-0.5 rounded-full bg-error-container/10 text-error text-[9px] font-bold uppercase border border-error-container/20 italic">EXPIRED</span>
+<span class="text-[10px] text-neutral-600 font-medium">Inactive since May 12</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-12">
+<div class="text-right">
+<p class="text-2xl font-black leading-none text-neutral-600">3,110</p>
+<p class="text-[10px] text-neutral-700 uppercase tracking-widest font-bold">Redeemed</p>
+</div>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-neutral-500 hover:text-white">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Performance Matrix / Bottom Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
+<div class="bg-surface-container-low p-6 rounded-xl border border-neutral-800 flex items-center gap-6">
+<div class="w-14 h-14 rounded-full bg-primary-container/10 flex items-center justify-center border border-primary-container/20">
+<span class="material-symbols-outlined text-primary-fixed text-3xl" data-icon="rocket_launch">rocket_launch</span>
+</div>
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-black tracking-widest mb-1">Total Reach</p>
+<p class="text-3xl font-headline font-black">1.4M</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-neutral-800 flex items-center gap-6">
+<div class="w-14 h-14 rounded-full bg-secondary-container/10 flex items-center justify-center border border-secondary-container/20">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="ads_click">ads_click</span>
+</div>
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-black tracking-widest mb-1">Avg Click-Through</p>
+<p class="text-3xl font-headline font-black">12.4<span class="text-lg">%</span></p>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-neutral-800 flex items-center gap-6">
+<div class="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center border border-neutral-700">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="savings">savings</span>
+</div>
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-black tracking-widest mb-1">Revenue Attributed</p>
+<p class="text-3xl font-headline font-black">$48.2K</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import 'package:fithub_portal_admin/core/network/api_provider.dart';
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/staff_invite/data/data_sources/remote/staff_invite_http_remote_data_source.dart';
 import 'package:fithub_portal_admin/features/staff_invite/data/data_sources/remote/staff_invite_remote_data_source.dart';
 import 'package:fithub_portal_admin/features/staff_invite/data/repositories/staff_invite_repository_impl.dart';
@@ -23,7 +24,12 @@ void registerStaffInviteDependencies(GetIt getIt) {
   }
 
   if (!getIt.isRegistered<InviteStaffUseCase>()) {
-    getIt.registerLazySingleton(() => InviteStaffUseCase(getIt()));
+    getIt.registerLazySingleton(
+      () => InviteStaffUseCase(
+        getIt(),
+        cloudGuard: getIt<CloudMutationGuard>(),
+      ),
+    );
   }
 
   if (!getIt.isRegistered<StaffInviteBloc>()) {

@@ -1,3 +1,5 @@
+import '../../../../core/network/cloud_mutation_guard.dart';
+import '../class_sessions_failure.dart';
 import '../entities/class_session.dart';
 import '../repositories/class_sessions_repository.dart';
 
@@ -16,8 +18,13 @@ class ListClassCoachesUseCase {
 }
 
 class UpsertClassSessionUseCase {
-  const UpsertClassSessionUseCase(this._repository);
+  UpsertClassSessionUseCase(
+    this._repository, {
+    required CloudMutationGuard cloudGuard,
+  }) : _cloudGuard = cloudGuard;
+
   final ClassSessionsRepository _repository;
+  final CloudMutationGuard _cloudGuard;
 
   Future<ClassSession> call({
     String? id,
@@ -28,6 +35,9 @@ class UpsertClassSessionUseCase {
     String? coachEmployeeId,
     String status = 'scheduled',
   }) {
+    if (!_cloudGuard.isOnline) {
+      throw const ClassSessionsOfflineFailure();
+    }
     return _repository.upsertSession(
       id: id,
       title: title,
