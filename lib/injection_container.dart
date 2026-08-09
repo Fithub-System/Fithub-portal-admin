@@ -35,6 +35,8 @@ import 'package:fithub_portal_admin/features/gym_sku_settings/inject_gym_sku_set
     as gym_sku_settings_di;
 import 'package:fithub_portal_admin/features/class_sessions/inject_class_sessions.dart'
     as class_sessions_di;
+import 'package:fithub_portal_admin/features/admin_payout_queue/inject_admin_payout_queue.dart'
+    as admin_payout_queue_di;
 import 'package:fithub_portal_admin/features/staff_invite/presentation/bloc/staff_invite_bloc.dart';
 import 'package:fithub_portal_admin/features/memberships/presentation/cubit/memberships_cubit.dart';
 import 'package:fithub_portal_admin/features/billing/presentation/cubit/billing_cubit.dart';
@@ -42,6 +44,7 @@ import 'package:fithub_portal_admin/features/marketing/presentation/bloc/marketi
 import 'package:fithub_portal_admin/features/add_member/presentation/bloc/add_member_bloc.dart';
 import 'package:fithub_portal_admin/features/gym_sku_settings/presentation/bloc/gym_sku_settings_bloc.dart';
 import 'package:fithub_portal_admin/features/class_sessions/presentation/cubit/class_sessions_cubit.dart';
+import 'package:fithub_portal_admin/features/admin_payout_queue/presentation/bloc/admin_payout_queue_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -67,6 +70,7 @@ class InjectionContainer {
     add_member_di.registerAddMemberDependencies(getIt);
     gym_sku_settings_di.registerGymSkuSettingsDependencies(getIt);
     class_sessions_di.registerClassSessionsDependencies(getIt);
+    admin_payout_queue_di.registerAdminPayoutQueueDependencies(getIt);
 
     if (!getIt.isRegistered<ScanRepository>()) {
       getIt.registerLazySingleton<ScanRepository>(
@@ -90,6 +94,9 @@ class InjectionContainer {
 
   static ClassSessionsCubit createClassSessionsCubit() =>
       getIt<ClassSessionsCubit>();
+
+  static AdminPayoutQueueBloc createAdminPayoutQueueBloc() =>
+      getIt<AdminPayoutQueueBloc>();
 
   static GetIt get locator => getIt;
 

@@ -17,6 +17,7 @@ import '../../../billing/presentation/screens/marketing_promotions_screen.dart';
 import '../../../gym_sku_settings/presentation/screens/gym_sku_settings_screen.dart';
 import '../../../staff_invite/presentation/screens/staff_management_screen.dart';
 import '../../../class_sessions/presentation/screens/class_manager_screen.dart';
+import '../../../admin_payout_queue/presentation/screens/admin_payout_queue_screen.dart';
 import '../widgets/access_scanner_focus_host.dart';
 import '../widgets/kinetic_coming_soon_empty.dart';
 import 'portal_shell_destinations.dart';
@@ -27,11 +28,14 @@ import 'portal_shell_destinations.dart';
 /// Home | Members | Staff | Classes | Marketing | Reports
 /// (`@specs/FEAT-11-PORTAL-SHELL-MATCH-STITCH.md` §3).
 ///
+/// FEAT-30 — **Payouts** rail destination inserted before Reports
+/// (`@specs/FEAT-30-ADMIN-PAYOUT-QUEUE.md` §3).
+///
 /// FEAT-12 Install I2 — G1 Access Scanner / Check-in Gate mounts under Home
 /// (CTA → focus mode). Not a rail destination (AC-A1).
 ///
 /// FEAT-10 Install I3 — G2 Gym Settings opens from avatar menu or Reports nest
-/// (focus overlay). Not a 7th rail tab (AC-D4).
+/// (focus overlay). Not a rail tab (AC-D4).
 /// Language + sign-out via header avatar menu (AC-E1).
 class PortalHomeShell extends StatefulWidget {
   const PortalHomeShell({super.key});
@@ -103,6 +107,9 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
         : false;
     final canManageClassSessions = authState is AuthAuthenticated
         ? authState.profile.canManageClassSessions
+        : false;
+    final canFulfillPayouts = authState is AuthAuthenticated
+        ? authState.profile.canFulfillPayouts
         : false;
     final tenantId = authState is AuthAuthenticated
         ? authState.profile.tenantId
@@ -183,6 +190,13 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                         ],
                         child: MarketingPromotionsScreen(
                           canWrite: canManageMarketing || canManageBilling,
+                        ),
+                      ),
+                      BlocProvider(
+                        create: (_) =>
+                            InjectionContainer.createAdminPayoutQueueBloc(),
+                        child: AdminPayoutQueueScreen(
+                          canWrite: canFulfillPayouts,
                         ),
                       ),
                       ReportsShellPage(onOpenGymSettings: _openSettingsFocus),
@@ -282,6 +296,14 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                       color: KineticTokens.electricLime,
                     ),
                     label: 'nav.marketing'.tr(),
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.payments_outlined),
+                    selectedIcon: const Icon(
+                      Icons.payments,
+                      color: KineticTokens.electricLime,
+                    ),
+                    label: 'nav.payouts'.tr(),
                   ),
                   NavigationDestination(
                     icon: const Icon(Icons.insights_outlined),
@@ -575,6 +597,11 @@ class _PortalNavigationRail extends StatelessWidget {
                     icon: const Icon(Icons.campaign_outlined),
                     selectedIcon: const Icon(Icons.campaign),
                     label: Text('nav.marketing'.tr()),
+                  ),
+                  NavigationRailDestination(
+                    icon: const Icon(Icons.payments_outlined),
+                    selectedIcon: const Icon(Icons.payments),
+                    label: Text('nav.payouts'.tr()),
                   ),
                   NavigationRailDestination(
                     icon: const Icon(Icons.insights_outlined),

@@ -10,30 +10,31 @@ import 'support/localized_pump.dart';
 
 void main() {
   group('FEAT-11 shell destinations', () {
-    test('exactly six destinations in Stitch order', () {
-      expect(PortalShellDestinations.destinationCount, 6);
+    test('seven destinations in Stitch order (FEAT-30 adds Payouts)', () {
+      expect(PortalShellDestinations.destinationCount, 7);
       expect(PortalShellDestinations.home, 0);
       expect(PortalShellDestinations.members, 1);
       expect(PortalShellDestinations.staff, 2);
       expect(PortalShellDestinations.classes, 3);
       expect(PortalShellDestinations.marketing, 4);
-      expect(PortalShellDestinations.reports, 5);
+      expect(PortalShellDestinations.payouts, 5);
+      expect(PortalShellDestinations.reports, 6);
       expect(PortalShellDestinations.dashboard, PortalShellDestinations.home);
     });
 
     test('Scan and Account are not rail destination indices', () {
       // AC-A2: no nav.scan / nav.account as rail destinations.
-      // Indices 0..5 are only Home..Reports — no scan/account slots.
       final indices = {
         PortalShellDestinations.home,
         PortalShellDestinations.members,
         PortalShellDestinations.staff,
         PortalShellDestinations.classes,
         PortalShellDestinations.marketing,
+        PortalShellDestinations.payouts,
         PortalShellDestinations.reports,
       };
-      expect(indices.length, 6);
-      expect(indices, {0, 1, 2, 3, 4, 5});
+      expect(indices.length, 7);
+      expect(indices, {0, 1, 2, 3, 4, 5, 6});
     });
   });
 

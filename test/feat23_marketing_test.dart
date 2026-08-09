@@ -189,7 +189,7 @@ void main() {
       );
       expect(MarketingStitchFixtures.totalReach, '1.4M');
       expect(PortalShellDestinations.marketing, 4);
-      expect(PortalShellDestinations.destinationCount, 6);
+      expect(PortalShellDestinations.destinationCount, 7);
     });
   });
 
