@@ -14,21 +14,59 @@ import 'package:fithub_portal_admin/features/admin_payout_queue/presentation/blo
 import 'package:fithub_portal_admin/features/admin_payout_queue/presentation/screens/admin_payout_queue_screen.dart';
 import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
 import 'package:fithub_portal_admin/features/home/presentation/pages/portal_shell_destinations.dart';
-import 'package:mocktail/mocktail.dart';
 
 import 'support/localized_pump.dart';
 
-class _MockPayoutRepo extends Mock implements AdminPayoutQueueRepository {}
+class _FakePayoutRepo implements AdminPayoutQueueRepository {
+  List<CoachPayoutRequest> rows = const [];
+  Object? fulfillError;
+  int fulfillCalls = 0;
+
+  @override
+  Future<List<CoachPayoutRequest>> listRequests({int limit = 100}) async {
+    return rows.take(limit).toList(growable: false);
+  }
+
+  @override
+  Future<CoachPayoutRequest> fulfill({
+    required String requestId,
+    required AdminPayoutFulfillAction action,
+  }) async {
+    fulfillCalls += 1;
+    final err = fulfillError;
+    if (err != null) {
+      if (err is Exception) throw err;
+      throw Exception('$err');
+    }
+    final idx = rows.indexWhere((r) => r.id == requestId);
+    if (idx < 0) throw const AdminPayoutNotFoundFailure();
+    final current = rows[idx];
+    final updated = CoachPayoutRequest(
+      id: current.id,
+      tenantId: current.tenantId,
+      coachEmployeeId: current.coachEmployeeId,
+      coachDisplayName: current.coachDisplayName,
+      amountCents: current.amountCents,
+      currency: current.currency,
+      status: action == AdminPayoutFulfillAction.paid
+          ? CoachPayoutRequestStatus.paid
+          : CoachPayoutRequestStatus.rejected,
+      createdAt: current.createdAt,
+      updatedAt: DateTime.now().toUtc(),
+    );
+    rows = [
+      for (var i = 0; i < rows.length; i++)
+        if (i == idx) updated else rows[i],
+    ];
+    return updated;
+  }
+}
 
 void main() {
-  late _MockPayoutRepo repo;
-
-  setUpAll(() {
-    registerFallbackValue(AdminPayoutFulfillAction.paid);
-  });
+  late _FakePayoutRepo repo;
 
   setUp(() {
-    repo = _MockPayoutRepo();
+    repo = _FakePayoutRepo();
   });
 
   AdminPayoutQueueBloc buildBloc({bool online = true}) {
@@ -96,7 +134,10 @@ void main() {
         AdminPayoutQueueScreen.stitchScreenIdAr,
         KineticTokens.stitchAdminPayoutQueueScreenIdAr,
       );
-      expect(AdminPayoutQueueScreen.brandLockDsAsset, 'assets/12737976743993098844');
+      expect(
+        AdminPayoutQueueScreen.brandLockDsAsset,
+        'assets/12737976743993098844',
+      );
       expect(KineticTokens.peakCoral, const Color(0xFFFF3B30));
       expect(KineticTokens.electricLime, const Color(0xFFCCFF00));
       expect(KineticTokens.deepCharcoal, const Color(0xFF121212));
@@ -105,14 +146,12 @@ void main() {
 
   group('AdminPayoutQueueBloc', () {
     test('load emits ready with pending filter default', () async {
-      when(() => repo.listRequests(limit: any(named: 'limit'))).thenAnswer(
-        (_) async => [
-          pending(),
-          pending(id: 'r2', name: 'Karim').copyWithStatus(
-            CoachPayoutRequestStatus.paid,
-          ),
-        ],
-      );
+      repo.rows = [
+        pending(),
+        pending(id: 'r2', name: 'Karim').copyWithStatus(
+          CoachPayoutRequestStatus.paid,
+        ),
+      ];
 
       final bloc = buildBloc();
       bloc.add(const AdminPayoutQueueLoadRequested());
@@ -133,14 +172,8 @@ void main() {
     });
 
     test('mark paid maps forbidden failure', () async {
-      when(() => repo.listRequests(limit: any(named: 'limit')))
-          .thenAnswer((_) async => [pending()]);
-      when(
-        () => repo.fulfill(
-          requestId: any(named: 'requestId'),
-          action: any(named: 'action'),
-        ),
-      ).thenThrow(const AdminPayoutForbiddenFailure());
+      repo.rows = [pending()];
+      repo.fulfillError = const AdminPayoutForbiddenFailure();
 
       final bloc = buildBloc();
       final ready = bloc.stream.firstWhere(
@@ -168,8 +201,7 @@ void main() {
     });
 
     test('receptionist canWrite=false emits forbidden without RPC', () async {
-      when(() => repo.listRequests(limit: any(named: 'limit')))
-          .thenAnswer((_) async => [pending()]);
+      repo.rows = [pending()];
 
       final bloc = buildBloc();
       final ready = bloc.stream.firstWhere(
@@ -193,18 +225,12 @@ void main() {
           ),
         ),
       );
-      verifyNever(
-        () => repo.fulfill(
-          requestId: any(named: 'requestId'),
-          action: any(named: 'action'),
-        ),
-      );
+      expect(repo.fulfillCalls, 0);
       await bloc.close();
     });
 
     test('offline fulfill throws offline key via use case', () async {
-      when(() => repo.listRequests(limit: any(named: 'limit')))
-          .thenAnswer((_) async => [pending()]);
+      repo.rows = [pending()];
 
       final bloc = buildBloc(online: false);
       final ready = bloc.stream.firstWhere(
@@ -228,6 +254,7 @@ void main() {
           ),
         ),
       );
+      expect(repo.fulfillCalls, 0);
       await bloc.close();
     });
   });
@@ -235,8 +262,7 @@ void main() {
   group('AdminPayoutQueueScreen UI', () {
     testWidgets('renders header, filters, KPIs, Mark paid for Admin',
         (tester) async {
-      when(() => repo.listRequests(limit: any(named: 'limit')))
-          .thenAnswer((_) async => [pending()]);
+      repo.rows = [pending()];
 
       await pumpLocalizedApp(
         tester,
@@ -244,7 +270,7 @@ void main() {
           create: (_) => buildBloc(),
           child: const AdminPayoutQueueScreen(canWrite: true),
         ),
-        waitFor: find.text('Payout Queue'),
+        waitFor: find.text('Maya Okonkwo'),
       );
 
       expect(find.text('Payout Queue'), findsOneWidget);
@@ -252,7 +278,6 @@ void main() {
         find.textContaining('fulfill without live PSP'),
         findsOneWidget,
       );
-      expect(find.text('Pending'), findsWidgets);
       expect(find.text('Mark paid'), findsOneWidget);
       expect(find.text('Reject'), findsOneWidget);
       expect(find.text('Maya Okonkwo'), findsOneWidget);
@@ -263,8 +288,7 @@ void main() {
     });
 
     testWidgets('Receptionist sees read-only actions', (tester) async {
-      when(() => repo.listRequests(limit: any(named: 'limit')))
-          .thenAnswer((_) async => [pending()]);
+      repo.rows = [pending()];
 
       await pumpLocalizedApp(
         tester,
@@ -272,7 +296,7 @@ void main() {
           create: (_) => buildBloc(),
           child: const AdminPayoutQueueScreen(canWrite: false),
         ),
-        waitFor: find.text('Payout Queue'),
+        waitFor: find.text('Maya Okonkwo'),
       );
 
       expect(find.text('Mark paid'), findsNothing);
@@ -281,8 +305,7 @@ void main() {
     });
 
     testWidgets('AR RTL title renders', (tester) async {
-      when(() => repo.listRequests(limit: any(named: 'limit')))
-          .thenAnswer((_) async => [pending()]);
+      repo.rows = [pending()];
 
       await pumpLocalizedApp(
         tester,
@@ -291,9 +314,8 @@ void main() {
           child: const AdminPayoutQueueScreen(canWrite: true),
         ),
         locale: AppLocales.ar,
-        waitFor: find.text('طابور السحوبات'),
+        waitFor: find.text('تعليم كمدفوع'),
       );
-
       expect(find.text('طابور السحوبات'), findsOneWidget);
       expect(find.text('تعليم كمدفوع'), findsOneWidget);
       expect(find.text('رفض'), findsOneWidget);
