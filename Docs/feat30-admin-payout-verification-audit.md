@@ -15,7 +15,7 @@
 - [x] EasyLocalization EN/AR `payouts.*` + `nav.payouts`
 - [x] Brand Lock tokens (`peakCoral` `#FF3B30`, lime, charcoal)
 - [x] Tests: `test/feat30_admin_payout_queue_test.dart` (+ shell count updates)
-- [ ] §E2 Stitch MCP screenshot side-by-side — **BLOCKED** (no OAuth / API key this session)
+- [x] §E2 Stitch MCP screenshots — `Docs/feat30-assets/stitch-en-mcp.png` + `stitch-ar-mcp.png` (HTTP MCP `get_screen`)
 
 ## AC mapping
 
@@ -25,7 +25,7 @@
 | AC-A2 Receptionist SELECT / no fulfill UI | `canFulfillPayouts`; UI read-only |
 | AC-B1/C1 RPC `admin_fulfill_coach_payout` paid\|rejected | `fulfill` remote |
 | AC-D1 Stitch ids cited | Screen constants + Visual Spec Cards |
-| AC-D2 Spec Card + §E2 | Cards present; **MCP evidence residual** |
+| AC-D2 Spec Card + §E2 | Cards + MCP PNGs under `Docs/feat30-assets/` |
 | AC-D4 EN\|AR RTL | translations + widget tests |
 
 ## Visual Spec Cards
@@ -36,10 +36,11 @@
 
 ## Residuals for BizDev
 
-1. **Stitch MCP OAuth** unavailable → §E2 cannot PASS until re-fetch screenshots into `Docs/feat30-assets/`.
-2. Backend sibling repo not readable from this token — contract taken from locked FSD §4 (view/RPC names).
+1. **§E2 region order** — live Stitch MCP: Header → KPI → Filters → Table; app: Header → Filters → KPI → Table (see region checklist).
+2. Rail order locks **Payouts before Reports** (index 5/6) to match committed Portal IA + tests; Stitch HTML lists Reports then Payouts — confirm with Lead if swap needed.
 3. No PSP (confirmed — UI copy + no payment SDK).
+4. Manual P1–P5 against live Kinetic Dev pending remedia + BizDev re-audit.
 
 ## BizDev Audit
 
-`BizDev Audit: ` _(pending — STOP for Lead BizDev)_
+`BizDev Audit: FAIL` — 2026-08-10 — Lead BizDev. MCP screenshots present; vertical region order does not match Stitch SoT. Do not merge PR #34 until remedia + re-audit PASS.

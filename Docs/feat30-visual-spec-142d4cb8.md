@@ -10,8 +10,8 @@
 | Stitch title | Admin Payout Queue (Arabic RTL) |
 | Platform | DESKTOP |
 | EN twin / AR twin ids | EN `405663d1534848d2a96f1db4e76c35df` · AR `142d4cb868ff4aff8c040453bad737f9` |
-| MCP tools used | **BLOCKED this session** — same as EN card (401 / no `GOOGLE_STITCH_API_KEY` / no gcloud account). IA from `@specs/stitch-inventory-milestone-6.md` AR extract. |
-| Fetched at (UTC) | 2026-08-09T23:55:00Z (attempt) |
+| MCP tools used | HTTP JSON-RPC `tools/call` → `get_screen` on `https://stitch.googleapis.com/mcp` (Bearer via `gcloud auth print-access-token` + `X-Goog-User-Project: fithub-503813`) |
+| Fetched at (UTC) | 2026-08-10T09:02:00Z |
 | Author agent | Portal Admin Agent |
 
 ---
@@ -20,12 +20,12 @@
 
 | Field | Stitch value | Notes |
 |-------|--------------|-------|
-| Width × height | DESKTOP (ESTIMATED) | Pending MCP |
+| Width × height | `2560` × `2048` | From MCP `get_screen` |
 | Page background | `#121212` | Brand Lock |
 | Direction | RTL | EasyLocalization `ar` + Directionality |
 
-Screenshot (MCP): **pending**  
-App screenshot: `Docs/feat30-assets/app-ar-payout-queue.png` (when captured)
+Screenshot (MCP AR): `Docs/feat30-assets/stitch-ar-mcp.png`  
+App screenshot: `Docs/feat30-assets/app-ar-payout-queue.png`
 
 ---
 
@@ -33,12 +33,12 @@ App screenshot: `Docs/feat30-assets/app-ar-payout-queue.png` (when captured)
 
 Same 7 content regions as EN card, mirrored RTL:
 
-1. Rail end-side in LTR terms → start in RTL with **السحوبات** active  
+1. Rail end-side in LTR terms → start in RTL with **المدفوعات** active  
 2. Title `طابور السحوبات`  
 3. Filters: الكل / قيد الانتظار / مدفوع / مرفوض  
 4. KPI strip (same metrics)  
 5. Table columns mirrored  
-6. Actions: تعليم كمدفوع / رفض  
+6. Actions: تعيين كمدفوع / رفض  
 7. Footer ops-only copy  
 
 ---
@@ -55,7 +55,6 @@ Mirror EN card; Arabic copy from `assets/translations/ar.json` `payouts.*`. Bran
 |-------|--------|
 | RTL mirroring of EN layout | FEAT-03 |
 | Live vs fixture rows | Binding |
-| Exact Stitch px pending MCP | OAuth residual |
 
 ---
 
@@ -63,6 +62,6 @@ Mirror EN card; Arabic copy from `assets/translations/ar.json` `payouts.*`. Bran
 
 | Artifact | Path / URL |
 |----------|------------|
-| Stitch screenshot (MCP) | **BLOCKED** |
+| Stitch screenshot (MCP) | `Docs/feat30-assets/stitch-ar-mcp.png` |
 | App screenshot | `Docs/feat30-assets/app-ar-payout-queue.png` |
 | Region checklist | `Docs/feat30-region-checklist.md` |

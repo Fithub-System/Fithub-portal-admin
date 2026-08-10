@@ -10,22 +10,23 @@
 | Stitch title | Admin Payout Queue |
 | Platform | DESKTOP |
 | EN twin / AR twin ids | EN `405663d1534848d2a96f1db4e76c35df` · AR `142d4cb868ff4aff8c040453bad737f9` |
-| MCP tools used | **BLOCKED this session** — Cursor catalog omitted `stitch`/`user-stitch`; `GOOGLE_STITCH_API_KEY` len=0; `gcloud auth` has no credentialed accounts; HTTP `POST https://stitch.googleapis.com/mcp` → 401 OAuth required. Regions sourced from locked FSD §3 + `@specs/stitch-inventory-milestone-6.md` IA extract (BizDev MCP generation 2026-08-10) + Brand Lock DS `assets/12737976743993098844`. |
-| Fetched at (UTC) | 2026-08-09T23:55:00Z (attempt) — live artboard fetch **failed** |
+| MCP tools used | HTTP JSON-RPC `tools/call` → `get_screen` on `https://stitch.googleapis.com/mcp` (Cursor catalog omitted `user-stitch`; OAuth Bearer via `gcloud auth print-access-token` + `X-Goog-User-Project: fithub-503813`) |
+| Fetched at (UTC) | 2026-08-10T09:02:00Z |
 | Author agent | Portal Admin Agent |
 
 ---
 
 ## Frame
 
-| Field | Stitch value | Notes |
-|-------|--------------|-------|
-| Width × height | DESKTOP artboard (ESTIMATED `2560`×~`1800`) | Exact px pending MCP re-fetch |
-| Page background | `#121212` / `#131313` | Brand Lock canvas |
+| Field | Value | Notes |
+|-------|-------|-------|
+| Width × height | `3072` × `2048` (EN DESKTOP) | From MCP `get_screen` |
+| Page background | `#121212` | Brand Lock canvas |
 | Primary surface | `#1C1B1B` | KPI + table surfaces |
 
-Screenshot (MCP): **pending** — residual for BizDev §E2  
-App screenshot: `Docs/feat30-assets/app-en-payout-queue.png` (when captured)
+Screenshot (MCP EN): `Docs/feat30-assets/stitch-en-mcp.png`  
+HTML (MCP EN): fetched via `htmlCode.downloadUrl` (session)  
+App screenshot: `Docs/feat30-assets/app-en-payout-queue.png`
 
 ---
 
@@ -90,7 +91,6 @@ App screenshot: `Docs/feat30-assets/app-en-payout-queue.png` (when captured)
 | SafeArea / keyboard | Platform |
 | Scroll overflow | Content > viewport |
 | Live data vs fixture sample coaches/amounts | Binding |
-| Exact Stitch px pending MCP re-fetch | OAuth unavailable this session — **§E2 residual** |
 
 ---
 
@@ -98,6 +98,6 @@ App screenshot: `Docs/feat30-assets/app-en-payout-queue.png` (when captured)
 
 | Artifact | Path / URL |
 |----------|------------|
-| Stitch screenshot (from MCP) | **BLOCKED** — no OAuth / API key |
+| Stitch screenshot (from MCP) | `Docs/feat30-assets/stitch-en-mcp.png` |
 | App screenshot | `Docs/feat30-assets/app-en-payout-queue.png` |
 | Golden / region checklist | `Docs/feat30-region-checklist.md` |
