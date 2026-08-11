@@ -74,8 +74,8 @@ void main() {
     });
 
     test('six rail destinations preserved (not a 7th Settings tab)', () {
-      expect(PortalShellDestinations.destinationCount, 6);
-      expect(PortalShellDestinations.reports, 5);
+      expect(PortalShellDestinations.destinationCount, 7);
+      expect(PortalShellDestinations.reports, 6);
     });
   });
 

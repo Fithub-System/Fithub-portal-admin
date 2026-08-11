@@ -39,6 +39,9 @@ class EmployeeProfile extends Equatable {
   /// FEAT-23 AC-B2 / AC-C — only Admin may deploy campaigns / upsert promos.
   bool get canManageMarketing => role == 'Admin';
 
+  /// FEAT-30 AC-B2 — only Admin may fulfill/reject payouts (Receptionist RO).
+  bool get canFulfillPayouts => role == 'Admin';
+
   @override
   List<Object?> get props => [id, tenantId, userId, name, role];
 }

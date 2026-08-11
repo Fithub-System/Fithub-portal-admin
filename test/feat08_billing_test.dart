@@ -224,8 +224,8 @@ void main() {
   group('Shell destinations', () {
     test('Marketing is index 4 under FEAT-11 six-destination shell', () {
       expect(PortalShellDestinations.marketing, 4);
-      expect(PortalShellDestinations.reports, 5);
-      expect(PortalShellDestinations.destinationCount, 6);
+      expect(PortalShellDestinations.reports, 6);
+      expect(PortalShellDestinations.destinationCount, 7);
     });
   });
 }

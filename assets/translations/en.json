@@ -74,7 +74,8 @@
     "marketing": "Marketing",
     "reports": "Reports",
     "account": "Account",
-    "coming_soon": "Coming soon in a later phase."
+    "coming_soon": "Coming soon in a later phase.",
+    "payouts": "Payouts"
   },
   "staff": {
     "shell": {
@@ -368,7 +369,6 @@
       "assign_prereq": "Need an active plan and enrolled athlete to assign."
     }
   },
-
   "members": {
     "title": "ACTIVE ROSTER",
     "subtitle": "Managing high-performance athletes and elite members. Ensure data integrity for kinetic output tracking.",
@@ -617,5 +617,58 @@
     "password_empty": "Password cannot be empty",
     "password_invalid": "Password must be at least 8 characters long, contain at least one letter and one number",
     "passwords_mismatch": "Passwords do not match"
+  },
+  "payouts": {
+    "header": {
+      "title": "Payout Queue",
+      "subtitle": "Coach payout requests — fulfill without live PSP"
+    },
+    "filter": {
+      "all": "All",
+      "pending": "Pending",
+      "paid": "Paid",
+      "rejected": "Rejected"
+    },
+    "kpi": {
+      "pending": "Pending",
+      "paid_today": "Paid today",
+      "rejected_today": "Rejected today"
+    },
+    "table": {
+      "coach": "Coach",
+      "amount": "Amount",
+      "status": "Status",
+      "requested_at": "Requested at",
+      "actions": "Actions",
+      "empty": "No payout requests in this filter.",
+      "no_actions": "—",
+      "read_only": "Read-only"
+    },
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "rejected": "Rejected"
+    },
+    "actions": {
+      "mark_paid": "Mark paid",
+      "reject": "Reject",
+      "retry": "Retry"
+    },
+    "footer": {
+      "ops_only": "Mark paid records ops fulfillment only — no bank transfer."
+    },
+    "success": {
+      "marked_paid": "Payout marked paid.",
+      "rejected": "Payout rejected — reserve released."
+    },
+    "error": {
+      "not_configured": "Payouts backend is not configured.",
+      "forbidden": "Admin only — fulfill is forbidden for this role.",
+      "not_found": "Payout request not found.",
+      "invalid_state": "Request is not pending.",
+      "invalid_input": "Invalid fulfill action.",
+      "unknown": "Something went wrong with payouts.",
+      "offline": "Cloud required — reconnect to fulfill payouts."
+    }
   }
 }

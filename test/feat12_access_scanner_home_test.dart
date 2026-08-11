@@ -47,13 +47,13 @@ void main() {
 
   group('FEAT-12 shell IA', () {
     test('six rail destinations preserved; Scan not an index', () {
-      expect(PortalShellDestinations.destinationCount, 6);
+      expect(PortalShellDestinations.destinationCount, 7);
       expect(PortalShellDestinations.home, 0);
       expect(PortalShellDestinations.members, 1);
       expect(PortalShellDestinations.staff, 2);
       expect(PortalShellDestinations.classes, 3);
       expect(PortalShellDestinations.marketing, 4);
-      expect(PortalShellDestinations.reports, 5);
+      expect(PortalShellDestinations.reports, 6);
     });
   });
 
