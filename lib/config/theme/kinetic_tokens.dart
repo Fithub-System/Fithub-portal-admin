@@ -49,6 +49,15 @@ abstract final class KineticTokens {
   /// Stitch `error` — urgent expiration tint.
   static const Color stitchError = Color(0xFFFFB4AB);
 
+  /// Brand Lock peak / reject — Kinetic Forge `#FF3B30`.
+  static const Color peakCoral = Color(0xFFFF3B30);
+
+  /// FEAT-30 Admin Payout Queue EN / AR.
+  static const String stitchAdminPayoutQueueScreenIdEn =
+      '405663d1534848d2a96f1db4e76c35df';
+  static const String stitchAdminPayoutQueueScreenIdAr =
+      '142d4cb868ff4aff8c040453bad737f9';
+
   /// Stitch SideNavBar width (`w-64`).
   static const double railWidth = 256;
 

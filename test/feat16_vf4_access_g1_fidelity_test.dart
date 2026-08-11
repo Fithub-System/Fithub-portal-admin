@@ -90,7 +90,7 @@ void main() {
     });
 
     test('Install 6-rail preserved; Scan not an index', () {
-      expect(PortalShellDestinations.destinationCount, 6);
+      expect(PortalShellDestinations.destinationCount, 7);
       expect(PortalShellDestinations.home, 0);
     });
   });
