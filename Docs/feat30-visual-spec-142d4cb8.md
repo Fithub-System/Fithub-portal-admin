@@ -35,8 +35,8 @@ Same 7 content regions as EN card, mirrored RTL:
 
 1. Rail end-side in LTR terms → start in RTL with **المدفوعات** active  
 2. Title `طابور السحوبات`  
-3. Filters: الكل / قيد الانتظار / مدفوع / مرفوض  
-4. KPI strip (same metrics)  
+3. KPI strip (same metrics) — below header (Stitch SoT)  
+4. Filters: الكل / قيد الانتظار / مدفوع / مرفوض — below KPIs  
 5. Table columns mirrored  
 6. Actions: تعيين كمدفوع / رفض  
 7. Footer ops-only copy  

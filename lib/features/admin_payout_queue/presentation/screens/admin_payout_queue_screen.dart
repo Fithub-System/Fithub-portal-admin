@@ -86,17 +86,17 @@ class _AdminPayoutQueueScreenState extends State<AdminPayoutQueueScreen> {
                 children: [
                   _Header(stitchId: stitchId),
                   const SizedBox(height: 28),
+                  PayoutKpiStrip(
+                    pending: state.pendingCount,
+                    paidToday: state.paidTodayCount,
+                    rejectedToday: state.rejectedTodayCount,
+                  ),
+                  const SizedBox(height: 24),
                   PayoutFilterChips(
                     selected: state.filter,
                     onSelected: (filter) => context
                         .read<AdminPayoutQueueBloc>()
                         .add(AdminPayoutQueueFilterChanged(filter)),
-                  ),
-                  const SizedBox(height: 24),
-                  PayoutKpiStrip(
-                    pending: state.pendingCount,
-                    paidToday: state.paidTodayCount,
-                    rejectedToday: state.rejectedTodayCount,
                   ),
                   const SizedBox(height: 28),
                   PayoutQueueTable(

@@ -36,8 +36,8 @@ App screenshot: `Docs/feat30-assets/app-en-payout-queue.png`
 |---|-------------|-----------------|---------|----------------------|------------------------|
 | 1 | SideNavBar + **Payouts** active | Sticky start, `w-64` | Brand pad | `#0A0A0A`; active lime | `_PortalNavigationRail` + `PortalShellDestinations.payouts` |
 | 2 | Header — Payout Queue + no-PSP subtitle | Top of main | `p-10` rhythm | page canvas | `_Header` in `AdminPayoutQueueScreen` |
-| 3 | Filter chips — All / Pending / Paid / Rejected | Below header | chip pad 16×10 | selected lime wash | `PayoutFilterChips` |
-| 4 | KPI strip — Pending · Paid today · Rejected today | Below filters | tile pad ~20 | `#1C1B1B` + accent left bar | `PayoutKpiStrip` |
+| 3 | KPI strip — Pending · Paid today · Rejected today | Below header | tile pad ~20 | `#1C1B1B` + accent left bar | `PayoutKpiStrip` |
+| 4 | Filter chips — All / Pending / Paid / Rejected | Below KPIs | chip pad 16×10 | selected lime wash | `PayoutFilterChips` |
 | 5 | Table — Coach · Amount · Status · Requested at · Actions | Main | header/row pads | `#1C1B1B` / `#0E0E0E` header | `PayoutQueueTable` |
 | 6 | Pending actions — **Mark paid** (lime) · **Reject** (peak coral) | Actions col | CTA pad | lime fill / coral outline | `_ActionButtons` |
 | 7 | Footer — ops fulfillment only / no bank transfer | Bottom | — | zinc caption | footer `Text` |

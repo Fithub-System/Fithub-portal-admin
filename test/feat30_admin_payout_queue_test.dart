@@ -12,6 +12,9 @@ import 'package:fithub_portal_admin/features/admin_payout_queue/domain/repositor
 import 'package:fithub_portal_admin/features/admin_payout_queue/domain/use_cases/admin_payout_queue_use_cases.dart';
 import 'package:fithub_portal_admin/features/admin_payout_queue/presentation/bloc/admin_payout_queue_bloc.dart';
 import 'package:fithub_portal_admin/features/admin_payout_queue/presentation/screens/admin_payout_queue_screen.dart';
+import 'package:fithub_portal_admin/features/admin_payout_queue/presentation/widgets/payout_filter_chips.dart';
+import 'package:fithub_portal_admin/features/admin_payout_queue/presentation/widgets/payout_kpi_strip.dart';
+import 'package:fithub_portal_admin/features/admin_payout_queue/presentation/widgets/payout_queue_table.dart';
 import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
 import 'package:fithub_portal_admin/features/home/presentation/pages/portal_shell_destinations.dart';
 
@@ -260,7 +263,7 @@ void main() {
   });
 
   group('AdminPayoutQueueScreen UI', () {
-    testWidgets('renders header, filters, KPIs, Mark paid for Admin',
+    testWidgets('renders header, KPIs, filters, Mark paid for Admin',
         (tester) async {
       repo.rows = [pending()];
 
@@ -286,6 +289,30 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets('Stitch vertical order Header → KPI → Filters → Table',
+        (tester) async {
+      repo.rows = [pending()];
+
+      await pumpLocalizedApp(
+        tester,
+        BlocProvider(
+          create: (_) => buildBloc(),
+          child: const AdminPayoutQueueScreen(canWrite: true),
+        ),
+        waitFor: find.text('Maya Okonkwo'),
+      );
+
+      final headerY = tester.getTopLeft(find.text('Payout Queue')).dy;
+      final kpiY = tester.getTopLeft(find.byType(PayoutKpiStrip)).dy;
+      final filterY = tester.getTopLeft(find.byType(PayoutFilterChips)).dy;
+      final tableY = tester.getTopLeft(find.byType(PayoutQueueTable)).dy;
+
+      expect(headerY, lessThan(kpiY));
+      expect(kpiY, lessThan(filterY));
+      expect(filterY, lessThan(tableY));
+    });
+
 
     testWidgets('Receptionist sees read-only actions', (tester) async {
       repo.rows = [pending()];

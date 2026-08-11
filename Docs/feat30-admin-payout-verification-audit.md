@@ -4,6 +4,7 @@
 **Base:** `origin/dev`  
 **Agent:** Portal  
 **Date (UTC):** 2026-08-10  
+**Remedia (UTC):** 2026-08-11 — Stitch vertical order Header → KPI → Filters → Table
 
 ## Self-check
 
@@ -16,6 +17,7 @@
 - [x] Brand Lock tokens (`peakCoral` `#FF3B30`, lime, charcoal)
 - [x] Tests: `test/feat30_admin_payout_queue_test.dart` (+ shell count updates)
 - [x] §E2 Stitch MCP screenshots — `Docs/feat30-assets/stitch-en-mcp.png` + `stitch-ar-mcp.png` (HTTP MCP `get_screen`)
+- [x] Remedia: widget order + Spec Card regions + region checklist (2026-08-11)
 
 ## AC mapping
 
@@ -36,11 +38,13 @@
 
 ## Residuals for BizDev
 
-1. **§E2 region order** — live Stitch MCP: Header → KPI → Filters → Table; app: Header → Filters → KPI → Table (see region checklist).
+1. ~~§E2 region order~~ — **Remedia done (2026-08-11):** `AdminPayoutQueueScreen` ListView is Header → `PayoutKpiStrip` → `PayoutFilterChips` → `PayoutQueueTable` → footer; Spec Cards + checklist updated; widget test asserts KPI Y < filters Y.
 2. Rail order locks **Payouts before Reports** (index 5/6) to match committed Portal IA + tests; Stitch HTML lists Reports then Payouts — confirm with Lead if swap needed.
 3. No PSP (confirmed — UI copy + no payment SDK).
-4. Manual P1–P5 against live Kinetic Dev pending remedia + BizDev re-audit.
+4. Manual P1–P5 against live Kinetic Dev pending BizDev re-audit. App PNGs pre-remedia; order proven by widget Y-assert (screenshot `toImage` unsupported in harness).
 
 ## BizDev Audit
 
 `BizDev Audit: FAIL` — 2026-08-10 — Lead BizDev. MCP screenshots present; vertical region order does not match Stitch SoT. Do not merge PR #34 until remedia + re-audit PASS.
+
+*(Portal remedia ready for re-audit — do not self-PASS.)*

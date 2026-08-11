@@ -2,15 +2,16 @@
 
 **Stitch source:** HTTP MCP `get_screen` (2026-08-10) — EN `405663d1534848d2a96f1db4e76c35df` · AR `142d4cb868ff4aff8c040453bad737f9`.  
 **MCP screenshots:** `Docs/feat30-assets/stitch-en-mcp.png` · `stitch-ar-mcp.png`  
-**App screenshots:** `Docs/feat30-assets/app-en-payout-queue.png` · `app-ar-payout-queue.png`  
-**Brand Lock DS:** `assets/12737976743993098844`
+**App screenshots:** `Docs/feat30-assets/app-en-payout-queue.png` · `app-ar-payout-queue.png` (pre-remedia chrome; order proven by widget Y-assert 2026-08-11)  
+**Brand Lock DS:** `assets/12737976743993098844`  
+**Remedia:** 2026-08-11 — vertical order fixed to Stitch SoT (Header → KPI → Filters → Table).
 
 | # | Region | Spec / Stitch | Flutter | Status |
 |---|--------|---------------|---------|--------|
 | 1 | Payouts rail destination | Inventory: Payouts active | `PortalShellDestinations.payouts` + rail/bar | Implemented |
 | 2 | Header title + no-PSP subtitle | Stitch header | `_Header` | Implemented |
-| 3 | KPI strip — Pending / Paid today / Rejected today | **Stitch order: after header** | `PayoutKpiStrip` | **FAIL** — currently after filters |
-| 4 | Filter chips All/Pending/Paid/Rejected | **Stitch order: after KPIs** | `PayoutFilterChips` | **FAIL** — currently before KPIs |
+| 3 | KPI strip — Pending / Paid today / Rejected today | **Stitch order: after header** | `PayoutKpiStrip` | Implemented |
+| 4 | Filter chips All/Pending/Paid/Rejected | **Stitch order: after KPIs** | `PayoutFilterChips` | Implemented |
 | 5 | Table Coach·Amount·Status·Requested·Actions | Stitch table | `PayoutQueueTable` | Implemented |
 | 6 | Mark paid (lime) / Reject (peak coral) | Stitch actions | `_ActionButtons` | Implemented |
 | 7 | Footer ops-only / no bank | Stitch footer | footer Text | Implemented |
@@ -21,5 +22,6 @@
 ## §E2 status
 
 - MCP screenshots present (side-by-side artifacts ready).
-- **Blocking:** Vertical region order vs live Stitch is **Header → KPI → Filters → Table**; app is **Header → Filters → KPI → Table**. Reorder + re-capture app screenshots before BizDev PASS.
-- Note: Locked FSD §3 listed filters before KPIs — Stitch artboard (SoT for pixels) wins; amend Spec Card regions on remedia.
+- Vertical region order matches live Stitch SoT: **Header → KPI → Filters → Table** (remedia 2026-08-11 in `admin_payout_queue_screen.dart`).
+- Spec Cards region tables amended to KPI-then-filters (Stitch artboard wins over earlier FSD §3 filter-first listing).
+- Widget-test harness `toImage` hangs (no reliable screenshot writer); remedia order covered by `Stitch vertical order Header → KPI → Filters → Table` Y-position assertion in `test/feat30_admin_payout_queue_test.dart`. Existing app PNGs retained for token/copy chrome.
