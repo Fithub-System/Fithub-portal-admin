@@ -45,6 +45,11 @@
 
 ## BizDev Audit
 
-`BizDev Audit: FAIL` — 2026-08-10 — Lead BizDev. MCP screenshots present; vertical region order does not match Stitch SoT. Do not merge PR #34 until remedia + re-audit PASS.
+`BizDev Audit: PASS` — 2026-08-11 — Lead BizDev re-audit after remedia `822b88ea`.
 
-*(Portal remedia ready for re-audit — do not self-PASS.)*
+- Spec: FEAT-30 US-A/D + §3 (amended KPI-then-filters) + §E2 Stitch SoT
+- Branch: PR [#34](https://github.com/Fithub-System/Fithub-portal-admin/pull/34) @ `822b88ea`
+- Evidence: Header → KPI → Filters → Table in screen; Spec Cards + checklist; MCP PNGs; BizDev re-ran `flutter test test/feat30_admin_payout_queue_test.dart` → **12 passed** (incl. Y-order assert)
+- Residuals (non-blocking): Payouts-before-Reports rail lock vs Stitch HTML order; app PNGs pre-remedia (order covered by widget assert); Manual P1–P5 on live Kinetic Dev
+- Merge to Portal `dev`: **AUTHORIZED**
+- Issue [#33](https://github.com/Fithub-System/Fithub-portal-admin/issues/33): close after merge
