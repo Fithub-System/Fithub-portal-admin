@@ -180,7 +180,8 @@
     "yield": {
       "title": "العائد\nاليومي",
       "subtitle": "تدفق إيرادات اليوم",
-      "delta_placeholder": "+14.2% vs yesterday"
+      "delta_placeholder": "+14.2% vs yesterday",
+      "delta_unavailable": "—"
     },
     "expiring": {
       "title": "عضويات تنتهي قريبًا",
@@ -203,8 +204,12 @@
     "stats": {
       "total_active": "النشطون إجماليًا",
       "classes_today": "حصص اليوم",
+      "check_ins_today": "تسجيلات الدخول اليوم",
       "guest_passes": "تصاريح الضيوف",
       "incidents": "بلاغات الحوادث"
+    },
+    "metrics": {
+      "load_failed": "تعذّر تحديث مقاييس الرئيسية — عرض قيم مباشرة فارغة."
     },
     "scan": {
       "approved": "مقبول: {name}",

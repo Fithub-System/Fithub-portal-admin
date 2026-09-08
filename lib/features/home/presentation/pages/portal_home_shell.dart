@@ -10,6 +10,7 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
+import '../../../dashboard/presentation/cubit/overview_metrics_cubit.dart';
 import '../../../dashboard/presentation/widgets/admin_overview_dashboard.dart';
 import '../../../members/presentation/screens/member_management_screen.dart';
 import '../../../members/inject_members.dart' as members_di;
@@ -653,23 +654,39 @@ class _DashboardDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DashboardCubit, DashboardState>(
       builder: (context, dashboard) {
-        final approved =
-            dashboard.lastScanMessageKey == 'dashboard.scan.approved';
-        final rejected =
-            dashboard.lastScanMessageKey == 'dashboard.scan.rejected';
+        return BlocBuilder<OverviewMetricsCubit, OverviewMetricsState>(
+          builder: (context, metricsState) {
+            final approved =
+                dashboard.lastScanMessageKey == 'dashboard.scan.approved';
+            final rejected =
+                dashboard.lastScanMessageKey == 'dashboard.scan.rejected';
+            final metrics = metricsState.displayMetrics;
+            final loading =
+                metricsState.status == OverviewMetricsStatus.loading ||
+                metricsState.status == OverviewMetricsStatus.initial;
+            final statusKey =
+                metricsState.statusMessageKey ?? dashboard.statusMessageKey;
 
-        return ColoredBox(
-          color: KineticTokens.stitchBackground,
-          child: AdminOverviewDashboard(
-            currentOccupancy: dashboard.currentOccupancy,
-            capacityLimit: dashboard.capacityLimit,
-            onOpenScanner: onOpenScanner,
-            statusMessageKey: dashboard.statusMessageKey,
-            lastScanApproved: approved,
-            lastScanMemberName: dashboard.lastScanMemberName,
-            lastScanRejectReason:
-                rejected ? dashboard.lastScanRejectReason : null,
-          ),
+            return ColoredBox(
+              color: KineticTokens.stitchBackground,
+              child: AdminOverviewDashboard(
+                currentOccupancy: dashboard.currentOccupancy,
+                capacityLimit: dashboard.capacityLimit,
+                onOpenScanner: onOpenScanner,
+                statusMessageKey: statusKey,
+                lastScanApproved: approved,
+                lastScanMemberName: dashboard.lastScanMemberName,
+                lastScanRejectReason:
+                    rejected ? dashboard.lastScanRejectReason : null,
+                liveMetricsBound: true,
+                metricsLoading: loading,
+                revenueAmountLabel: metrics.revenueAmountLabel,
+                expiringRows: metrics.expiringSoon,
+                membersCountLabel: metrics.membersCountLabel,
+                checkInsTodayLabel: metrics.checkInsTodayLabel,
+              ),
+            );
+          },
         );
       },
     );

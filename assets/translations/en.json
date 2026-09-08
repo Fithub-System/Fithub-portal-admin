@@ -180,7 +180,8 @@
     "yield": {
       "title": "DAILY\nYIELD",
       "subtitle": "TODAY'S REVENUE STREAM",
-      "delta_placeholder": "+14.2% vs yesterday"
+      "delta_placeholder": "+14.2% vs yesterday",
+      "delta_unavailable": "—"
     },
     "expiring": {
       "title": "EXPIRING MEMBERSHIPS",
@@ -203,8 +204,12 @@
     "stats": {
       "total_active": "TOTAL ACTIVE",
       "classes_today": "CLASSES TODAY",
+      "check_ins_today": "CHECK-INS TODAY",
       "guest_passes": "GUEST PASSES",
       "incidents": "INCIDENT REPORTS"
+    },
+    "metrics": {
+      "load_failed": "Could not refresh Home metrics — showing empty live values."
     },
     "scan": {
       "approved": "Approved: {name}",
