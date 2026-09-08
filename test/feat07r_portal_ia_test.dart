@@ -22,7 +22,7 @@ void main() {
       expect(PortalShellDestinations.home, 0);
       expect(PortalShellDestinations.members, 1);
       expect(PortalShellDestinations.marketing, 4);
-      expect(PortalShellDestinations.destinationCount, 7);
+      expect(PortalShellDestinations.destinationCount, 8);
     });
   });
 

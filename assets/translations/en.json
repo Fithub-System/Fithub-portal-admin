@@ -75,7 +75,25 @@
     "reports": "Reports",
     "account": "Account",
     "coming_soon": "Coming soon in a later phase.",
-    "payouts": "Payouts"
+    "payouts": "Payouts",
+    "settings": "Settings"
+  },
+  "settings": {
+    "hub": {
+      "title": "SETTINGS",
+      "subtitle": "Configure gym modules. Open a tile to edit.",
+      "back": "Back to Settings",
+      "modules": {
+        "sku": {
+          "title": "SKU & Marketplace",
+          "body": "Network / Private Cloud and Marketplace opt-in."
+        },
+        "freeze": {
+          "title": "Freeze policy",
+          "body": "Default and max freeze days — general and per plan."
+        }
+      }
+    }
   },
   "staff": {
     "shell": {

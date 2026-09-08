@@ -18,6 +18,7 @@ class GymSkuSettingsScreen extends StatefulWidget {
     super.key,
     required this.canWrite,
     this.onClose,
+    this.includeFreezePolicy = true,
   });
 
   static const String stitchScreenId = '6cb93d6100314ce8a5d9c1af92c97723';
@@ -27,8 +28,11 @@ class GymSkuSettingsScreen extends StatefulWidget {
   /// Admin-only mutate via RPC (Receptionist read-only).
   final bool canWrite;
 
-  /// Optional close when hosted as shell focus overlay.
+  /// Optional close when hosted as shell focus overlay / Settings hub module.
   final VoidCallback? onClose;
+
+  /// When false (Settings hub SKU tile), Freeze policy is a separate module.
+  final bool includeFreezePolicy;
 
   @override
   State<GymSkuSettingsScreen> createState() => _GymSkuSettingsScreenState();
@@ -258,14 +262,15 @@ class _GymSkuSettingsScreenState extends State<GymSkuSettingsScreen> {
                 ),
               ),
             ],
-            // FEAT-61: Freeze policy above SKU Save so it is not below the fold.
-            const SizedBox(height: 32),
-            Divider(
-              height: 1,
-              color: KineticTokens.zincGray.withValues(alpha: 0.35),
-            ),
-            const SizedBox(height: 24),
-            FreezePolicySettingsSection(canWrite: widget.canWrite),
+            if (widget.includeFreezePolicy) ...[
+              const SizedBox(height: 32),
+              Divider(
+                height: 1,
+                color: KineticTokens.zincGray.withValues(alpha: 0.35),
+              ),
+              const SizedBox(height: 24),
+              FreezePolicySettingsSection(canWrite: widget.canWrite),
+            ],
             if (widget.canWrite) ...[
               const SizedBox(height: 24),
               Align(

@@ -34,7 +34,7 @@ void main() {
     });
 
     test('Install 6-rail Members index unchanged', () {
-      expect(PortalShellDestinations.destinationCount, 7);
+      expect(PortalShellDestinations.destinationCount, 8);
       expect(PortalShellDestinations.members, 1);
     });
   });
