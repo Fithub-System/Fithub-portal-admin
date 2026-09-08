@@ -95,6 +95,17 @@ class AccessScannerFocusHost extends StatelessWidget {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 4),
+                          // AC-B2: honest browser origin-lifetime permission copy.
+                          Text(
+                            'access_scanner.camera.permission_note'.tr(),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: KineticTokens.zincGray.withValues(
+                                alpha: 0.75,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),

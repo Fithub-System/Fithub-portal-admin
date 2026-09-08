@@ -66,9 +66,17 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
     }
   }
 
+  /// Call when [MobileScannerController] reports `isRunning` (stream start).
   void markCameraReady() {
-    if (state.cameraReady || isClosed) return;
-    emit(state.copyWith(cameraReady: true));
+    if (isClosed) return;
+    if (state.cameraReady && !state.cameraError) return;
+    emit(state.copyWith(cameraReady: true, cameraError: false));
+  }
+
+  /// Call when camera start fails (permission denied / unavailable).
+  void markCameraError() {
+    if (isClosed || state.cameraError) return;
+    emit(state.copyWith(cameraReady: false, cameraError: true));
   }
 
   Future<void> syncRoster() async {
@@ -152,7 +160,9 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
     _lastPayload = trimmed;
     _lastScanAt = now;
 
-    emit(state.copyWith(isProcessing: true, clearSuccess: true, clearError: true));
+    emit(
+      state.copyWith(isProcessing: true, clearSuccess: true, clearError: true),
+    );
 
     final result = await _processQrScan(
       tenantId: _tenantId,
