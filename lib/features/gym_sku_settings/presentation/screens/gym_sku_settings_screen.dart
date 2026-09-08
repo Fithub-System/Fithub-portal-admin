@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../auth/presentation/widgets/stitch_auth_snackbar.dart';
+import '../../../memberships/presentation/widgets/freeze_policy_settings_section.dart';
 import '../../domain/entities/gym_sku_settings.dart';
 import '../bloc/gym_sku_settings_bloc.dart';
 
@@ -278,6 +279,9 @@ class _GymSkuSettingsScreenState extends State<GymSkuSettingsScreen> {
                 ),
               ),
             ],
+            const SizedBox(height: 32),
+            FreezePolicySettingsSection(canWrite: widget.canWrite),
+            const SizedBox(height: 24),
           ],
         ),
         if (state.busy)

@@ -18,11 +18,13 @@ import '../widgets/members_stats_bento.dart';
 ///
 /// FEAT-59: opens with cloud refresh; empty live roster shows empty chrome
 /// (fixtures only for widget tests / explicit demo). FEAT-07 assign + plans
-/// (via Filter Type sheet) and FEAT-13 Add Member preserved.
-class MemberManagementScreen extends StatelessWidget {
+/// (via Filter Type sheet), FEAT-13 Add Member, FEAT-61 renew/freeze preserved.
+class MemberManagementScreen extends StatefulWidget {
   const MemberManagementScreen({
     super.key,
     required this.canWrite,
+    this.canRenew = false,
+    this.canFreeze = false,
     this.canEnroll = false,
   });
 
@@ -31,10 +33,32 @@ class MemberManagementScreen extends StatelessWidget {
   static const String stitchScreenIdAr = '60b6a0e1f7fb4419b1b0e774ec8bdb32';
   static const String stitchScreenTitle = 'Member Management';
 
+  /// FEAT-07 Admin-only assign / plan writes.
   final bool canWrite;
+
+  /// FEAT-61 Admin-only renew.
+  final bool canRenew;
+
+  /// FEAT-61 Admin + Receptionist freeze/unfreeze.
+  final bool canFreeze;
 
   /// FEAT-13 AC-B4 — Admin-only Add New Member navigation.
   final bool canEnroll;
+
+  @override
+  State<MemberManagementScreen> createState() => _MemberManagementScreenState();
+}
+
+class _MemberManagementScreenState extends State<MemberManagementScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Freeze actions need policy rows (no policy ⇒ freeze disabled).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<MembershipsCubit>().loadFreezePolicies();
+    });
+  }
 
   Future<void> _openAddMember(BuildContext context) async {
     await Navigator.of(context).push<void>(
@@ -96,7 +120,9 @@ class MemberManagementScreen extends StatelessWidget {
                   ),
                 ),
                 const Divider(height: 1, color: KineticTokens.zincGray),
-                Expanded(child: MembershipsPlansPanel(canWrite: canWrite)),
+                Expanded(
+                  child: MembershipsPlansPanel(canWrite: widget.canWrite),
+                ),
               ],
             ),
           ),
@@ -159,7 +185,9 @@ class MemberManagementScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                 ],
                 _Header(
-                  onAdd: canEnroll ? () => _openAddMember(context) : null,
+                  onAdd: widget.canEnroll
+                      ? () => _openAddMember(context)
+                      : null,
                   onFilter: () => _openPlansSheet(context),
                 ),
                 const SizedBox(height: 32),
@@ -196,7 +224,9 @@ class MemberManagementScreen extends StatelessWidget {
                             children: [
                               MemberRosterTable(
                                 members: rows,
-                                canWrite: canWrite,
+                                canAssign: widget.canWrite,
+                                canRenew: widget.canRenew,
+                                canFreeze: widget.canFreeze,
                               ),
                               MembersRosterPagination(
                                 visibleCount: rows.length,

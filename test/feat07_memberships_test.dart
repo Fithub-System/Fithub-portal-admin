@@ -61,6 +61,9 @@ void main() {
           MembershipAthleteOption(id: 'a1', fullName: 'Mostafa'),
         ],
       );
+      when(() => repository.listFreezePolicies()).thenAnswer(
+        (_) async => const [],
+      );
 
       final cubit = MembershipsCubit(
         listPlans: ListMembershipPlansUseCase(repository),
@@ -68,6 +71,11 @@ void main() {
         deactivatePlan: DeactivateMembershipPlanUseCase(repository),
         assignMembership: AssignMembershipUseCase(repository),
         listAthletes: ListMembershipAthletesUseCase(repository),
+        renewMembership: RenewMembershipUseCase(repository),
+        freezeMembership: FreezeMembershipUseCase(repository),
+        unfreezeMembership: UnfreezeMembershipUseCase(repository),
+        listFreezePolicies: ListFreezePoliciesUseCase(repository),
+        upsertFreezePolicy: UpsertFreezePolicyUseCase(repository),
       );
 
       await cubit.load();
@@ -84,6 +92,9 @@ void main() {
           athleteId: any(named: 'athleteId'),
         ),
       ).thenThrow(const MembershipsForbiddenFailure());
+      when(() => repository.listFreezePolicies()).thenAnswer(
+        (_) async => const [],
+      );
 
       final cubit = MembershipsCubit(
         listPlans: ListMembershipPlansUseCase(repository),
@@ -91,6 +102,11 @@ void main() {
         deactivatePlan: DeactivateMembershipPlanUseCase(repository),
         assignMembership: AssignMembershipUseCase(repository),
         listAthletes: ListMembershipAthletesUseCase(repository),
+        renewMembership: RenewMembershipUseCase(repository),
+        freezeMembership: FreezeMembershipUseCase(repository),
+        unfreezeMembership: UnfreezeMembershipUseCase(repository),
+        listFreezePolicies: ListFreezePoliciesUseCase(repository),
+        upsertFreezePolicy: UpsertFreezePolicyUseCase(repository),
       );
 
       await cubit.assign(planId: 'p1', athleteId: 'a1');

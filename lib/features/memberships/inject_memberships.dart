@@ -7,7 +7,7 @@ import 'package:fithub_portal_admin/features/memberships/domain/repositories/mem
 import 'package:fithub_portal_admin/features/memberships/domain/use_cases/memberships_use_cases.dart';
 import 'package:fithub_portal_admin/features/memberships/presentation/cubit/memberships_cubit.dart';
 
-/// Memberships feature DI (FEAT-07).
+/// Memberships feature DI (FEAT-07 / FEAT-61).
 void registerMembershipsDependencies(GetIt getIt) {
   if (!getIt.isRegistered<MembershipsRemoteDataSource>()) {
     getIt.registerLazySingleton<MembershipsRemoteDataSource>(
@@ -47,6 +47,21 @@ void registerMembershipsDependencies(GetIt getIt) {
   if (!getIt.isRegistered<ListMembershipAthletesUseCase>()) {
     getIt.registerLazySingleton(() => ListMembershipAthletesUseCase(getIt()));
   }
+  if (!getIt.isRegistered<RenewMembershipUseCase>()) {
+    getIt.registerLazySingleton(() => RenewMembershipUseCase(getIt()));
+  }
+  if (!getIt.isRegistered<FreezeMembershipUseCase>()) {
+    getIt.registerLazySingleton(() => FreezeMembershipUseCase(getIt()));
+  }
+  if (!getIt.isRegistered<UnfreezeMembershipUseCase>()) {
+    getIt.registerLazySingleton(() => UnfreezeMembershipUseCase(getIt()));
+  }
+  if (!getIt.isRegistered<ListFreezePoliciesUseCase>()) {
+    getIt.registerLazySingleton(() => ListFreezePoliciesUseCase(getIt()));
+  }
+  if (!getIt.isRegistered<UpsertFreezePolicyUseCase>()) {
+    getIt.registerLazySingleton(() => UpsertFreezePolicyUseCase(getIt()));
+  }
 
   if (!getIt.isRegistered<MembershipsCubit>()) {
     getIt.registerFactory(
@@ -56,6 +71,11 @@ void registerMembershipsDependencies(GetIt getIt) {
         deactivatePlan: getIt(),
         assignMembership: getIt(),
         listAthletes: getIt(),
+        renewMembership: getIt(),
+        freezeMembership: getIt(),
+        unfreezeMembership: getIt(),
+        listFreezePolicies: getIt(),
+        upsertFreezePolicy: getIt(),
       ),
     );
   }

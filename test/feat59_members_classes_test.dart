@@ -111,6 +111,7 @@ void main() {
           const MembershipsState(status: MembershipsStatus.ready, plans: []),
         ),
       );
+      when(() => membershipsCubit.loadFreezePolicies()).thenAnswer((_) async {});
 
       when(() => rosterCubit.state).thenReturn(
         const MemberRosterState(status: MemberRosterStatus.ready),

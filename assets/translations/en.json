@@ -427,12 +427,37 @@
     },
     "action": {
       "freeze": "FREEZE",
+      "unfreeze": "UNFREEZE",
       "renew": "RENEW",
       "full_evaluation": "FULL EVALUATION"
     },
+    "dialog": {
+      "cancel": "Cancel"
+    },
+    "renew": {
+      "confirm_title": "Renew membership",
+      "confirm_body": "Bill a new interval for {name} on the same plan at the current price? The current period continues until its end date."
+    },
+    "freeze": {
+      "confirm_title": "Freeze membership",
+      "confirm_body": "Pause access for {name}? The end date will extend by elapsed freeze days on unfreeze.",
+      "days_label": "Freeze days",
+      "days_helper": "Default from policy. Max {max} days per freeze."
+    },
+    "unfreeze": {
+      "confirm_title": "Unfreeze membership",
+      "confirm_body": "Restore access for {name} and extend the end date by elapsed freeze days?"
+    },
+    "success": {
+      "renewed": "Membership renewed — new interval scheduled.",
+      "frozen": "Membership frozen.",
+      "unfrozen": "Membership unfrozen."
+    },
     "empty_roster": "No members in this gym yet — add a member or sync when online.",
     "error": {
-      "roster": "Could not refresh members — tap Retry."
+      "roster": "Could not refresh members — tap Retry.",
+      "freeze_no_policy": "Freeze disabled — configure Freeze policy in Gym Settings.",
+      "freeze_days_invalid": "Enter freeze days between 0 and {max}."
     }
   },
   "add_member": {
@@ -606,6 +631,29 @@
       "forbidden": "Only Admins can change SKU settings.",
       "invalid": "Invalid SKU settings.",
       "unknown": "Could not update gym settings."
+    },
+    "freeze": {
+      "heading": "FREEZE POLICY",
+      "subtitle": "Default and max freeze days — general and optional per-plan overrides.",
+      "visual_spec": "Visual Spec Card: Docs/feat61-visual-spec-freeze-policy.md (no dedicated Stitch freeze screen).",
+      "general_title": "General (tenant-wide)",
+      "per_plan_title": "Per-plan override",
+      "per_plan_card": "Selected plan policy",
+      "plan_label": "Membership plan",
+      "field_freeze_days": "Default freeze days",
+      "field_max_days": "Max freeze days per request",
+      "cta_save": "Save freeze policy",
+      "read_only_hint": "Receptionist view — only Admins can change freeze policy.",
+      "empty": "No freeze policies yet — freeze actions stay disabled until configured.",
+      "list_heading": "CONFIGURED POLICIES",
+      "list_row": "{scope}: default {days}d · max {max}d",
+      "scope_general": "General",
+      "success": {
+        "saved": "Freeze policy saved."
+      },
+      "error": {
+        "invalid": "Max days must be ≥ 1 and default days must be ≤ max."
+      }
     }
   },
   "router": {

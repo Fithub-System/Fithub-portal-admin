@@ -1,3 +1,4 @@
+import '../entities/freeze_policy.dart';
 import '../entities/membership_plan.dart';
 import '../repositories/memberships_repository.dart';
 
@@ -59,5 +60,65 @@ class ListMembershipAthletesUseCase {
 
   Future<List<MembershipAthleteOption>> call() {
     return _repository.listEnrolledAthletes();
+  }
+}
+
+class RenewMembershipUseCase {
+  const RenewMembershipUseCase(this._repository);
+  final MembershipsRepository _repository;
+
+  Future<String> call(String membershipId) {
+    return _repository.renewMembership(membershipId);
+  }
+}
+
+class FreezeMembershipUseCase {
+  const FreezeMembershipUseCase(this._repository);
+  final MembershipsRepository _repository;
+
+  Future<String> call({required String membershipId, int? days}) {
+    return _repository.freezeMembership(
+      membershipId: membershipId,
+      days: days,
+    );
+  }
+}
+
+class UnfreezeMembershipUseCase {
+  const UnfreezeMembershipUseCase(this._repository);
+  final MembershipsRepository _repository;
+
+  Future<String> call(String membershipId) {
+    return _repository.unfreezeMembership(membershipId);
+  }
+}
+
+class ListFreezePoliciesUseCase {
+  const ListFreezePoliciesUseCase(this._repository);
+  final MembershipsRepository _repository;
+
+  Future<List<FreezePolicy>> call() => _repository.listFreezePolicies();
+}
+
+class UpsertFreezePolicyUseCase {
+  const UpsertFreezePolicyUseCase(this._repository);
+  final MembershipsRepository _repository;
+
+  Future<String> call({
+    required int freezeDays,
+    required int maxFreezeDaysPerTime,
+    String? planId,
+  }) {
+    if (maxFreezeDaysPerTime < 1) {
+      throw ArgumentError('maxFreezeDaysPerTime must be >= 1');
+    }
+    if (freezeDays < 0 || freezeDays > maxFreezeDaysPerTime) {
+      throw ArgumentError('freezeDays must be 0..maxFreezeDaysPerTime');
+    }
+    return _repository.upsertFreezePolicy(
+      freezeDays: freezeDays,
+      maxFreezeDaysPerTime: maxFreezeDaysPerTime,
+      planId: planId,
+    );
   }
 }
