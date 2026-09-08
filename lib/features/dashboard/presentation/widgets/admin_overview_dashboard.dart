@@ -15,7 +15,8 @@ import 'overview_footer_stats.dart';
 /// Hero (Occupancy|Revenue) → Insights/footer stats → Mid (Expiring|Gate).
 ///
 /// Live KPIs when [liveMetricsBound]: revenue, expiring 48h, members, check-ins.
-/// Guest Insights tile stays fixture until FEAT-62.
+/// Guest Insights tile stays fixture (optional `member_invite_counts` bind
+/// deferred — do not invent guest analytics).
 class AdminOverviewDashboard extends StatelessWidget {
   const AdminOverviewDashboard({
     super.key,
@@ -105,7 +106,7 @@ class AdminOverviewDashboard extends StatelessWidget {
                 child: OverviewFooterStats(
                   totalActive: liveMetricsBound ? membersCountLabel : null,
                   checkInsToday: liveMetricsBound ? checkInsTodayLabel : null,
-                  // Guest + incidents: fixture until FEAT-62 / owner unlock
+                  // Guest + incidents: fixture (invite counts bind optional)
                   loading: metricsLoading && liveMetricsBound,
                 ),
               ),

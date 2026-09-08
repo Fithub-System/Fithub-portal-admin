@@ -6,6 +6,7 @@ import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/entities/member_roster_entry.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/repositories/member_roster_repository.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/use_cases/sync_member_roster_use_case.dart';
+import 'package:fithub_portal_admin/features/add_member/domain/entities/member_invite.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/repositories/add_member_repository.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/use_cases/add_member_use_cases.dart';
 import 'package:fithub_portal_admin/features/add_member/presentation/bloc/add_member_bloc.dart';
@@ -39,6 +40,10 @@ class _MockMemberRosterCubit extends Mock implements MemberRosterCubit {}
 class _MockClassRepo extends Mock implements ClassSessionsRepository {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(const MemberInvite(email: 'fallback@example.com'));
+  });
+
   group('FEAT-59 US-A MemberRosterCubit refreshFromCloud', () {
     late _MockRosterRepo roster;
 
@@ -75,24 +80,29 @@ void main() {
       await cubit.close();
     });
 
-    test('refreshFromCloud empty live roster stays empty (no fixtures)', () async {
-      when(() => roster.syncRoster(tenantId: 't1')).thenAnswer((_) async => 0);
-      when(
-        () => roster.listCachedMembers(tenantId: 't1'),
-      ).thenAnswer((_) async => []);
+    test(
+      'refreshFromCloud empty live roster stays empty (no fixtures)',
+      () async {
+        when(
+          () => roster.syncRoster(tenantId: 't1'),
+        ).thenAnswer((_) async => 0);
+        when(
+          () => roster.listCachedMembers(tenantId: 't1'),
+        ).thenAnswer((_) async => []);
 
-      final cubit = MemberRosterCubit(
-        listCachedRoster: ListCachedMemberRosterUseCase(roster),
-        syncRoster: SyncMemberRosterUseCase(roster),
-        tenantId: 't1',
-        isOnline: () => true,
-      );
-      await cubit.refreshFromCloud();
+        final cubit = MemberRosterCubit(
+          listCachedRoster: ListCachedMemberRosterUseCase(roster),
+          syncRoster: SyncMemberRosterUseCase(roster),
+          tenantId: 't1',
+          isOnline: () => true,
+        );
+        await cubit.refreshFromCloud();
 
-      expect(cubit.state.status, MemberRosterStatus.ready);
-      expect(cubit.state.members, isEmpty);
-      await cubit.close();
-    });
+        expect(cubit.state.status, MemberRosterStatus.ready);
+        expect(cubit.state.members, isEmpty);
+        await cubit.close();
+      },
+    );
   });
 
   group('FEAT-59 US-A empty Members chrome', () {
@@ -111,11 +121,13 @@ void main() {
           const MembershipsState(status: MembershipsStatus.ready, plans: []),
         ),
       );
-      when(() => membershipsCubit.loadFreezePolicies()).thenAnswer((_) async {});
+      when(
+        () => membershipsCubit.loadFreezePolicies(),
+      ).thenAnswer((_) async {});
 
-      when(() => rosterCubit.state).thenReturn(
-        const MemberRosterState(status: MemberRosterStatus.ready),
-      );
+      when(
+        () => rosterCubit.state,
+      ).thenReturn(const MemberRosterState(status: MemberRosterStatus.ready));
       when(() => rosterCubit.stream).thenAnswer(
         (_) => Stream.value(
           const MemberRosterState(status: MemberRosterStatus.ready),
@@ -137,10 +149,7 @@ void main() {
             BlocProvider<MembershipsCubit>.value(value: membershipsCubit),
             BlocProvider<MemberRosterCubit>.value(value: rosterCubit),
           ],
-          child: const MemberManagementScreen(
-            canWrite: true,
-            canEnroll: true,
-          ),
+          child: const MemberManagementScreen(canWrite: true, canEnroll: true),
         ),
         waitFor: find.textContaining('No members in this gym'),
       );
@@ -152,9 +161,7 @@ void main() {
     });
 
     testWidgets('failure banner retry calls refreshFromCloud', (tester) async {
-      const failure = MemberRosterState(
-        status: MemberRosterStatus.failure,
-      );
+      const failure = MemberRosterState(status: MemberRosterStatus.failure);
       when(() => rosterCubit.state).thenReturn(failure);
       when(() => rosterCubit.stream).thenAnswer((_) => Stream.value(failure));
 
@@ -201,6 +208,10 @@ void main() {
       final bloc = AddMemberBloc(
         findAthlete: FindAthleteForEnrollUseCase(addRepo),
         enrollGymMember: EnrollGymMemberUseCase(addRepo),
+        inviteMember: InviteMemberUseCase(
+          addRepo,
+          cloudGuard: CloudMutationGuard(isOnline: () => true),
+        ),
         listPlans: ListMembershipPlansUseCase(membershipsRepo),
         assignMembership: AssignMembershipUseCase(membershipsRepo),
       );

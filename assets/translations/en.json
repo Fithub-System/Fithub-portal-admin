@@ -480,7 +480,7 @@
   },
   "add_member": {
     "title": "ADD NEW MEMBER",
-    "subtitle": "Link an existing athlete to this gym, optionally assign a plan.",
+    "subtitle": "Link an existing athlete, or invite by email / username. Invitees accept with a membership OTP in the Athlete app.",
     "tab": {
       "link": "Link existing",
       "invite": "Invite"
@@ -488,35 +488,47 @@
     "link_heading": "FIND ATHLETE",
     "match_heading": "MATCHED ATHLETE",
     "invite_heading": "SEND INVITE",
-    "invite_body": "Creating a new Auth user from Portal is not available in this install. Use Link existing for athletes who already have an account, or send an invite later.",
+    "invite_body": "Enter an email (new or existing) or an existing athlete username. Optional display name and plan apply when they accept the membership OTP (email, 48h).",
     "cta": {
       "add_new": "Add New Member",
       "find": "Find athlete",
       "enroll": "Enroll member",
+      "send_invite": "Send invite",
       "send_invite_later": "Send invite later"
     },
     "field": {
       "email": "Athlete email",
       "email_hint": "athlete@example.com",
+      "identifier": "Email or username",
+      "identifier_hint": "athlete@example.com or username",
+      "display_name": "Display name (optional)",
+      "display_name_hint": "Preferred name",
       "plan_optional": "Membership plan (optional)"
     },
     "plan": {
       "none": "No plan now"
     },
     "validation": {
-      "email": "Enter a valid athlete email."
+      "email": "Enter a valid athlete email.",
+      "identifier": "Enter an email or username."
     },
     "success": {
       "enrolled": "Member enrolled.",
-      "already_enrolled": "Athlete was already enrolled for this gym."
+      "already_enrolled": "Athlete was already enrolled for this gym.",
+      "invite_sent": "Member invite sent. They must enter the membership OTP in the Athlete app."
     },
     "error": {
       "not_configured": "Add Member is not configured for this build.",
-      "forbidden": "Only Admins can enroll members.",
+      "forbidden": "Only Admins can invite or enroll members.",
       "not_found": "No athlete found for that email.",
+      "username_not_found": "No athlete found for that username.",
+      "invite_email_failed": "Invite could not be emailed. Try again or check email delivery.",
+      "invite_failed": "Could not send member invite.",
+      "offline": "Member invite needs a live connection.",
       "invalid": "Invalid enroll input.",
       "unknown": "Could not enroll member."
-    }
+    },
+    "visual_spec": "Visual Spec Card: Docs/feat62-visual-spec-add-member-invite.md (Stitch Add New Member)."
   },
   "marketing": {
     "growth_engine": "GROWTH ENGINE",
