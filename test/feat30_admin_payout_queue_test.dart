@@ -124,8 +124,8 @@ void main() {
   group('FEAT-30 shell IA', () {
     test('Payouts is rail destination before Reports', () {
       expect(PortalShellDestinations.payouts, 5);
-      expect(PortalShellDestinations.reports, 6);
-      expect(PortalShellDestinations.destinationCount, 7);
+      expect(PortalShellDestinations.reports, 7);
+      expect(PortalShellDestinations.destinationCount, 8);
     });
 
     test('cites Stitch EN + AR screen ids + Brand Lock peak', () {

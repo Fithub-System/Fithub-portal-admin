@@ -182,7 +182,7 @@ void main() {
         ClassesComingSoonPage.stitchScreenIdEn,
         isNot(ClassManagerScreen.stitchScreenIdEn),
       );
-      expect(PortalShellDestinations.destinationCount, 7);
+      expect(PortalShellDestinations.destinationCount, 8);
       expect(PortalShellDestinations.classes, 3);
     });
   });

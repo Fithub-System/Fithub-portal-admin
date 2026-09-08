@@ -10,15 +10,16 @@ import 'support/localized_pump.dart';
 
 void main() {
   group('FEAT-11 shell destinations', () {
-    test('seven destinations in Stitch order (FEAT-30 adds Payouts)', () {
-      expect(PortalShellDestinations.destinationCount, 7);
+    test('eight destinations including Settings rail hub', () {
+      expect(PortalShellDestinations.destinationCount, 8);
       expect(PortalShellDestinations.home, 0);
       expect(PortalShellDestinations.members, 1);
       expect(PortalShellDestinations.staff, 2);
       expect(PortalShellDestinations.classes, 3);
       expect(PortalShellDestinations.marketing, 4);
       expect(PortalShellDestinations.payouts, 5);
-      expect(PortalShellDestinations.reports, 6);
+      expect(PortalShellDestinations.settings, 6);
+      expect(PortalShellDestinations.reports, 7);
       expect(PortalShellDestinations.dashboard, PortalShellDestinations.home);
     });
 
@@ -31,10 +32,11 @@ void main() {
         PortalShellDestinations.classes,
         PortalShellDestinations.marketing,
         PortalShellDestinations.payouts,
+        PortalShellDestinations.settings,
         PortalShellDestinations.reports,
       };
-      expect(indices.length, 7);
-      expect(indices, {0, 1, 2, 3, 4, 5, 6});
+      expect(indices.length, 8);
+      expect(indices, {0, 1, 2, 3, 4, 5, 6, 7});
     });
   });
 
