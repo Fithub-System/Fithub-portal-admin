@@ -600,7 +600,7 @@
   },
   "gym_settings": {
     "title": "إعدادات الصالة",
-    "subtitle": "وضع SKU وحدود Marketplace لهذه الصالة.",
+    "subtitle": "وضع SKU وحدود Marketplace وسياسة التجميد لهذه الصالة.",
     "close": "إغلاق الإعدادات",
     "retry": "إعادة المحاولة",
     "read_only_hint": "عرض الاستقبال — تغيير إعدادات SKU للمسؤول فقط.",
