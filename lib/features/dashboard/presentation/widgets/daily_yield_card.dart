@@ -6,24 +6,39 @@ import '../fixtures/overview_stitch_fixtures.dart';
 
 /// Stitch Daily Yield card (`#C3F400`) — Admin Overview hero col-span-5.
 ///
-/// §4.1: ships Stitch sample amount/delta when unbound (`fixture`). Live
-/// amount replaces the fixture when Backend binds — same chrome.
+/// Unbound (`amountLabel == null`): Stitch §4.1 fixture amount/delta.
+/// Live-bound (FEAT-60): pass formatted amount; empty [deltaLabel] omits fake %.
 class DailyYieldCard extends StatelessWidget {
-  const DailyYieldCard({super.key, this.amountLabel, this.deltaLabel});
+  const DailyYieldCard({
+    super.key,
+    this.amountLabel,
+    this.deltaLabel,
+    this.loading = false,
+  });
 
   /// Live amount when bound; null → Stitch fixture `$12,482`.
   final String? amountLabel;
 
-  /// Live delta when bound; null → Stitch fixture `+14.2% vs yesterday`.
+  /// Live delta when bound; null → fixture; empty string → omit delta row.
   final String? deltaLabel;
+
+  /// Shows honest placeholder while metrics load.
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final amount = amountLabel ?? OverviewStitchFixtures.yieldAmount;
+    final liveBound = amountLabel != null || loading;
+    final amount = loading
+        ? '…'
+        : (amountLabel ?? OverviewStitchFixtures.yieldAmount);
     final delta = deltaLabel ?? OverviewStitchFixtures.yieldDelta;
+    final showDelta = !liveBound
+        ? true
+        : (deltaLabel != null && deltaLabel!.isNotEmpty);
 
     return Container(
+      key: const Key('overview-daily-yield'),
       width: double.infinity,
       padding: const EdgeInsetsDirectional.all(32),
       decoration: BoxDecoration(
@@ -74,6 +89,7 @@ class DailyYieldCard extends StatelessWidget {
               const SizedBox(height: 48),
               Text(
                 amount,
+                key: const Key('overview-yield-amount'),
                 textAlign: TextAlign.start,
                 style: textTheme.displaySmall?.copyWith(
                   fontSize: 60,
@@ -83,25 +99,40 @@ class DailyYieldCard extends StatelessWidget {
                   color: KineticTokens.onPrimaryContainer,
                 ),
               ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    Icons.trending_up,
-                    size: 16,
-                    color: KineticTokens.onPrimaryContainer,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    delta,
-                    style: textTheme.labelMedium?.copyWith(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+              if (showDelta) ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.trending_up,
+                      size: 16,
                       color: KineticTokens.onPrimaryContainer,
                     ),
+                    const SizedBox(width: 6),
+                    Text(
+                      delta,
+                      style: textTheme.labelMedium?.copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: KineticTokens.onPrimaryContainer,
+                      ),
+                    ),
+                  ],
+                ),
+              ] else ...[
+                const SizedBox(height: 8),
+                Text(
+                  'dashboard.yield.delta_unavailable'.tr(),
+                  key: const Key('overview-yield-delta-omitted'),
+                  style: textTheme.labelMedium?.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: KineticTokens.onPrimaryContainer.withValues(
+                      alpha: 0.7,
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ],
           ),
         ],

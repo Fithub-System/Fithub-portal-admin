@@ -5,6 +5,7 @@ import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../cubit/dashboard_cubit.dart';
+import '../cubit/overview_metrics_cubit.dart';
 import '../widgets/admin_overview_dashboard.dart';
 
 /// Standalone dashboard page (also embedded via [PortalHomeShell]).
@@ -17,30 +18,47 @@ class DashboardPage extends StatelessWidget {
       builder: (context, connectivity) {
         return BlocBuilder<DashboardCubit, DashboardState>(
           builder: (context, dashboard) {
-            final approved =
-                dashboard.lastScanMessageKey == 'dashboard.scan.approved';
-            final rejected =
-                dashboard.lastScanMessageKey == 'dashboard.scan.rejected';
+            return BlocBuilder<OverviewMetricsCubit, OverviewMetricsState>(
+              builder: (context, metricsState) {
+                final approved =
+                    dashboard.lastScanMessageKey == 'dashboard.scan.approved';
+                final rejected =
+                    dashboard.lastScanMessageKey == 'dashboard.scan.rejected';
+                final metrics = metricsState.displayMetrics;
+                final loading =
+                    metricsState.status == OverviewMetricsStatus.loading ||
+                    metricsState.status == OverviewMetricsStatus.initial;
 
-            return Scaffold(
-              backgroundColor: KineticTokens.stitchBackground,
-              body: Column(
-                children: [
-                  SafeModeBanner(visible: connectivity.isOffline),
-                  Expanded(
-                    child: AdminOverviewDashboard(
-                      currentOccupancy: dashboard.currentOccupancy,
-                      capacityLimit: dashboard.capacityLimit,
-                      onOpenScanner: () {},
-                      statusMessageKey: dashboard.statusMessageKey,
-                      lastScanApproved: approved,
-                      lastScanMemberName: dashboard.lastScanMemberName,
-                      lastScanRejectReason:
-                          rejected ? dashboard.lastScanRejectReason : null,
-                    ),
+                return Scaffold(
+                  backgroundColor: KineticTokens.stitchBackground,
+                  body: Column(
+                    children: [
+                      SafeModeBanner(visible: connectivity.isOffline),
+                      Expanded(
+                        child: AdminOverviewDashboard(
+                          currentOccupancy: dashboard.currentOccupancy,
+                          capacityLimit: dashboard.capacityLimit,
+                          onOpenScanner: () {},
+                          statusMessageKey:
+                              metricsState.statusMessageKey ??
+                              dashboard.statusMessageKey,
+                          lastScanApproved: approved,
+                          lastScanMemberName: dashboard.lastScanMemberName,
+                          lastScanRejectReason: rejected
+                              ? dashboard.lastScanRejectReason
+                              : null,
+                          liveMetricsBound: true,
+                          metricsLoading: loading,
+                          revenueAmountLabel: metrics.revenueAmountLabel,
+                          expiringRows: metrics.expiringSoon,
+                          membersCountLabel: metrics.membersCountLabel,
+                          checkInsTodayLabel: metrics.checkInsTodayLabel,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             );
           },
         );

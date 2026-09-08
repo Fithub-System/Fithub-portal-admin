@@ -2,27 +2,40 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
+import '../../domain/entities/overview_expiring_row.dart';
 import '../fixtures/overview_stitch_fixtures.dart';
 
 /// Stitch Expiring Memberships table (Overview mid col-span-8).
 ///
-/// §4.1: ships Marcus / Elena fixture rows when expiry API unbound. Live rows
-/// of the same structure replace fixtures when Backend binds.
+/// Unbound (`rows == null`): Marcus / Elena §4.1 fixtures.
+/// Live-bound (FEAT-60): pass list (empty → honest empty chrome, no fixtures).
 class ExpiringMembershipsCard extends StatelessWidget {
-  const ExpiringMembershipsCard({super.key, this.rows});
+  const ExpiringMembershipsCard({
+    super.key,
+    this.rows,
+    this.liveBound = false,
+    this.loading = false,
+  });
 
-  /// Live expiry rows when bound; null/empty → Stitch fixtures.
+  /// Live expiry rows when bound; ignored when [liveBound] is false and null.
   final List<OverviewExpiringRow>? rows;
+
+  /// When true, empty [rows] shows empty chrome — never Marcus/Elena fixtures.
+  final bool liveBound;
+
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final displayRows =
-        (rows != null && rows!.isNotEmpty)
-            ? rows!
-            : OverviewStitchFixtures.expiringRows;
+    final useLive = liveBound || rows != null;
+    final displayRows = useLive
+        ? (rows ?? const <OverviewExpiringRow>[])
+        : OverviewStitchFixtures.expiringRows;
+    final emptyLive = useLive && displayRows.isEmpty && !loading;
 
     return Container(
+      key: const Key('overview-expiring-card'),
       width: double.infinity,
       decoration: BoxDecoration(
         color: KineticTokens.surfaceContainerLow,
@@ -126,15 +139,40 @@ class ExpiringMembershipsCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                for (var i = 0; i < displayRows.length; i++) ...[
-                  if (i > 0)
-                    Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: KineticTokens.pureWhite.withValues(alpha: 0.05),
+                if (loading)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Text(
+                      '…',
+                      key: const Key('overview-expiring-loading'),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: KineticTokens.zincGray,
+                      ),
                     ),
-                  _ExpiringRowTile(row: displayRows[i]),
-                ],
+                  )
+                else if (emptyLive)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Text(
+                      'dashboard.expiring.empty'.tr(),
+                      key: const Key('overview-expiring-empty'),
+                      textAlign: TextAlign.center,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontSize: 14,
+                        color: KineticTokens.zincGray,
+                      ),
+                    ),
+                  )
+                else
+                  for (var i = 0; i < displayRows.length; i++) ...[
+                    if (i > 0)
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: KineticTokens.pureWhite.withValues(alpha: 0.05),
+                      ),
+                    _ExpiringRowTile(row: displayRows[i]),
+                  ],
               ],
             ),
           ),

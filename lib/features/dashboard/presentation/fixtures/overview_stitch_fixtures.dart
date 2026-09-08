@@ -1,3 +1,7 @@
+import '../../domain/entities/overview_expiring_row.dart';
+
+export '../../domain/entities/overview_expiring_row.dart';
+
 /// Stitch Admin Overview sample chrome (§4.1 fixtures).
 ///
 /// Screen `216e0407184f4c39bd501ed436c1e88b` — Daily Yield, Expiring
@@ -40,22 +44,4 @@ abstract final class OverviewStitchFixtures {
   static const String classesToday = '42';
   static const String guestPasses = '12';
   static const String incidentReports = '0';
-}
-
-class OverviewExpiringRow {
-  const OverviewExpiringRow({
-    required this.fullName,
-    required this.email,
-    required this.planLabel,
-    required this.expirationDate,
-    required this.relativeLabel,
-    required this.urgent,
-  });
-
-  final String fullName;
-  final String email;
-  final String planLabel;
-  final String expirationDate;
-  final String relativeLabel;
-  final bool urgent;
 }

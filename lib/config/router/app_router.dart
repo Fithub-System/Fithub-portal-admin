@@ -7,6 +7,8 @@ import 'package:fithub_portal_admin/features/auth/presentation/pages/login_page.
 import 'package:fithub_portal_admin/features/access_scanner/injection_container.dart'
     as access_scanner_di;
 import 'package:fithub_portal_admin/features/connectivity/presentation/cubit/connectivity_cubit.dart';
+import 'package:fithub_portal_admin/features/dashboard/injection_container.dart'
+    as dashboard_di;
 import 'package:fithub_portal_admin/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:fithub_portal_admin/features/home/presentation/pages/portal_home_shell.dart';
 import 'package:fithub_portal_admin/features/offline_sync/presentation/cubit/offline_sync_cubit.dart';
@@ -73,6 +75,15 @@ class _AuthenticatedShell extends StatelessWidget {
             cubit.start();
             return cubit;
           },
+        ),
+        BlocProvider(
+          create: (_) => dashboard_di
+              .createOverviewMetricsCubit(
+                getIt: InjectionContainer.locator,
+                tenantId: profile.tenantId,
+                isOnline: () => connectivity.isOnline,
+              )
+            ..start(),
         ),
         BlocProvider(
           create: (context) {

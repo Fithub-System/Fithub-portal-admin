@@ -4,42 +4,63 @@ import 'package:flutter/material.dart';
 import '../../../../config/theme/kinetic_tokens.dart';
 import '../fixtures/overview_stitch_fixtures.dart';
 
-/// Stitch footer stats cluster (4 tiles) — Admin Overview.
+/// Stitch footer / Insights stats cluster (4 tiles) — Admin Overview.
 ///
-/// §4.1: ships artboard fixture counts when analytics unbound.
+/// FEAT-60: members + check-ins today bind live; guest stays fixture until
+/// FEAT-62; incidents may remain fixture. Null prop → fixture for that tile.
 class OverviewFooterStats extends StatelessWidget {
   const OverviewFooterStats({
     super.key,
     this.totalActive,
-    this.classesToday,
+    this.checkInsToday,
     this.guestPasses,
     this.incidentReports,
+    this.loading = false,
   });
 
+  /// Live members count label; null → Stitch fixture `2,841`.
   final String? totalActive;
-  final String? classesToday;
+
+  /// Live check-ins today; null → legacy classes-today fixture `42`.
+  final String? checkInsToday;
+
+  /// Guest passes — leave null for FEAT-62 fixture chrome.
   final String? guestPasses;
+
+  /// Incident reports — may stay fixture this FEAT.
   final String? incidentReports;
+
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final cols = constraints.maxWidth >= 720 ? 4 : 2;
+        final membersValue = loading
+            ? '…'
+            : (totalActive ?? OverviewStitchFixtures.totalActive);
+        final checkInsValue = loading
+            ? '…'
+            : (checkInsToday ?? OverviewStitchFixtures.classesToday);
         final tiles = [
           _StatTile(
+            key: const Key('overview-stat-members'),
             label: 'dashboard.stats.total_active'.tr(),
-            value: totalActive ?? OverviewStitchFixtures.totalActive,
+            value: membersValue,
           ),
           _StatTile(
-            label: 'dashboard.stats.classes_today'.tr(),
-            value: classesToday ?? OverviewStitchFixtures.classesToday,
+            key: const Key('overview-stat-checkins'),
+            label: 'dashboard.stats.check_ins_today'.tr(),
+            value: checkInsValue,
           ),
           _StatTile(
+            key: const Key('overview-stat-guests'),
             label: 'dashboard.stats.guest_passes'.tr(),
             value: guestPasses ?? OverviewStitchFixtures.guestPasses,
           ),
           _StatTile(
+            key: const Key('overview-stat-incidents'),
             label: 'dashboard.stats.incidents'.tr(),
             value: incidentReports ?? OverviewStitchFixtures.incidentReports,
             muted: true,
@@ -47,6 +68,7 @@ class OverviewFooterStats extends StatelessWidget {
         ];
 
         return GridView.count(
+          key: const Key('overview-footer-stats'),
           crossAxisCount: cols,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -62,6 +84,7 @@ class OverviewFooterStats extends StatelessWidget {
 
 class _StatTile extends StatelessWidget {
   const _StatTile({
+    super.key,
     required this.label,
     required this.value,
     this.muted = false,
