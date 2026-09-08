@@ -16,8 +16,12 @@ class ScanSuccessNotification extends Equatable {
   final String? membershipStatus;
 
   @override
-  List<Object?> get props =>
-      [memberName, avatarUrl, occupancy, membershipStatus];
+  List<Object?> get props => [
+    memberName,
+    avatarUrl,
+    occupancy,
+    membershipStatus,
+  ];
 }
 
 class AccessScannerState extends Equatable {
@@ -30,6 +34,7 @@ class AccessScannerState extends Equatable {
     this.rosterCount,
     this.rosterErrorKey,
     this.cameraReady = false,
+    this.cameraError = false,
   });
 
   final bool isProcessing;
@@ -39,7 +44,15 @@ class AccessScannerState extends Equatable {
   final AccessScannerRosterStatus rosterStatus;
   final int? rosterCount;
   final String? rosterErrorKey;
+
+  /// True after the camera stream starts (not after first barcode).
   final bool cameraReady;
+
+  /// True when MobileScanner reports a start/permission error.
+  final bool cameraError;
+
+  /// Production manual-entry CTA while permission pending or camera failed.
+  bool get showManualEntryCta => !cameraReady || cameraError;
 
   AccessScannerState copyWith({
     bool? isProcessing,
@@ -53,6 +66,7 @@ class AccessScannerState extends Equatable {
     String? rosterErrorKey,
     bool clearRosterError = false,
     bool? cameraReady,
+    bool? cameraError,
   }) {
     return AccessScannerState(
       isProcessing: isProcessing ?? this.isProcessing,
@@ -65,6 +79,7 @@ class AccessScannerState extends Equatable {
           ? null
           : (rosterErrorKey ?? this.rosterErrorKey),
       cameraReady: cameraReady ?? this.cameraReady,
+      cameraError: cameraError ?? this.cameraError,
     );
   }
 
@@ -78,5 +93,6 @@ class AccessScannerState extends Equatable {
     rosterCount,
     rosterErrorKey,
     cameraReady,
+    cameraError,
   ];
 }
