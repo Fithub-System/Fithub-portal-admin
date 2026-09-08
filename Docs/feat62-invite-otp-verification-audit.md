@@ -13,8 +13,9 @@
 
 ## Status
 
-**Provisional PASS (client)** — Portal Agent Verification Audit.  
-**Do not merge without BizDev PASS.** Never claim BizDev PASS from this audit.
+**BizDev Audit: PASS** (US-B Portal) — 2026-09-08 — Lead BizDev re-ran suites (**26 passed**). Merge Portal [#47](https://github.com/Fithub-System/Fithub-portal-admin/pull/47) → `dev`.
+
+**Prior:** Provisional PASS (client) — Portal Agent Verification Audit.
 
 ## Stitch / Visual Spec
 
