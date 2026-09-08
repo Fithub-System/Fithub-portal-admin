@@ -10,7 +10,10 @@ class LocalMembers extends Table {
   IntColumn get powerScore => integer().withDefault(const Constant(100))();
   TextColumn get cryptoSalt => text().withLength(min: 1, max: 255)();
   DateTimeColumn get createdAt => dateTime()();
-  /// Cached from `athlete_memberships.status` (FEAT-07 roster sync).
+
+  /// Cached from `athlete_memberships` (FEAT-07 / FEAT-61 roster sync).
+  TextColumn get membershipId => text().nullable()();
+  TextColumn get membershipPlanId => text().nullable()();
   TextColumn get membershipStatus => text().nullable()();
   TextColumn get membershipPlanName => text().nullable()();
   DateTimeColumn get membershipEndsAt => dateTime().nullable()();

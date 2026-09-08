@@ -1,3 +1,4 @@
+import '../../domain/entities/freeze_policy.dart';
 import '../../domain/entities/membership_plan.dart';
 import '../../domain/repositories/memberships_repository.dart';
 import '../data_sources/remote/memberships_remote_data_source.dart';
@@ -55,5 +56,44 @@ class MembershipsRepositoryImpl implements MembershipsRepository {
   @override
   Future<List<MembershipAthleteOption>> listEnrolledAthletes() {
     return _remote.listEnrolledAthletes();
+  }
+
+  @override
+  Future<String> renewMembership(String membershipId) {
+    return _remote.renewMembership(membershipId);
+  }
+
+  @override
+  Future<String> freezeMembership({
+    required String membershipId,
+    int? days,
+  }) {
+    return _remote.freezeMembership(
+      membershipId: membershipId,
+      days: days,
+    );
+  }
+
+  @override
+  Future<String> unfreezeMembership(String membershipId) {
+    return _remote.unfreezeMembership(membershipId);
+  }
+
+  @override
+  Future<List<FreezePolicy>> listFreezePolicies() {
+    return _remote.listFreezePolicies();
+  }
+
+  @override
+  Future<String> upsertFreezePolicy({
+    required int freezeDays,
+    required int maxFreezeDaysPerTime,
+    String? planId,
+  }) {
+    return _remote.upsertFreezePolicy(
+      freezeDays: freezeDays,
+      maxFreezeDaysPerTime: maxFreezeDaysPerTime,
+      planId: planId,
+    );
   }
 }

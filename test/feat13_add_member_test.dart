@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fithub_portal_admin/config/theme/kinetic_tokens.dart';
+import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/entities/member_roster_entry.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/add_member_failure.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/entities/athlete_enroll_match.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/entities/enroll_gym_member_result.dart';
+import 'package:fithub_portal_admin/features/add_member/domain/entities/member_invite.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/repositories/add_member_repository.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/use_cases/add_member_use_cases.dart';
 import 'package:fithub_portal_admin/features/add_member/presentation/bloc/add_member_bloc.dart';
@@ -30,6 +32,10 @@ class _MockMembershipsCubit extends Mock implements MembershipsCubit {}
 class _MockMemberRosterCubit extends Mock implements MemberRosterCubit {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(const MemberInvite(email: 'fallback@example.com'));
+  });
+
   group('FEAT-13 Admin gate', () {
     test('Admin can enroll; Receptionist cannot', () {
       const admin = EmployeeProfile(
@@ -98,6 +104,10 @@ void main() {
       bloc = AddMemberBloc(
         findAthlete: FindAthleteForEnrollUseCase(addRepo),
         enrollGymMember: EnrollGymMemberUseCase(addRepo),
+        inviteMember: InviteMemberUseCase(
+          addRepo,
+          cloudGuard: CloudMutationGuard(isOnline: () => true),
+        ),
         listPlans: ListMembershipPlansUseCase(membershipsRepo),
         assignMembership: AssignMembershipUseCase(membershipsRepo),
       );
@@ -119,10 +129,7 @@ void main() {
         ),
       );
       when(
-        () => membershipsRepo.assignMembership(
-          planId: 'p1',
-          athleteId: 'a1',
-        ),
+        () => membershipsRepo.assignMembership(planId: 'p1', athleteId: 'a1'),
       ).thenAnswer((_) async => 'm1');
 
       bloc.add(const AddMemberStarted());
@@ -142,10 +149,7 @@ void main() {
       expect(bloc.state.messageKey, 'add_member.success.enrolled');
       verify(() => addRepo.enrollGymMember('a1')).called(1);
       verify(
-        () => membershipsRepo.assignMembership(
-          planId: 'p1',
-          athleteId: 'a1',
-        ),
+        () => membershipsRepo.assignMembership(planId: 'p1', athleteId: 'a1'),
       ).called(1);
     });
 
@@ -198,6 +202,9 @@ void main() {
         ),
       );
       when(() => membershipsCubit.load()).thenAnswer((_) async {});
+      when(
+        () => membershipsCubit.loadFreezePolicies(),
+      ).thenAnswer((_) async {});
 
       when(() => rosterCubit.state).thenReturn(
         MemberRosterState(
@@ -240,10 +247,7 @@ void main() {
             BlocProvider<MembershipsCubit>.value(value: membershipsCubit),
             BlocProvider<MemberRosterCubit>.value(value: rosterCubit),
           ],
-          child: const MemberManagementScreen(
-            canWrite: true,
-            canEnroll: true,
-          ),
+          child: const MemberManagementScreen(canWrite: true, canEnroll: true),
         ),
       );
       expect(find.text('Add New Member'), findsOneWidget);

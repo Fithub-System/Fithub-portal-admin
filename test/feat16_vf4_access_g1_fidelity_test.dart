@@ -55,6 +55,8 @@ void main() {
       tenantId: 't1',
       isOnline: () => false,
     );
+    // FEAT-58: Stitch Ready chrome assumes stream started (not barcode).
+    cubit.markCameraReady();
   });
 
   tearDown(() async {
@@ -90,7 +92,7 @@ void main() {
     });
 
     test('Install 6-rail preserved; Scan not an index', () {
-      expect(PortalShellDestinations.destinationCount, 7);
+      expect(PortalShellDestinations.destinationCount, 8);
       expect(PortalShellDestinations.home, 0);
     });
   });
@@ -132,7 +134,10 @@ void main() {
       expect(find.text('780'), findsOneWidget);
       expect(find.textContaining('GATE_INIT_SUCCESS'), findsOneWidget);
       expect(find.byKey(const Key('check-in-gate-system-log')), findsOneWidget);
-      expect(find.byKey(const Key('check-in-gate-last-member')), findsOneWidget);
+      expect(
+        find.byKey(const Key('check-in-gate-last-member')),
+        findsOneWidget,
+      );
       expect(find.byType(CheckInGateLayout), findsOneWidget);
       expect(find.text('scanner-body'), findsOneWidget);
       expect(find.text('—'), findsNothing);

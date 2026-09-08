@@ -22,7 +22,7 @@ void main() {
       expect(PortalShellDestinations.home, 0);
       expect(PortalShellDestinations.members, 1);
       expect(PortalShellDestinations.marketing, 4);
-      expect(PortalShellDestinations.destinationCount, 7);
+      expect(PortalShellDestinations.destinationCount, 8);
     });
   });
 
@@ -56,6 +56,7 @@ void main() {
         ),
       );
       when(() => membershipsCubit.load()).thenAnswer((_) async {});
+      when(() => membershipsCubit.loadFreezePolicies()).thenAnswer((_) async {});
 
       when(() => rosterCubit.state).thenReturn(
         MemberRosterState(
@@ -110,7 +111,7 @@ void main() {
       expect(find.text('ACTIVE ROSTER'), findsOneWidget);
       expect(find.text('Plan Type'), findsOneWidget);
       expect(find.text('Ada'), findsOneWidget);
-      expect(find.text('STANDARD'), findsOneWidget);
+      expect(find.text('Monthly'), findsOneWidget);
       expect(find.text('FREEZE'), findsOneWidget);
       expect(find.text('RENEW'), findsOneWidget);
       expect(find.byType(TabBar), findsNothing);

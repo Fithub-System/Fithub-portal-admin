@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
+import 'package:fithub_portal_admin/features/memberships/domain/entities/freeze_policy.dart';
 import 'package:fithub_portal_admin/features/memberships/domain/entities/membership_plan.dart';
 import 'package:fithub_portal_admin/features/memberships/domain/memberships_failure.dart';
 
@@ -24,6 +25,27 @@ abstract class MembershipsRemoteDataSource {
   });
 
   Future<List<MembershipAthleteOption>> listEnrolledAthletes();
+
+  /// FEAT-61 — Admin JWT only.
+  Future<String> renewMembership(String membershipId);
+
+  /// FEAT-61 — Admin / Receptionist JWT.
+  Future<String> freezeMembership({
+    required String membershipId,
+    int? days,
+  });
+
+  /// FEAT-61 — Admin / Receptionist JWT.
+  Future<String> unfreezeMembership(String membershipId);
+
+  Future<List<FreezePolicy>> listFreezePolicies();
+
+  /// FEAT-61 — Admin JWT; [planId] null = general.
+  Future<String> upsertFreezePolicy({
+    required int freezeDays,
+    required int maxFreezeDaysPerTime,
+    String? planId,
+  });
 }
 
 class MembershipsSupabaseRemoteDataSource
@@ -177,6 +199,105 @@ class MembershipsSupabaseRemoteDataSource
     }
   }
 
+  @override
+  Future<String> renewMembership(String membershipId) async {
+    final client = _requireClient();
+    try {
+      final result = await client.rpc(
+        'renew_membership',
+        params: {'p_membership_id': membershipId},
+      );
+      return result as String;
+    } on PostgrestException catch (e) {
+      throw _mapException(e);
+    } catch (e) {
+      if (e is MembershipsFailure) rethrow;
+      throw const MembershipsUnknownFailure();
+    }
+  }
+
+  @override
+  Future<String> freezeMembership({
+    required String membershipId,
+    int? days,
+  }) async {
+    final client = _requireClient();
+    try {
+      final params = <String, dynamic>{
+        'p_membership_id': membershipId,
+      };
+      if (days != null) {
+        params['p_days'] = days;
+      }
+      final result = await client.rpc('freeze_membership', params: params);
+      return result as String;
+    } on PostgrestException catch (e) {
+      throw _mapException(e);
+    } catch (e) {
+      if (e is MembershipsFailure) rethrow;
+      throw const MembershipsUnknownFailure();
+    }
+  }
+
+  @override
+  Future<String> unfreezeMembership(String membershipId) async {
+    final client = _requireClient();
+    try {
+      final result = await client.rpc(
+        'unfreeze_membership',
+        params: {'p_membership_id': membershipId},
+      );
+      return result as String;
+    } on PostgrestException catch (e) {
+      throw _mapException(e);
+    } catch (e) {
+      if (e is MembershipsFailure) rethrow;
+      throw const MembershipsUnknownFailure();
+    }
+  }
+
+  @override
+  Future<List<FreezePolicy>> listFreezePolicies() async {
+    final client = _requireClient();
+    try {
+      final result = await client.rpc('list_freeze_policies');
+      final rows = result as List<dynamic>? ?? const [];
+      return rows
+          .map((row) => _mapFreezePolicy(row as Map<String, dynamic>))
+          .toList(growable: false);
+    } on PostgrestException catch (e) {
+      throw _mapException(e);
+    } catch (e) {
+      if (e is MembershipsFailure) rethrow;
+      throw const MembershipsUnknownFailure();
+    }
+  }
+
+  @override
+  Future<String> upsertFreezePolicy({
+    required int freezeDays,
+    required int maxFreezeDaysPerTime,
+    String? planId,
+  }) async {
+    final client = _requireClient();
+    try {
+      final result = await client.rpc(
+        'upsert_freeze_policy',
+        params: {
+          'p_freeze_days': freezeDays,
+          'p_max_freeze_days_per_time': maxFreezeDaysPerTime,
+          'p_plan_id': planId,
+        },
+      );
+      return result as String;
+    } on PostgrestException catch (e) {
+      throw _mapException(e);
+    } catch (e) {
+      if (e is MembershipsFailure) rethrow;
+      throw const MembershipsUnknownFailure();
+    }
+  }
+
   SupabaseClient _requireClient() {
     final client = _supabase;
     if (client == null) {
@@ -198,6 +319,16 @@ class MembershipsSupabaseRemoteDataSource
     );
   }
 
+  FreezePolicy _mapFreezePolicy(Map<String, dynamic> row) {
+    return FreezePolicy(
+      id: row['id'] as String,
+      tenantId: row['tenant_id'] as String,
+      planId: row['plan_id'] as String?,
+      freezeDays: (row['freeze_days'] as num).toInt(),
+      maxFreezeDaysPerTime: (row['max_freeze_days_per_time'] as num).toInt(),
+    );
+  }
+
   MembershipsFailure _mapException(PostgrestException e) {
     final code = e.code ?? '';
     final message = e.message.toLowerCase();
@@ -205,6 +336,12 @@ class MembershipsSupabaseRemoteDataSource
       return const MembershipsForbiddenFailure();
     }
     if (code == '22023' || message.contains('invalid_input')) {
+      if (message.contains('no freeze policy') ||
+          message.contains('policy')) {
+        return const MembershipsValidationFailure(
+          'members.error.freeze_no_policy',
+        );
+      }
       return const MembershipsValidationFailure();
     }
     return const MembershipsUnknownFailure();

@@ -34,7 +34,7 @@ void main() {
     });
 
     test('Install 6-rail destinations unchanged', () {
-      expect(PortalShellDestinations.destinationCount, 7);
+      expect(PortalShellDestinations.destinationCount, 8);
       expect(PortalShellDestinations.home, 0);
     });
 
@@ -86,7 +86,22 @@ void main() {
       expect(find.text('EXPIRING MEMBERSHIPS'), findsOneWidget);
       expect(find.text('ACCESS GATE 1'), findsOneWidget);
       expect(find.text('TOTAL ACTIVE'), findsOneWidget);
+      // FEAT-60: Insights label retitled (classes → check-ins)
+      expect(find.text('CHECK-INS TODAY'), findsOneWidget);
       expect(find.text('WAITING FOR SCAN...'), findsOneWidget);
+
+      // FEAT-60 owner layout: Insights immediately under Hero, Mid below
+      final hero = tester.getTopLeft(
+        find.byKey(AdminOverviewDashboard.heroRowKey),
+      );
+      final insights = tester.getTopLeft(
+        find.byKey(AdminOverviewDashboard.insightsRowKey),
+      );
+      final mid = tester.getTopLeft(
+        find.byKey(AdminOverviewDashboard.midRowKey),
+      );
+      expect(hero.dy < insights.dy, isTrue);
+      expect(insights.dy < mid.dy, isTrue);
 
       // §4.1 content fixtures
       expect(find.text(r'$12,482'), findsOneWidget);

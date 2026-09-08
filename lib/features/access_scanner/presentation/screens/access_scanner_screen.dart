@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,8 @@ import '../widgets/scanner_target_overlay.dart';
 /// Project: `13435235862240753621`
 /// EN: [stitchScreenId] · AR: [stitchScreenIdAr]
 /// Entry: Home → Open scanner (not a rail tab). Kinetic `#121212` / `#CCFF00`.
+///
+/// FEAT-58: [cameraReady] on stream start; production manual CTA; stop on leave.
 class AccessScannerScreen extends StatefulWidget {
   const AccessScannerScreen({super.key, this.embedded = false});
 
@@ -22,7 +26,8 @@ class AccessScannerScreen extends StatefulWidget {
   final bool embedded;
 
   /// Stitch G1 Check-in Gate (EN).
-  static const String stitchScreenId = KineticTokens.stitchAccessScannerScreenId;
+  static const String stitchScreenId =
+      KineticTokens.stitchAccessScannerScreenId;
 
   /// Stitch G1 Check-in Gate (AR).
   static const String stitchScreenIdAr =
@@ -40,25 +45,67 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
     facing: CameraFacing.back,
   );
 
-  final TextEditingController _manualPayloadController = TextEditingController();
+  final TextEditingController _manualPayloadController =
+      TextEditingController();
   bool _useManualEntry = false;
   bool _cameraFallbackScheduled = false;
 
   @override
   void initState() {
     super.initState();
+    _controller.addListener(_onControllerStateChanged);
     // Sync after first frame — never from build / MobileScanner listeners.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<AccessScannerCubit>().onScannerOpened();
+      _syncCameraReadyFromController();
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.removeListener(_onControllerStateChanged);
+    // AC-B1: stop tracks on leave, then dispose (honest — cannot revoke
+    // browser origin permission).
+    unawaited(_stopAndDisposeController());
     _manualPayloadController.dispose();
     super.dispose();
+  }
+
+  Future<void> _stopAndDisposeController() async {
+    try {
+      await _controller.stop();
+    } catch (_) {
+      // Best-effort stop when already stopped / never started.
+    }
+    await _controller.dispose();
+  }
+
+  void _onControllerStateChanged() {
+    _syncCameraReadyFromController();
+  }
+
+  void _syncCameraReadyFromController() {
+    if (!mounted) return;
+    final value = _controller.value;
+    final cubit = context.read<AccessScannerCubit>();
+
+    if (value.isRunning) {
+      // AC-A1: ready when stream starts — not only on barcode detect.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        context.read<AccessScannerCubit>().markCameraReady();
+      });
+      return;
+    }
+
+    if (value.error != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        cubit.markCameraError();
+        _scheduleCameraFallback();
+      });
+    }
   }
 
   void _scheduleCameraFallback() {
@@ -76,11 +123,17 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final cubit = context.read<AccessScannerCubit>();
+      // Idempotent backup if stream-start listener was missed.
       cubit.markCameraReady();
       final value = capture.barcodes.firstOrNull?.rawValue;
       if (value == null) return;
       cubit.onQrDetected(value);
     });
+  }
+
+  void _openManualEntry() {
+    if (_useManualEntry) return;
+    setState(() => _useManualEntry = true);
   }
 
   @override
@@ -99,6 +152,9 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
         });
       },
       builder: (context, state) {
+        final showManualCta =
+            state.showManualEntryCta || _useManualEntry || kDebugMode;
+
         return Stack(
           children: [
             Positioned.fill(
@@ -111,8 +167,12 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                       )
                     : _CameraPane(
                         controller: _controller,
-                        onDetect: (capture) => _onBarcodeDetect(context, capture),
-                        onCameraError: _scheduleCameraFallback,
+                        onDetect: (capture) =>
+                            _onBarcodeDetect(context, capture),
+                        onCameraError: () {
+                          context.read<AccessScannerCubit>().markCameraError();
+                          _scheduleCameraFallback();
+                        },
                       ),
               ),
             ),
@@ -157,6 +217,14 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                         color: KineticTokens.zincGray,
                       ),
                     ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'access_scanner.camera.permission_note'.tr(),
+                      style: textTheme.bodySmall?.copyWith(
+                        fontSize: 11,
+                        color: KineticTokens.zincGray.withValues(alpha: 0.85),
+                      ),
+                    ),
                     if (state.rosterStatus == AccessScannerRosterStatus.syncing)
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
@@ -167,7 +235,8 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                           ),
                         ),
                       ),
-                    if (state.rosterStatus == AccessScannerRosterStatus.synced &&
+                    if (state.rosterStatus ==
+                            AccessScannerRosterStatus.synced &&
                         state.rosterCount != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
@@ -180,7 +249,8 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                           ),
                         ),
                       ),
-                    if (state.rosterStatus == AccessScannerRosterStatus.failed &&
+                    if (state.rosterStatus ==
+                            AccessScannerRosterStatus.failed &&
                         state.rosterErrorKey != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
@@ -265,18 +335,31 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                   ),
                 ),
               ),
-            if (kDebugMode || _useManualEntry)
+            // AC-A2 / AC-A3: production manual CTA when pending or error.
+            if (showManualCta)
               PositionedDirectional(
                 end: 16,
                 bottom: 16,
-                child: FloatingActionButton.small(
+                child: FloatingActionButton.extended(
+                  key: const Key('access-scanner-manual-entry-cta'),
                   heroTag: 'scanner-toggle-manual',
                   backgroundColor: KineticTokens.gunmetalCard,
-                  onPressed: () =>
-                      setState(() => _useManualEntry = !_useManualEntry),
-                  child: Icon(
+                  onPressed: () {
+                    if (_useManualEntry) {
+                      setState(() => _useManualEntry = false);
+                    } else {
+                      _openManualEntry();
+                    }
+                  },
+                  icon: Icon(
                     _useManualEntry ? Icons.camera_alt : Icons.keyboard,
                     color: KineticTokens.electricLime,
+                  ),
+                  label: Text(
+                    _useManualEntry
+                        ? 'access_scanner.manual.back_to_camera'.tr()
+                        : 'access_scanner.manual.enter_code'.tr(),
+                    style: const TextStyle(color: KineticTokens.electricLime),
                   ),
                 ),
               ),
@@ -316,10 +399,24 @@ class _CameraPane extends StatelessWidget {
         return Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
-            child: Text(
-              'access_scanner.camera.unavailable'.tr(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: KineticTokens.zincGray),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'access_scanner.camera.unavailable'.tr(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: KineticTokens.zincGray),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'access_scanner.camera.permission_note'.tr(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: KineticTokens.zincGray.withValues(alpha: 0.85),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -329,10 +426,7 @@ class _CameraPane extends StatelessWidget {
 }
 
 class _ManualEntryPane extends StatelessWidget {
-  const _ManualEntryPane({
-    required this.controller,
-    required this.onSubmit,
-  });
+  const _ManualEntryPane({required this.controller, required this.onSubmit});
 
   final TextEditingController controller;
   final VoidCallback onSubmit;

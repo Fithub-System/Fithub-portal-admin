@@ -7,6 +7,7 @@ class MembershipsState extends Equatable {
     this.status = MembershipsStatus.initial,
     this.plans = const [],
     this.athletes = const [],
+    this.freezePolicies = const [],
     this.busy = false,
     this.messageKey,
   });
@@ -14,6 +15,7 @@ class MembershipsState extends Equatable {
   final MembershipsStatus status;
   final List<MembershipPlan> plans;
   final List<MembershipAthleteOption> athletes;
+  final List<FreezePolicy> freezePolicies;
   final bool busy;
   final String? messageKey;
 
@@ -21,6 +23,7 @@ class MembershipsState extends Equatable {
     MembershipsStatus? status,
     List<MembershipPlan>? plans,
     List<MembershipAthleteOption>? athletes,
+    List<FreezePolicy>? freezePolicies,
     bool? busy,
     String? messageKey,
     bool clearMessage = false,
@@ -29,11 +32,19 @@ class MembershipsState extends Equatable {
       status: status ?? this.status,
       plans: plans ?? this.plans,
       athletes: athletes ?? this.athletes,
+      freezePolicies: freezePolicies ?? this.freezePolicies,
       busy: busy ?? this.busy,
       messageKey: clearMessage ? null : (messageKey ?? this.messageKey),
     );
   }
 
   @override
-  List<Object?> get props => [status, plans, athletes, busy, messageKey];
+  List<Object?> get props => [
+    status,
+    plans,
+    athletes,
+    freezePolicies,
+    busy,
+    messageKey,
+  ];
 }

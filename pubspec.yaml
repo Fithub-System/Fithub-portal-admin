@@ -82,11 +82,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   assets:
-    - assets/images/
-    - assets/fonts/
-    - assets/icons/
-    - assets/jsons/
-    - assets/logo/
+    # - assets/images/
+    # - assets/fonts/
+    # - assets/icons/
+    # - assets/jsons/
+    # - assets/logo/
     - assets/translations/
   uses-material-design: true
 

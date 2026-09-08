@@ -24,6 +24,15 @@ class EmployeeProfile extends Equatable {
   /// FEAT-07 AC-A3 / AC-B4 — only Admin may create/assign memberships.
   bool get canManageMemberships => role == 'Admin';
 
+  /// FEAT-61 AC-B2 / AC-B4 — Admin-only renew on Portal Members.
+  bool get canRenewMembership => role == 'Admin';
+
+  /// FEAT-61 AC-B4 — Admin + Receptionist freeze/unfreeze.
+  bool get canFreezeMembership => role == 'Admin' || role == 'Receptionist';
+
+  /// FEAT-61 AC-C3 — Admin-only freeze policy upsert.
+  bool get canManageFreezePolicy => role == 'Admin';
+
   /// FEAT-13 AC-B4 — only Admin may enroll members (Receptionist denied).
   bool get canEnrollMembers => role == 'Admin';
 

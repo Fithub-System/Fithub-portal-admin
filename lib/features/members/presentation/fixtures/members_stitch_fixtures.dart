@@ -1,7 +1,8 @@
 import '../../../access_scanner/domain/entities/member_roster_entry.dart';
 
-/// Stitch Member Management sample chrome (§4.1 fixtures).
+/// Stitch Member Management sample chrome (widget tests / explicit demo only).
 ///
+/// FEAT-59: do **not** mask an empty live roster with [sampleRows] in production.
 /// Screen `9b35dd57f15443e99f7e798f6867acb6` — Active Roster sample rows/stats.
 abstract final class MembersStitchFixtures {
   static const String eliteTierValue = '124';
@@ -22,6 +23,8 @@ abstract final class MembersStitchFixtures {
       powerScore: 88,
       cryptoSalt: 'fixture',
       createdAt: DateTime.utc(2024, 1, 1),
+      membershipId: 'mem-fixture-1',
+      membershipPlanId: 'plan-elite',
       membershipPlanName: 'Elite',
       membershipStatus: 'active',
     ),
@@ -31,6 +34,8 @@ abstract final class MembersStitchFixtures {
       powerScore: 42,
       cryptoSalt: 'fixture',
       createdAt: DateTime.utc(2024, 1, 2),
+      membershipId: 'mem-fixture-2',
+      membershipPlanId: 'plan-standard',
       membershipPlanName: 'Standard',
       membershipStatus: 'active',
     ),
@@ -40,6 +45,8 @@ abstract final class MembersStitchFixtures {
       powerScore: 15,
       cryptoSalt: 'fixture',
       createdAt: DateTime.utc(2024, 1, 3),
+      membershipId: 'mem-fixture-3',
+      membershipPlanId: 'plan-basic',
       membershipPlanName: 'Basic',
       membershipStatus: 'active',
     ),
@@ -49,6 +56,8 @@ abstract final class MembersStitchFixtures {
       powerScore: 94,
       cryptoSalt: 'fixture',
       createdAt: DateTime.utc(2024, 1, 4),
+      membershipId: 'mem-fixture-4',
+      membershipPlanId: 'plan-elite',
       membershipPlanName: 'Elite',
       membershipStatus: 'active',
     ),
@@ -62,27 +71,24 @@ abstract final class MembersStitchFixtures {
       id == 'KM-7732';
 }
 
-/// Plan chip visual kind matching Stitch Elite / Standard / Basic.
-enum MembersPlanChipKind { elite, standard, basic, unknown }
+/// Plan chip visual kind — FEAT-61: label is always the live plan name;
+/// styling is neutral (no Elite/Standard/Basic keyword heuristic).
+enum MembersPlanChipKind { named, none }
 
 MembersPlanChipKind membersPlanChipKind(String? planName) {
   if (planName == null || planName.trim().isEmpty) {
-    return MembersPlanChipKind.unknown;
+    return MembersPlanChipKind.none;
   }
-  final lower = planName.toLowerCase();
-  if (lower.contains('elite') || lower.contains('premium')) {
-    return MembersPlanChipKind.elite;
+  return MembersPlanChipKind.named;
+}
+
+/// Exact live plan name for the roster chip (AC-B1).
+String membersPlanChipLabel(String? planName) {
+  final name = planName?.trim();
+  if (name == null || name.isEmpty) {
+    return '—';
   }
-  if (lower.contains('standard') ||
-      lower.contains('pro') ||
-      lower.contains('monthly')) {
-    return MembersPlanChipKind.standard;
-  }
-  if (lower.contains('basic') || lower.contains('day')) {
-    return MembersPlanChipKind.basic;
-  }
-  // Default mid-tier styling for unknown named plans (avoid bare —).
-  return MembersPlanChipKind.standard;
+  return name;
 }
 
 String membersInitials(String fullName) {

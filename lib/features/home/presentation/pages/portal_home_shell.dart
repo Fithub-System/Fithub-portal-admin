@@ -10,33 +10,25 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 import '../../../connectivity/presentation/widgets/safe_mode_banner.dart';
 import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
+import '../../../dashboard/presentation/cubit/overview_metrics_cubit.dart';
 import '../../../dashboard/presentation/widgets/admin_overview_dashboard.dart';
 import '../../../members/presentation/screens/member_management_screen.dart';
 import '../../../members/inject_members.dart' as members_di;
 import '../../../billing/presentation/screens/marketing_promotions_screen.dart';
-import '../../../gym_sku_settings/presentation/screens/gym_sku_settings_screen.dart';
 import '../../../staff_invite/presentation/screens/staff_management_screen.dart';
 import '../../../class_sessions/presentation/screens/class_manager_screen.dart';
 import '../../../admin_payout_queue/presentation/screens/admin_payout_queue_screen.dart';
 import '../widgets/access_scanner_focus_host.dart';
 import '../widgets/kinetic_coming_soon_empty.dart';
+import '../screens/portal_settings_hub_screen.dart';
 import 'portal_shell_destinations.dart';
 
 /// Adaptive Admin shell: NavigationRail (desktop/tablet) / NavigationBar (mobile).
 ///
-/// FEAT-11 Install I1 — Stitch shell IA:
-/// Home | Members | Staff | Classes | Marketing | Reports
-/// (`@specs/FEAT-11-PORTAL-SHELL-MATCH-STITCH.md` §3).
+/// Destinations: Home | Members | Staff | Classes | Marketing | Payouts |
+/// **Settings** | Reports (Settings = owner soft lock hub with module tiles).
 ///
-/// FEAT-30 — **Payouts** rail destination inserted before Reports
-/// (`@specs/FEAT-30-ADMIN-PAYOUT-QUEUE.md` §3).
-///
-/// FEAT-12 Install I2 — G1 Access Scanner / Check-in Gate mounts under Home
-/// (CTA → focus mode). Not a rail destination (AC-A1).
-///
-/// FEAT-10 Install I3 — G2 Gym Settings opens from avatar menu or Reports nest
-/// (focus overlay). Not a rail tab (AC-D4).
-/// Language + sign-out via header avatar menu (AC-E1).
+/// FEAT-12 — Access Scanner under Home focus (not a rail tab).
 class PortalHomeShell extends StatefulWidget {
   const PortalHomeShell({super.key});
 
@@ -49,13 +41,11 @@ class PortalHomeShell extends StatefulWidget {
 class _PortalHomeShellState extends State<PortalHomeShell> {
   int _selectedIndex = PortalShellDestinations.home;
   bool _scannerFocus = false;
-  bool _settingsFocus = false;
 
   void _openScannerFocus() {
     setState(() {
       _selectedIndex = PortalShellDestinations.home;
       _scannerFocus = true;
-      _settingsFocus = false;
     });
   }
 
@@ -64,16 +54,11 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     setState(() => _scannerFocus = false);
   }
 
-  void _openSettingsFocus() {
+  void _openSettingsTab() {
     setState(() {
       _scannerFocus = false;
-      _settingsFocus = true;
+      _selectedIndex = PortalShellDestinations.settings;
     });
-  }
-
-  void _closeSettingsFocus() {
-    if (!_settingsFocus) return;
-    setState(() => _settingsFocus = false);
   }
 
   void _selectDestination(int index) {
@@ -82,8 +67,6 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
       if (index != PortalShellDestinations.home) {
         _scannerFocus = false;
       }
-      // Settings is nested overlay — closing on rail change keeps IA clear.
-      _settingsFocus = false;
     });
   }
 
@@ -92,6 +75,12 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     final authState = context.select((AuthBloc b) => b.state);
     final canManageMemberships = authState is AuthAuthenticated
         ? authState.profile.canManageMemberships
+        : false;
+    final canRenewMembership = authState is AuthAuthenticated
+        ? authState.profile.canRenewMembership
+        : false;
+    final canFreezeMembership = authState is AuthAuthenticated
+        ? authState.profile.canFreezeMembership
         : false;
     final canEnrollMembers = authState is AuthAuthenticated
         ? authState.profile.canEnrollMembers
@@ -122,28 +111,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
             final useRail =
                 constraints.maxWidth >= PortalHomeShell.railBreakpoint;
 
-            if (_settingsFocus) {
-              return Scaffold(
-                backgroundColor: KineticTokens.deepCharcoal,
-                body: Column(
-                  children: [
-                    SafeModeBanner(visible: connectivity.isOffline),
-                    Expanded(
-                      child: BlocProvider(
-                        create: (_) =>
-                            InjectionContainer.createGymSkuSettingsBloc(),
-                        child: GymSkuSettingsScreen(
-                          canWrite: canManageSkuSettings,
-                          onClose: _closeSettingsFocus,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            // FEAT-16 VF4: Check-in Gate keeps Install 6-rail + SafeMode;
+            // FEAT-16 VF4: Check-in Gate keeps Install rail + SafeMode;
             // content replaces Home body (not a Scan rail tab).
             final body = _scannerFocus
                 ? AccessScannerFocusHost(onClose: _closeScannerFocus)
@@ -161,11 +129,13 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                             create: (_) => members_di.createMemberRosterCubit(
                               getIt: InjectionContainer.locator,
                               tenantId: tenantId,
-                            )..load(),
+                            )..refreshFromCloud(),
                           ),
                         ],
                         child: MemberManagementScreen(
                           canWrite: canManageMemberships,
+                          canRenew: canRenewMembership,
+                          canFreeze: canFreezeMembership,
                           canEnroll: canEnrollMembers,
                         ),
                       ),
@@ -199,7 +169,10 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                           canWrite: canFulfillPayouts,
                         ),
                       ),
-                      ReportsShellPage(onOpenGymSettings: _openSettingsFocus),
+                      PortalSettingsHubScreen(
+                        canWriteSku: canManageSkuSettings,
+                      ),
+                      ReportsShellPage(onOpenGymSettings: _openSettingsTab),
                     ],
                   );
 
@@ -207,7 +180,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
               children: [
                 if (!_scannerFocus)
                   _PortalShellHeader(
-                    onOpenGymSettings: _openSettingsFocus,
+                    onOpenGymSettings: _openSettingsTab,
                     onOpenScanner: _openScannerFocus,
                   ),
                 Expanded(child: body),
@@ -304,6 +277,14 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                       color: KineticTokens.electricLime,
                     ),
                     label: 'nav.payouts'.tr(),
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.settings_outlined),
+                    selectedIcon: const Icon(
+                      Icons.settings,
+                      color: KineticTokens.electricLime,
+                    ),
+                    label: 'nav.settings'.tr(),
                   ),
                   NavigationDestination(
                     icon: const Icon(Icons.insights_outlined),
@@ -604,6 +585,11 @@ class _PortalNavigationRail extends StatelessWidget {
                     label: Text('nav.payouts'.tr()),
                   ),
                   NavigationRailDestination(
+                    icon: const Icon(Icons.settings_outlined),
+                    selectedIcon: const Icon(Icons.settings),
+                    label: Text('nav.settings'.tr()),
+                  ),
+                  NavigationRailDestination(
                     icon: const Icon(Icons.insights_outlined),
                     selectedIcon: const Icon(Icons.insights),
                     label: Text('nav.reports'.tr()),
@@ -653,23 +639,39 @@ class _DashboardDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DashboardCubit, DashboardState>(
       builder: (context, dashboard) {
-        final approved =
-            dashboard.lastScanMessageKey == 'dashboard.scan.approved';
-        final rejected =
-            dashboard.lastScanMessageKey == 'dashboard.scan.rejected';
+        return BlocBuilder<OverviewMetricsCubit, OverviewMetricsState>(
+          builder: (context, metricsState) {
+            final approved =
+                dashboard.lastScanMessageKey == 'dashboard.scan.approved';
+            final rejected =
+                dashboard.lastScanMessageKey == 'dashboard.scan.rejected';
+            final metrics = metricsState.displayMetrics;
+            final loading =
+                metricsState.status == OverviewMetricsStatus.loading ||
+                metricsState.status == OverviewMetricsStatus.initial;
+            final statusKey =
+                metricsState.statusMessageKey ?? dashboard.statusMessageKey;
 
-        return ColoredBox(
-          color: KineticTokens.stitchBackground,
-          child: AdminOverviewDashboard(
-            currentOccupancy: dashboard.currentOccupancy,
-            capacityLimit: dashboard.capacityLimit,
-            onOpenScanner: onOpenScanner,
-            statusMessageKey: dashboard.statusMessageKey,
-            lastScanApproved: approved,
-            lastScanMemberName: dashboard.lastScanMemberName,
-            lastScanRejectReason:
-                rejected ? dashboard.lastScanRejectReason : null,
-          ),
+            return ColoredBox(
+              color: KineticTokens.stitchBackground,
+              child: AdminOverviewDashboard(
+                currentOccupancy: dashboard.currentOccupancy,
+                capacityLimit: dashboard.capacityLimit,
+                onOpenScanner: onOpenScanner,
+                statusMessageKey: statusKey,
+                lastScanApproved: approved,
+                lastScanMemberName: dashboard.lastScanMemberName,
+                lastScanRejectReason:
+                    rejected ? dashboard.lastScanRejectReason : null,
+                liveMetricsBound: true,
+                metricsLoading: loading,
+                revenueAmountLabel: metrics.revenueAmountLabel,
+                expiringRows: metrics.expiringSoon,
+                membersCountLabel: metrics.membersCountLabel,
+                checkInsTodayLabel: metrics.checkInsTodayLabel,
+              ),
+            );
+          },
         );
       },
     );

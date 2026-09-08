@@ -10,19 +10,21 @@ import '../../../auth/presentation/widgets/stitch_auth_snackbar.dart';
 import '../../../memberships/presentation/cubit/memberships_cubit.dart';
 import '../../../memberships/presentation/widgets/memberships_plans_panel.dart';
 import '../cubit/member_roster_cubit.dart';
-import '../fixtures/members_stitch_fixtures.dart';
 import '../widgets/member_roster_table.dart';
 import '../widgets/members_roster_chrome.dart';
 import '../widgets/members_stats_bento.dart';
 
 /// Member Management / Active Roster — Stitch `9b35dd57f15443e99f7e798f6867acb6`.
 ///
-/// Pixel regions + §4.1 fixtures when live cache is empty. FEAT-07 assign +
-/// plans (via Filter Type sheet) and FEAT-13 Add Member preserved.
-class MemberManagementScreen extends StatelessWidget {
+/// FEAT-59: opens with cloud refresh; empty live roster shows empty chrome
+/// (fixtures only for widget tests / explicit demo). FEAT-07 assign + plans
+/// (via Filter Type sheet), FEAT-13 Add Member, FEAT-61 renew/freeze preserved.
+class MemberManagementScreen extends StatefulWidget {
   const MemberManagementScreen({
     super.key,
     required this.canWrite,
+    this.canRenew = false,
+    this.canFreeze = false,
     this.canEnroll = false,
   });
 
@@ -31,10 +33,32 @@ class MemberManagementScreen extends StatelessWidget {
   static const String stitchScreenIdAr = '60b6a0e1f7fb4419b1b0e774ec8bdb32';
   static const String stitchScreenTitle = 'Member Management';
 
+  /// FEAT-07 Admin-only assign / plan writes.
   final bool canWrite;
+
+  /// FEAT-61 Admin-only renew.
+  final bool canRenew;
+
+  /// FEAT-61 Admin + Receptionist freeze/unfreeze.
+  final bool canFreeze;
 
   /// FEAT-13 AC-B4 — Admin-only Add New Member navigation.
   final bool canEnroll;
+
+  @override
+  State<MemberManagementScreen> createState() => _MemberManagementScreenState();
+}
+
+class _MemberManagementScreenState extends State<MemberManagementScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Freeze actions need policy rows (no policy ⇒ freeze disabled).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<MembershipsCubit>().loadFreezePolicies();
+    });
+  }
 
   Future<void> _openAddMember(BuildContext context) async {
     await Navigator.of(context).push<void>(
@@ -96,7 +120,9 @@ class MemberManagementScreen extends StatelessWidget {
                   ),
                 ),
                 const Divider(height: 1, color: KineticTokens.zincGray),
-                Expanded(child: MembershipsPlansPanel(canWrite: canWrite)),
+                Expanded(
+                  child: MembershipsPlansPanel(canWrite: widget.canWrite),
+                ),
               ],
             ),
           ),
@@ -118,13 +144,9 @@ class MemberManagementScreen extends StatelessWidget {
           );
         }
 
-        // §4.1: empty cache → Stitch sample rows (never blank table / —).
-        final live = state.members;
-        final usingFixtures = live.isEmpty;
-        final rows =
-            usingFixtures ? MembersStitchFixtures.sampleRows : live;
-        final showRetryBanner =
-            state.status == MemberRosterStatus.failure && usingFixtures;
+        // FEAT-59 AC-A2: never mask empty live roster with Stitch sample rows.
+        final rows = state.members;
+        final showRetryBanner = state.status == MemberRosterStatus.failure;
 
         return ColoredBox(
           color: KineticTokens.stitchBackground,
@@ -153,8 +175,9 @@ class MemberManagementScreen extends StatelessWidget {
                         ),
                       ),
                       TextButton(
-                        onPressed: () =>
-                            context.read<MemberRosterCubit>().load(),
+                        onPressed: () => context
+                            .read<MemberRosterCubit>()
+                            .refreshFromCloud(),
                         child: Text('memberships.retry'.tr()),
                       ),
                     ],
@@ -162,13 +185,15 @@ class MemberManagementScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                 ],
                 _Header(
-                  onAdd: canEnroll ? () => _openAddMember(context) : null,
+                  onAdd: widget.canEnroll
+                      ? () => _openAddMember(context)
+                      : null,
                   onFilter: () => _openPlansSheet(context),
                 ),
                 const SizedBox(height: 32),
                 MembersStatsBento(
                   members: rows,
-                  usingFixtures: usingFixtures,
+                  usingFixtures: false,
                 ),
                 const SizedBox(height: 32),
                 DecoratedBox(
@@ -188,19 +213,27 @@ class MemberManagementScreen extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        MemberRosterTable(
-                          members: rows,
-                          canWrite: canWrite,
-                        ),
-                        MembersRosterPagination(
-                          visibleCount: rows.length,
-                          usingFixtures: usingFixtures,
-                        ),
-                      ],
-                    ),
+                    child: rows.isEmpty
+                        ? _EmptyRosterChrome(
+                            onRetry: () => context
+                                .read<MemberRosterCubit>()
+                                .refreshFromCloud(),
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              MemberRosterTable(
+                                members: rows,
+                                canAssign: widget.canWrite,
+                                canRenew: widget.canRenew,
+                                canFreeze: widget.canFreeze,
+                              ),
+                              MembersRosterPagination(
+                                visibleCount: rows.length,
+                                usingFixtures: false,
+                              ),
+                            ],
+                          ),
                   ),
                 ),
                 MembersSyncFooter(offline: state.showingCachedOffline),
@@ -332,3 +365,36 @@ class _Header extends StatelessWidget {
     );
   }
 }
+
+/// Empty live roster — actionable chrome (FEAT-59 AC-A2 / AC-A3).
+class _EmptyRosterChrome extends StatelessWidget {
+  const _EmptyRosterChrome({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(32, 48, 32, 48),
+      child: Column(
+        children: [
+          Text(
+            'members.empty_roster'.tr(),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFFC4C9AC),
+              fontSize: 14,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: onRetry,
+            child: Text('memberships.retry'.tr()),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

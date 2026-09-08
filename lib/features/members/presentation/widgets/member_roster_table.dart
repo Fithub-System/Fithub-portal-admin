@@ -1,9 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../access_scanner/domain/entities/member_roster_entry.dart';
+import '../../../auth/presentation/widgets/stitch_auth_snackbar.dart';
+import '../../../memberships/domain/entities/freeze_policy.dart';
+import '../../../memberships/presentation/cubit/memberships_cubit.dart';
 import '../../../memberships/presentation/widgets/memberships_plans_panel.dart';
+import '../cubit/member_roster_cubit.dart';
 import '../fixtures/members_stitch_fixtures.dart';
 
 /// Stitch Active Roster table — name / plan chip / XP / actions.
@@ -11,21 +16,26 @@ class MemberRosterTable extends StatelessWidget {
   const MemberRosterTable({
     super.key,
     required this.members,
-    required this.canWrite,
+    required this.canAssign,
+    required this.canRenew,
+    required this.canFreeze,
   });
 
   final List<MemberRosterEntry> members;
-  final bool canWrite;
+
+  /// FEAT-07 Admin-only assign.
+  final bool canAssign;
+
+  /// FEAT-61 Admin-only renew.
+  final bool canRenew;
+
+  /// FEAT-61 Admin + Receptionist freeze/unfreeze.
+  final bool canFreeze;
 
   static const double _minTableWidth = 860;
 
   @override
   Widget build(BuildContext context) {
-    assert(
-      members.isNotEmpty,
-      '§4.1: roster table must never render empty — use Stitch fixtures',
-    );
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final tableWidth = constraints.maxWidth < _minTableWidth
@@ -41,7 +51,12 @@ class MemberRosterTable extends StatelessWidget {
               children: [
                 _HeaderRow(),
                 for (final member in members)
-                  _MemberRow(member: member, canWrite: canWrite),
+                  _MemberRow(
+                    member: member,
+                    canAssign: canAssign,
+                    canRenew: canRenew,
+                    canFreeze: canFreeze,
+                  ),
               ],
             ),
           ),
@@ -89,14 +104,22 @@ class _HeaderRow extends StatelessWidget {
 }
 
 class _MemberRow extends StatelessWidget {
-  const _MemberRow({required this.member, required this.canWrite});
+  const _MemberRow({
+    required this.member,
+    required this.canAssign,
+    required this.canRenew,
+    required this.canFreeze,
+  });
 
   final MemberRosterEntry member;
-  final bool canWrite;
+  final bool canAssign;
+  final bool canRenew;
+  final bool canFreeze;
 
   @override
   Widget build(BuildContext context) {
     final kind = membersPlanChipKind(member.membershipPlanName);
+    final label = membersPlanChipLabel(member.membershipPlanName);
     final xp = member.powerScore.clamp(0, 100);
     final initials = membersInitials(member.fullName);
 
@@ -144,7 +167,7 @@ class _MemberRow extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(flex: 2, child: _PlanChip(kind: kind, label: _planLabel(kind))),
+          Expanded(flex: 2, child: _PlanChip(kind: kind, label: label)),
           Expanded(
             flex: 3,
             child: Row(
@@ -192,26 +215,16 @@ class _MemberRow extends StatelessWidget {
           ),
           Expanded(
             flex: 3,
-            child: _ActionsCell(canWrite: canWrite, athleteId: member.id),
+            child: _ActionsCell(
+              member: member,
+              canAssign: canAssign,
+              canRenew: canRenew,
+              canFreeze: canFreeze,
+            ),
           ),
         ],
       ),
     );
-  }
-
-  String _planLabel(MembersPlanChipKind kind) {
-    switch (kind) {
-      case MembersPlanChipKind.elite:
-        return 'members.plan_chip.elite'.tr();
-      case MembersPlanChipKind.standard:
-        return 'members.plan_chip.standard'.tr();
-      case MembersPlanChipKind.basic:
-        return 'members.plan_chip.basic'.tr();
-      case MembersPlanChipKind.unknown:
-        final name = member.membershipPlanName;
-        if (name != null && name.isNotEmpty) return name.toUpperCase();
-        return 'members.plan_chip.standard'.tr();
-    }
   }
 }
 
@@ -224,10 +237,8 @@ class _InitialsAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color ink = switch (kind) {
-      MembersPlanChipKind.elite => KineticTokens.primaryContainer,
-      MembersPlanChipKind.standard => KineticTokens.secondaryContainer,
-      MembersPlanChipKind.basic => const Color(0xFFA3A3A3),
-      MembersPlanChipKind.unknown => KineticTokens.primaryContainer,
+      MembersPlanChipKind.named => KineticTokens.secondaryContainer,
+      MembersPlanChipKind.none => const Color(0xFFA3A3A3),
     };
     return Container(
       width: 40,
@@ -258,17 +269,12 @@ class _PlanChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (Color fg, Color bg, Color border) = switch (kind) {
-      MembersPlanChipKind.elite => (
-        KineticTokens.primaryContainer,
-        KineticTokens.primaryContainer.withValues(alpha: 0.1),
-        KineticTokens.primaryContainer.withValues(alpha: 0.2),
-      ),
-      MembersPlanChipKind.standard => (
+      MembersPlanChipKind.named => (
         KineticTokens.secondaryContainer,
         KineticTokens.secondaryContainer.withValues(alpha: 0.1),
         KineticTokens.secondaryContainer.withValues(alpha: 0.2),
       ),
-      MembersPlanChipKind.basic || MembersPlanChipKind.unknown => (
+      MembersPlanChipKind.none => (
         const Color(0xFFA3A3A3),
         const Color(0xFF262626),
         const Color(0xFF404040),
@@ -289,11 +295,13 @@ class _PlanChip extends StatelessWidget {
         ),
         child: Text(
           label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: fg,
             fontSize: 10,
             fontWeight: FontWeight.w900,
-            letterSpacing: 2,
+            letterSpacing: 1.2,
           ),
         ),
       ),
@@ -302,10 +310,17 @@ class _PlanChip extends StatelessWidget {
 }
 
 class _ActionsCell extends StatelessWidget {
-  const _ActionsCell({required this.canWrite, required this.athleteId});
+  const _ActionsCell({
+    required this.member,
+    required this.canAssign,
+    required this.canRenew,
+    required this.canFreeze,
+  });
 
-  final bool canWrite;
-  final String athleteId;
+  final MemberRosterEntry member;
+  final bool canAssign;
+  final bool canRenew;
+  final bool canFreeze;
 
   @override
   Widget build(BuildContext context) {
@@ -315,6 +330,23 @@ class _ActionsCell extends StatelessWidget {
       fontWeight: FontWeight.w700,
       letterSpacing: 0.5,
     );
+    final active = muted.copyWith(color: KineticTokens.primaryContainer);
+
+    final memberships = context.watch<MembershipsCubit>().state;
+    final policy = resolveFreezePolicy(
+      memberships.freezePolicies,
+      member.membershipPlanId,
+    );
+    final freezeEnabled =
+        canFreeze &&
+        member.membershipId != null &&
+        member.hasActiveMembership &&
+        policy != null;
+    final unfreezeEnabled =
+        canFreeze &&
+        member.membershipId != null &&
+        member.hasPausedMembership;
+    final renewEnabled = canRenew && member.canRenewMembership;
 
     return Align(
       alignment: AlignmentDirectional.centerEnd,
@@ -324,21 +356,46 @@ class _ActionsCell extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (member.hasPausedMembership)
+              TextButton(
+                onPressed: unfreezeEnabled
+                    ? () => _confirmUnfreeze(context, member)
+                    : null,
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFFC4C9AC),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                ),
+                child: Text(
+                  'members.action.unfreeze'.tr(),
+                  style: unfreezeEnabled ? active : muted,
+                ),
+              )
+            else
+              TextButton(
+                onPressed: freezeEnabled
+                    ? () => _confirmFreeze(context, member, policy)
+                    : null,
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFFC4C9AC),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                ),
+                child: Text(
+                  'members.action.freeze'.tr(),
+                  style: freezeEnabled ? active : muted,
+                ),
+              ),
             TextButton(
-              onPressed: null,
+              onPressed: renewEnabled
+                  ? () => _confirmRenew(context, member)
+                  : null,
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFFC4C9AC),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
               ),
-              child: Text('members.action.freeze'.tr(), style: muted),
-            ),
-            TextButton(
-              onPressed: null,
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFFC4C9AC),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Text(
+                'members.action.renew'.tr(),
+                style: renewEnabled ? active : muted,
               ),
-              child: Text('members.action.renew'.tr(), style: muted),
             ),
             const SizedBox(width: 4),
             Material(
@@ -346,10 +403,10 @@ class _ActionsCell extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: InkWell(
                 borderRadius: BorderRadius.circular(4),
-                onTap: canWrite
+                onTap: canAssign
                     ? () => MembershipsPlansPanel.showAssignSheet(
                         context,
-                        initialAthleteId: athleteId,
+                        initialAthleteId: member.id,
                       )
                     : null,
                 child: Padding(
@@ -368,5 +425,177 @@ class _ActionsCell extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmRenew(
+    BuildContext context,
+    MemberRosterEntry member,
+  ) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: KineticTokens.surfaceContainerLow,
+        title: Text(
+          'members.renew.confirm_title'.tr(),
+          style: const TextStyle(color: KineticTokens.pureWhite),
+        ),
+        content: Text(
+          'members.renew.confirm_body'.tr(
+            namedArgs: {'name': member.fullName},
+          ),
+          style: const TextStyle(color: KineticTokens.zincGray),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text('members.dialog.cancel'.tr()),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text('members.action.renew'.tr()),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    final membershipId = member.membershipId;
+    if (membershipId == null) return;
+
+    final key = await context.read<MembershipsCubit>().renewMembership(
+      membershipId,
+    );
+    if (!context.mounted) return;
+    StitchAuthSnackbar.show(context, key.tr());
+    if (key.startsWith('members.success')) {
+      await context.read<MemberRosterCubit>().refreshFromCloud();
+    }
+  }
+
+  Future<void> _confirmFreeze(
+    BuildContext context,
+    MemberRosterEntry member,
+    FreezePolicy policy,
+  ) async {
+    final daysController = TextEditingController(
+      text: '${policy.freezeDays}',
+    );
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: KineticTokens.surfaceContainerLow,
+        title: Text(
+          'members.freeze.confirm_title'.tr(),
+          style: const TextStyle(color: KineticTokens.pureWhite),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'members.freeze.confirm_body'.tr(
+                namedArgs: {'name': member.fullName},
+              ),
+              style: const TextStyle(color: KineticTokens.zincGray),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: daysController,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: KineticTokens.pureWhite),
+              decoration: InputDecoration(
+                labelText: 'members.freeze.days_label'.tr(),
+                helperText: 'members.freeze.days_helper'.tr(
+                  namedArgs: {
+                    'max': '${policy.maxFreezeDaysPerTime}',
+                  },
+                ),
+                helperMaxLines: 2,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text('members.dialog.cancel'.tr()),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text('members.action.freeze'.tr()),
+          ),
+        ],
+      ),
+    );
+    final rawDays = int.tryParse(daysController.text.trim());
+    daysController.dispose();
+    if (ok != true || !context.mounted) return;
+    final membershipId = member.membershipId;
+    if (membershipId == null) return;
+
+    if (rawDays == null ||
+        rawDays < 0 ||
+        rawDays > policy.maxFreezeDaysPerTime) {
+      StitchAuthSnackbar.show(
+        context,
+        'members.error.freeze_days_invalid'.tr(
+          namedArgs: {'max': '${policy.maxFreezeDaysPerTime}'},
+        ),
+      );
+      return;
+    }
+
+    final key = await context.read<MembershipsCubit>().freezeMembership(
+      membershipId: membershipId,
+      days: rawDays,
+    );
+    if (!context.mounted) return;
+    StitchAuthSnackbar.show(context, key.tr());
+    if (key.startsWith('members.success')) {
+      await context.read<MemberRosterCubit>().refreshFromCloud();
+    }
+  }
+
+  Future<void> _confirmUnfreeze(
+    BuildContext context,
+    MemberRosterEntry member,
+  ) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: KineticTokens.surfaceContainerLow,
+        title: Text(
+          'members.unfreeze.confirm_title'.tr(),
+          style: const TextStyle(color: KineticTokens.pureWhite),
+        ),
+        content: Text(
+          'members.unfreeze.confirm_body'.tr(
+            namedArgs: {'name': member.fullName},
+          ),
+          style: const TextStyle(color: KineticTokens.zincGray),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text('members.dialog.cancel'.tr()),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text('members.action.unfreeze'.tr()),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    final membershipId = member.membershipId;
+    if (membershipId == null) return;
+
+    final key = await context.read<MembershipsCubit>().unfreezeMembership(
+      membershipId,
+    );
+    if (!context.mounted) return;
+    StitchAuthSnackbar.show(context, key.tr());
+    if (key.startsWith('members.success')) {
+      await context.read<MemberRosterCubit>().refreshFromCloud();
+    }
   }
 }

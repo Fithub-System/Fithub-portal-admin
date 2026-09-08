@@ -12,7 +12,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -24,6 +24,10 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(localMembers, localMembers.membershipStatus);
         await m.addColumn(localMembers, localMembers.membershipPlanName);
         await m.addColumn(localMembers, localMembers.membershipEndsAt);
+      }
+      if (from < 3) {
+        await m.addColumn(localMembers, localMembers.membershipId);
+        await m.addColumn(localMembers, localMembers.membershipPlanId);
       }
     },
   );

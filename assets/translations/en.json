@@ -75,7 +75,25 @@
     "reports": "Reports",
     "account": "Account",
     "coming_soon": "Coming soon in a later phase.",
-    "payouts": "Payouts"
+    "payouts": "Payouts",
+    "settings": "Settings"
+  },
+  "settings": {
+    "hub": {
+      "title": "SETTINGS",
+      "subtitle": "Configure gym modules. Open a tile to edit.",
+      "back": "Back to Settings",
+      "modules": {
+        "sku": {
+          "title": "SKU & Marketplace",
+          "body": "Network / Private Cloud and Marketplace opt-in."
+        },
+        "freeze": {
+          "title": "Freeze policy",
+          "body": "Default and max freeze days — general and per plan."
+        }
+      }
+    }
   },
   "staff": {
     "shell": {
@@ -180,7 +198,8 @@
     "yield": {
       "title": "DAILY\nYIELD",
       "subtitle": "TODAY'S REVENUE STREAM",
-      "delta_placeholder": "+14.2% vs yesterday"
+      "delta_placeholder": "+14.2% vs yesterday",
+      "delta_unavailable": "—"
     },
     "expiring": {
       "title": "EXPIRING MEMBERSHIPS",
@@ -203,8 +222,12 @@
     "stats": {
       "total_active": "TOTAL ACTIVE",
       "classes_today": "CLASSES TODAY",
+      "check_ins_today": "CHECK-INS TODAY",
       "guest_passes": "GUEST PASSES",
       "incidents": "INCIDENT REPORTS"
+    },
+    "metrics": {
+      "load_failed": "Could not refresh Home metrics — showing empty live values."
     },
     "scan": {
       "approved": "Approved: {name}",
@@ -242,12 +265,16 @@
       "rejected": "Scan rejected: {reason}"
     },
     "camera": {
-      "unavailable": "Camera unavailable — use manual entry below."
+      "unavailable": "Camera unavailable — use manual entry below.",
+      "pending": "Allow camera access to scan, or enter a code manually.",
+      "permission_note": "Camera access is used for check-in. Your browser may remember this site's permission."
     },
     "manual": {
       "title": "Manual QR payload",
       "hint": "Paste JSON QR payload",
-      "submit": "Validate scan"
+      "submit": "Validate scan",
+      "enter_code": "Enter code",
+      "back_to_camera": "Camera"
     },
     "roster": {
       "syncing": "Syncing member roster…",
@@ -418,17 +445,42 @@
     },
     "action": {
       "freeze": "FREEZE",
+      "unfreeze": "UNFREEZE",
       "renew": "RENEW",
       "full_evaluation": "FULL EVALUATION"
     },
-    "empty_roster": "No members cached — sync roster from Scan tab or check in online.",
+    "dialog": {
+      "cancel": "Cancel"
+    },
+    "renew": {
+      "confirm_title": "Renew membership",
+      "confirm_body": "Bill a new interval for {name} on the same plan at the current price? The current period continues until its end date."
+    },
+    "freeze": {
+      "confirm_title": "Freeze membership",
+      "confirm_body": "Pause access for {name}? The end date will extend by elapsed freeze days on unfreeze.",
+      "days_label": "Freeze days",
+      "days_helper": "Default from policy. Max {max} days per freeze."
+    },
+    "unfreeze": {
+      "confirm_title": "Unfreeze membership",
+      "confirm_body": "Restore access for {name} and extend the end date by elapsed freeze days?"
+    },
+    "success": {
+      "renewed": "Membership renewed — new interval scheduled.",
+      "frozen": "Membership frozen.",
+      "unfrozen": "Membership unfrozen."
+    },
+    "empty_roster": "No members in this gym yet — add a member or sync when online.",
     "error": {
-      "roster": "Could not load cached roster — showing Stitch sample roster."
+      "roster": "Could not refresh members — tap Retry.",
+      "freeze_no_policy": "Freeze disabled — configure Freeze policy in Gym Settings.",
+      "freeze_days_invalid": "Enter freeze days between 0 and {max}."
     }
   },
   "add_member": {
     "title": "ADD NEW MEMBER",
-    "subtitle": "Link an existing athlete to this gym, optionally assign a plan.",
+    "subtitle": "Link an existing athlete, or invite by email / username. Invitees accept with a membership OTP in the Athlete app.",
     "tab": {
       "link": "Link existing",
       "invite": "Invite"
@@ -436,35 +488,47 @@
     "link_heading": "FIND ATHLETE",
     "match_heading": "MATCHED ATHLETE",
     "invite_heading": "SEND INVITE",
-    "invite_body": "Creating a new Auth user from Portal is not available in this install. Use Link existing for athletes who already have an account, or send an invite later.",
+    "invite_body": "Enter an email (new or existing) or an existing athlete username. Optional display name and plan apply when they accept the membership OTP (email, 48h).",
     "cta": {
       "add_new": "Add New Member",
       "find": "Find athlete",
       "enroll": "Enroll member",
+      "send_invite": "Send invite",
       "send_invite_later": "Send invite later"
     },
     "field": {
       "email": "Athlete email",
       "email_hint": "athlete@example.com",
+      "identifier": "Email or username",
+      "identifier_hint": "athlete@example.com or username",
+      "display_name": "Display name (optional)",
+      "display_name_hint": "Preferred name",
       "plan_optional": "Membership plan (optional)"
     },
     "plan": {
       "none": "No plan now"
     },
     "validation": {
-      "email": "Enter a valid athlete email."
+      "email": "Enter a valid athlete email.",
+      "identifier": "Enter an email or username."
     },
     "success": {
       "enrolled": "Member enrolled.",
-      "already_enrolled": "Athlete was already enrolled for this gym."
+      "already_enrolled": "Athlete was already enrolled for this gym.",
+      "invite_sent": "Member invite sent. They must enter the membership OTP in the Athlete app."
     },
     "error": {
       "not_configured": "Add Member is not configured for this build.",
-      "forbidden": "Only Admins can enroll members.",
+      "forbidden": "Only Admins can invite or enroll members.",
       "not_found": "No athlete found for that email.",
+      "username_not_found": "No athlete found for that username.",
+      "invite_email_failed": "Invite could not be emailed. Try again or check email delivery.",
+      "invite_failed": "Could not send member invite.",
+      "offline": "Member invite needs a live connection.",
       "invalid": "Invalid enroll input.",
       "unknown": "Could not enroll member."
-    }
+    },
+    "visual_spec": "Visual Spec Card: Docs/feat62-visual-spec-add-member-invite.md (Stitch Add New Member)."
   },
   "marketing": {
     "growth_engine": "GROWTH ENGINE",
@@ -566,7 +630,7 @@
   },
   "gym_settings": {
     "title": "GYM SETTINGS",
-    "subtitle": "SKU mode and Marketplace boundary for this gym.",
+    "subtitle": "SKU mode, Marketplace boundary, and Freeze policy for this gym.",
     "close": "Close settings",
     "retry": "Retry",
     "read_only_hint": "Receptionist view — only Admins can change SKU settings.",
@@ -597,6 +661,29 @@
       "forbidden": "Only Admins can change SKU settings.",
       "invalid": "Invalid SKU settings.",
       "unknown": "Could not update gym settings."
+    },
+    "freeze": {
+      "heading": "FREEZE POLICY",
+      "subtitle": "Default and max freeze days — general and optional per-plan overrides.",
+      "visual_spec": "Visual Spec Card: Docs/feat61-visual-spec-freeze-policy.md (no dedicated Stitch freeze screen).",
+      "general_title": "General (tenant-wide)",
+      "per_plan_title": "Per-plan override",
+      "per_plan_card": "Selected plan policy",
+      "plan_label": "Membership plan",
+      "field_freeze_days": "Default freeze days",
+      "field_max_days": "Max freeze days per request",
+      "cta_save": "Save freeze policy",
+      "read_only_hint": "Receptionist view — only Admins can change freeze policy.",
+      "empty": "No freeze policies yet — freeze actions stay disabled until configured.",
+      "list_heading": "CONFIGURED POLICIES",
+      "list_row": "{scope}: default {days}d · max {max}d",
+      "scope_general": "General",
+      "success": {
+        "saved": "Freeze policy saved."
+      },
+      "error": {
+        "invalid": "Max days must be ≥ 1 and default days must be ≤ max."
+      }
     }
   },
   "router": {
