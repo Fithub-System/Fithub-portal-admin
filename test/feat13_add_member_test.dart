@@ -198,6 +198,7 @@ void main() {
         ),
       );
       when(() => membershipsCubit.load()).thenAnswer((_) async {});
+      when(() => membershipsCubit.loadFreezePolicies()).thenAnswer((_) async {});
 
       when(() => rosterCubit.state).thenReturn(
         MemberRosterState(

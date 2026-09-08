@@ -56,6 +56,7 @@ void main() {
         ),
       );
       when(() => membershipsCubit.load()).thenAnswer((_) async {});
+      when(() => membershipsCubit.loadFreezePolicies()).thenAnswer((_) async {});
 
       when(() => rosterCubit.state).thenReturn(
         const MemberRosterState(status: MemberRosterStatus.ready),
@@ -146,7 +147,7 @@ void main() {
 
       expect(find.text('Ada Lovelace'), findsOneWidget);
       expect(find.text('Dominic Russo'), findsNothing);
-      expect(find.text('ELITE'), findsOneWidget);
+      expect(find.text('Elite Monthly'), findsOneWidget);
       expect(find.text('75'), findsOneWidget);
       expect(find.byType(MembersStatsBento), findsOneWidget);
     });

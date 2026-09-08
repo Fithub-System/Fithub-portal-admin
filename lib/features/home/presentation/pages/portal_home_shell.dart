@@ -94,6 +94,12 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     final canManageMemberships = authState is AuthAuthenticated
         ? authState.profile.canManageMemberships
         : false;
+    final canRenewMembership = authState is AuthAuthenticated
+        ? authState.profile.canRenewMembership
+        : false;
+    final canFreezeMembership = authState is AuthAuthenticated
+        ? authState.profile.canFreezeMembership
+        : false;
     final canEnrollMembers = authState is AuthAuthenticated
         ? authState.profile.canEnrollMembers
         : false;
@@ -130,9 +136,17 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                   children: [
                     SafeModeBanner(visible: connectivity.isOffline),
                     Expanded(
-                      child: BlocProvider(
-                        create: (_) =>
-                            InjectionContainer.createGymSkuSettingsBloc(),
+                      child: MultiBlocProvider(
+                        providers: [
+                          BlocProvider(
+                            create: (_) =>
+                                InjectionContainer.createGymSkuSettingsBloc(),
+                          ),
+                          BlocProvider(
+                            create: (_) =>
+                                InjectionContainer.createMembershipsCubit(),
+                          ),
+                        ],
                         child: GymSkuSettingsScreen(
                           canWrite: canManageSkuSettings,
                           onClose: _closeSettingsFocus,
@@ -167,6 +181,8 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                         ],
                         child: MemberManagementScreen(
                           canWrite: canManageMemberships,
+                          canRenew: canRenewMembership,
+                          canFreeze: canFreezeMembership,
                           canEnroll: canEnrollMembers,
                         ),
                       ),

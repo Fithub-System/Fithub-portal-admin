@@ -18,13 +18,14 @@ class MembersStatsBento extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // FEAT-61: no Elite keyword heuristic — count members with a live plan.
     final eliteCount = usingFixtures
         ? MembersStitchFixtures.eliteTierValue
         : members
               .where(
                 (m) =>
                     membersPlanChipKind(m.membershipPlanName) ==
-                    MembersPlanChipKind.elite,
+                    MembersPlanChipKind.named,
               )
               .length
               .toString();
