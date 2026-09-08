@@ -43,11 +43,7 @@ class CheckInGateLayout extends StatelessWidget {
         if (!wide) {
           return ListView(
             padding: const EdgeInsetsDirectional.all(24),
-            children: [
-              scanner,
-              const SizedBox(height: 24),
-              aside,
-            ],
+            children: [scanner, const SizedBox(height: 24), aside],
           );
         }
 
@@ -173,34 +169,93 @@ class _ScanViewportState extends State<_ScanViewport>
               buildWhen: (p, c) =>
                   p.success != c.success ||
                   p.cameraReady != c.cameraReady ||
+                  p.cameraError != c.cameraError ||
                   p.isProcessing != c.isProcessing,
               builder: (context, state) {
-                final showWaiting = state.success == null && !state.isProcessing;
-                if (!showWaiting) return const SizedBox.shrink();
-                return IgnorePointer(
-                  child: ColoredBox(
-                    color: KineticTokens.gunmetalCard.withValues(
-                      alpha: state.cameraReady ? 0.55 : 0.92,
+                if (state.success != null || state.isProcessing) {
+                  return const SizedBox.shrink();
+                }
+
+                // AC-A1: opaque waiting clears once the camera stream is ready.
+                // Stitch G1 still shows the Ready HUD label (not a blocker).
+                if (state.cameraReady) {
+                  return IgnorePointer(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.qr_code_scanner,
+                            size: 96,
+                            color: KineticTokens.primaryContainer.withValues(
+                              alpha: 0.2,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            key: const Key('access-scanner-ready-label'),
+                            'access_scanner.gate.ready_waiting'.tr(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 4.4,
+                              color: KineticTokens.primaryContainer,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  );
+                }
+
+                // AC-A2 / AC-A3: pending or error — actionable copy (not spinner-only).
+                final pendingKey = state.cameraError
+                    ? 'access_scanner.camera.unavailable'
+                    : 'access_scanner.camera.pending';
+                return IgnorePointer(
+                  ignoring: true,
+                  child: ColoredBox(
+                    key: const Key('access-scanner-pending-overlay'),
+                    color: KineticTokens.gunmetalCard.withValues(alpha: 0.92),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.qr_code_scanner,
-                          size: 96,
+                          state.cameraError
+                              ? Icons.videocam_off_outlined
+                              : Icons.qr_code_scanner,
+                          size: 72,
                           color: KineticTokens.primaryContainer.withValues(
-                            alpha: 0.2,
+                            alpha: 0.25,
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Text(
-                          'access_scanner.gate.ready_waiting'.tr(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 4.4,
-                            color: KineticTokens.primaryContainer,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Text(
+                            pendingKey.tr(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: KineticTokens.primaryContainer,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Text(
+                            'access_scanner.manual.enter_code'.tr(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: KineticTokens.zincGray.withValues(
+                                alpha: 0.9,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -325,10 +380,7 @@ class _ConfirmCheckInButton extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 24),
               shape: const RoundedRectangleBorder(),
             ),
-            icon: Icon(
-              granted ? Icons.verified : Icons.check_circle,
-              size: 28,
-            ),
+            icon: Icon(granted ? Icons.verified : Icons.check_circle, size: 28),
             label: Text(
               granted
                   ? 'access_scanner.gate.access_granted'.tr()
@@ -458,10 +510,7 @@ class _StatTile extends StatelessWidget {
 }
 
 class _AsideColumn extends StatelessWidget {
-  const _AsideColumn({
-    this.occupancyCurrent,
-    this.occupancyCapacity,
-  });
+  const _AsideColumn({this.occupancyCurrent, this.occupancyCapacity});
 
   final int? occupancyCurrent;
   final int? occupancyCapacity;
@@ -484,18 +533,14 @@ class _AsideColumn extends StatelessWidget {
 }
 
 class _OccupancyCard extends StatelessWidget {
-  const _OccupancyCard({
-    this.occupancyCurrent,
-    this.occupancyCapacity,
-  });
+  const _OccupancyCard({this.occupancyCurrent, this.occupancyCapacity});
 
   final int? occupancyCurrent;
   final int? occupancyCapacity;
 
   @override
   Widget build(BuildContext context) {
-    final hasOverride =
-        occupancyCurrent != null && occupancyCapacity != null;
+    final hasOverride = occupancyCurrent != null && occupancyCapacity != null;
 
     Widget gauge(int current, int capacity) {
       final safeCapacity = capacity <= 0 ? 1 : capacity;
@@ -633,7 +678,8 @@ class _LastMemberCard extends StatelessWidget {
         final live = state.success;
         final name = live?.memberName ?? AccessGateStitchFixtures.memberName;
         final plan = AccessGateStitchFixtures.memberPlan;
-        final badge = live?.membershipStatus?.toUpperCase() ??
+        final badge =
+            live?.membershipStatus?.toUpperCase() ??
             AccessGateStitchFixtures.memberActiveBadge.toUpperCase();
         final initials = _initials(name);
 
@@ -714,9 +760,7 @@ class _LastMemberCard extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             color: KineticTokens.onSurface,
-                          ).copyWith(
-                            color: const Color(0xFFC4C9AC),
-                          ),
+                          ).copyWith(color: const Color(0xFFC4C9AC)),
                         ),
                       ],
                     ),
@@ -724,9 +768,7 @@ class _LastMemberCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              Divider(
-                color: KineticTokens.onSurface.withValues(alpha: 0.1),
-              ),
+              Divider(color: KineticTokens.onSurface.withValues(alpha: 0.1)),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -787,7 +829,9 @@ class _LastMemberCard extends StatelessWidget {
     final parts = name.trim().split(RegExp(r'\s+'));
     if (parts.isEmpty) return AccessGateStitchFixtures.memberInitials;
     if (parts.length == 1) {
-      return parts.first.substring(0, math.min(2, parts.first.length)).toUpperCase();
+      return parts.first
+          .substring(0, math.min(2, parts.first.length))
+          .toUpperCase();
     }
     return ('${parts.first[0]}${parts.last[0]}').toUpperCase();
   }

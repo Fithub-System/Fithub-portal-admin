@@ -242,12 +242,16 @@
       "rejected": "Scan rejected: {reason}"
     },
     "camera": {
-      "unavailable": "Camera unavailable — use manual entry below."
+      "unavailable": "Camera unavailable — use manual entry below.",
+      "pending": "Allow camera access to scan, or enter a code manually.",
+      "permission_note": "Camera access is used for check-in. Your browser may remember this site's permission."
     },
     "manual": {
       "title": "Manual QR payload",
       "hint": "Paste JSON QR payload",
-      "submit": "Validate scan"
+      "submit": "Validate scan",
+      "enter_code": "Enter code",
+      "back_to_camera": "Camera"
     },
     "roster": {
       "syncing": "Syncing member roster…",
