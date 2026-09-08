@@ -11,6 +11,8 @@ import '../bloc/add_member_bloc.dart';
 /// Stitch G4 Add New Member — Flow A link athlete + Flow B invite stub.
 ///
 /// EN `cd59a129a24449478a5249ccb41635fb` · AR `89fe5d7afb8d4d4384d7e6498bcdd065`
+///
+/// FEAT-59: form shell centered on wide viewports (max-width preserved).
 class AddMemberScreen extends StatefulWidget {
   const AddMemberScreen({super.key, this.onEnrolled});
 
@@ -20,6 +22,9 @@ class AddMemberScreen extends StatefulWidget {
   static const String stitchScreenIdEn = 'cd59a129a24449478a5249ccb41635fb';
   static const String stitchScreenIdAr = '89fe5d7afb8d4d4384d7e6498bcdd065';
   static const String stitchScreenTitle = 'Add New Member';
+
+  /// FEAT-59 — wide-layout form max width (centered).
+  static const double formMaxWidth = 720;
 
   @override
   State<AddMemberScreen> createState() => _AddMemberScreenState();
@@ -75,46 +80,51 @@ class _AddMemberScreenState extends State<AddMemberScreen>
           }
         },
         builder: (context, state) {
-          return ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 720),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'add_member.subtitle'.tr(),
-                    textAlign: TextAlign.start,
-                    style: textTheme.bodyMedium?.copyWith(
-                      fontSize: 14,
-                      color: AppColors.onSurfaceVariant,
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AddMemberScreen.formMaxWidth,
+              ),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'add_member.subtitle'.tr(),
+                      textAlign: TextAlign.start,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontSize: 14,
+                        color: AppColors.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  TabBar(
-                    controller: _tabController,
-                    indicatorColor: KineticTokens.electricLime,
-                    labelColor: KineticTokens.electricLime,
-                    unselectedLabelColor: KineticTokens.zincGray,
-                    tabs: [
-                      Tab(text: 'add_member.tab.link'.tr()),
-                      Tab(text: 'add_member.tab.invite'.tr()),
-                    ],
-                  ),
-                  const Divider(height: 1, color: KineticTokens.zincGray),
-                  Expanded(
-                    child: TabBarView(
+                    const SizedBox(height: 16),
+                    TabBar(
                       controller: _tabController,
-                      children: [
-                        _LinkExistingTab(
-                          emailController: _emailController,
-                          state: state,
-                        ),
-                        const _InviteStubTab(),
+                      indicatorColor: KineticTokens.electricLime,
+                      labelColor: KineticTokens.electricLime,
+                      unselectedLabelColor: KineticTokens.zincGray,
+                      tabs: [
+                        Tab(text: 'add_member.tab.link'.tr()),
+                        Tab(text: 'add_member.tab.invite'.tr()),
                       ],
                     ),
-                  ),
-                ],
+                    const Divider(height: 1, color: KineticTokens.zincGray),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _LinkExistingTab(
+                            emailController: _emailController,
+                            state: state,
+                          ),
+                          const _InviteStubTab(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

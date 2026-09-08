@@ -45,7 +45,7 @@ class MemberRosterCubit extends Cubit<MemberRosterState> {
     }
   }
 
-  /// Cloud sync then reload cache (FEAT-13 after enroll).
+  /// Cloud sync then reload cache (FEAT-59 on Members open; FEAT-13 after enroll).
   ///
   /// Offline: reload Drift only — never pretend cloud refresh succeeded.
   Future<void> refreshFromCloud() async {
