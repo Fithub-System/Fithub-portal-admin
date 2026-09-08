@@ -15,23 +15,28 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
   AddMemberBloc({
     required FindAthleteForEnrollUseCase findAthlete,
     required EnrollGymMemberUseCase enrollGymMember,
+    required InviteMemberUseCase inviteMember,
     required ListMembershipPlansUseCase listPlans,
     required AssignMembershipUseCase assignMembership,
   }) : _findAthlete = findAthlete,
        _enrollGymMember = enrollGymMember,
+       _inviteMember = inviteMember,
        _listPlans = listPlans,
        _assignMembership = assignMembership,
        super(const AddMemberState()) {
     on<AddMemberStarted>(_onStarted);
     on<AddMemberFindRequested>(_onFind);
     on<AddMemberPlanSelected>(_onPlanSelected);
+    on<AddMemberInvitePlanSelected>(_onInvitePlanSelected);
     on<AddMemberEnrollRequested>(_onEnroll);
+    on<AddMemberInviteRequested>(_onInvite);
     on<AddMemberMessageCleared>(_onMessageCleared);
     on<AddMemberReset>(_onReset);
   }
 
   final FindAthleteForEnrollUseCase _findAthlete;
   final EnrollGymMemberUseCase _enrollGymMember;
+  final InviteMemberUseCase _inviteMember;
   final ListMembershipPlansUseCase _listPlans;
   final AssignMembershipUseCase _assignMembership;
 
@@ -40,19 +45,11 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
     Emitter<AddMemberState> emit,
   ) async {
     emit(
-      state.copyWith(
-        status: AddMemberStatus.loadingPlans,
-        clearMessage: true,
-      ),
+      state.copyWith(status: AddMemberStatus.loadingPlans, clearMessage: true),
     );
     try {
       final plans = await _listPlans(activeOnly: true);
-      emit(
-        state.copyWith(
-          status: AddMemberStatus.idle,
-          plans: plans,
-        ),
-      );
+      emit(state.copyWith(status: AddMemberStatus.idle, plans: plans));
     } on MembershipsFailure catch (e) {
       emit(
         state.copyWith(
@@ -109,12 +106,7 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
         );
         return;
       }
-      emit(
-        state.copyWith(
-          status: AddMemberStatus.found,
-          match: match,
-        ),
-      );
+      emit(state.copyWith(status: AddMemberStatus.found, match: match));
     } on AddMemberFailure catch (e) {
       emit(
         state.copyWith(
@@ -146,6 +138,18 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
     );
   }
 
+  void _onInvitePlanSelected(
+    AddMemberInvitePlanSelected event,
+    Emitter<AddMemberState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        invitePlanId: event.planId,
+        clearInvitePlan: event.planId == null,
+      ),
+    );
+  }
+
   Future<void> _onEnroll(
     AddMemberEnrollRequested event,
     Emitter<AddMemberState> emit,
@@ -156,12 +160,7 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        status: AddMemberStatus.enrolling,
-        clearMessage: true,
-      ),
-    );
+    emit(state.copyWith(status: AddMemberStatus.enrolling, clearMessage: true));
 
     try {
       final enroll = await _enrollGymMember(match.id);
@@ -192,16 +191,46 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
       );
     } on AddMemberFailure catch (e) {
       emit(
-        state.copyWith(
-          status: AddMemberStatus.found,
-          messageKey: e.messageKey,
-        ),
+        state.copyWith(status: AddMemberStatus.found, messageKey: e.messageKey),
       );
     } catch (_) {
       emit(
         state.copyWith(
           status: AddMemberStatus.found,
           messageKey: 'add_member.error.unknown',
+        ),
+      );
+    }
+  }
+
+  Future<void> _onInvite(
+    AddMemberInviteRequested event,
+    Emitter<AddMemberState> emit,
+  ) async {
+    emit(state.copyWith(status: AddMemberStatus.inviting, clearMessage: true));
+
+    try {
+      await _inviteMember(
+        identifier: event.identifier,
+        displayName: event.displayName,
+        planId: state.invitePlanId,
+      );
+      emit(
+        state.copyWith(
+          status: AddMemberStatus.idle,
+          messageKey: 'add_member.success.invite_sent',
+          clearInvitePlan: true,
+        ),
+      );
+    } on AddMemberFailure catch (e) {
+      emit(
+        state.copyWith(status: AddMemberStatus.idle, messageKey: e.messageKey),
+      );
+    } catch (_) {
+      emit(
+        state.copyWith(
+          status: AddMemberStatus.idle,
+          messageKey: 'add_member.error.invite_failed',
         ),
       );
     }
@@ -215,11 +244,6 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
   }
 
   void _onReset(AddMemberReset event, Emitter<AddMemberState> emit) {
-    emit(
-      AddMemberState(
-        status: AddMemberStatus.idle,
-        plans: state.plans,
-      ),
-    );
+    emit(AddMemberState(status: AddMemberStatus.idle, plans: state.plans));
   }
 }

@@ -26,4 +26,10 @@ abstract final class AppEndpoints {
   /// `POST /functions/v1/invite-staff`
   /// Body JSON: `{ email, role, name }` where role ∈ Admin|Receptionist|Coach.
   static String get inviteStaff => '$_root/functions/v1/invite-staff';
+
+  /// FEAT-62 member invite Edge Function (Admin JWT only).
+  ///
+  /// `POST /functions/v1/invite-member`
+  /// Body JSON: `{ email|username, display_name?, plan_id? }`.
+  static String get inviteMember => '$_root/functions/v1/invite-member';
 }

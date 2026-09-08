@@ -8,9 +8,10 @@ import '../../../auth/presentation/widgets/stitch_auth_snackbar.dart';
 import '../../../memberships/domain/entities/membership_plan.dart';
 import '../bloc/add_member_bloc.dart';
 
-/// Stitch G4 Add New Member — Flow A link athlete + Flow B invite stub.
+/// Stitch G4 Add New Member — Flow A link + FEAT-62 Invite (live).
 ///
 /// EN `cd59a129a24449478a5249ccb41635fb` · AR `89fe5d7afb8d4d4384d7e6498bcdd065`
+/// Visual Spec: `Docs/feat62-visual-spec-add-member-invite.md`
 ///
 /// FEAT-59: form shell centered on wide viewports (max-width preserved).
 class AddMemberScreen extends StatefulWidget {
@@ -67,15 +68,15 @@ class _AddMemberScreenState extends State<AddMemberScreen>
                 prev.status != AddMemberStatus.success),
         listener: (context, state) {
           if (state.status == AddMemberStatus.success) {
-            final key =
-                state.messageKey ?? 'add_member.success.enrolled';
+            final key = state.messageKey ?? 'add_member.success.enrolled';
             widget.onEnrolled?.call(key);
             Navigator.of(context).maybePop();
             return;
           }
           final key = state.messageKey;
           if (key != null && key.isNotEmpty) {
-            StitchAuthSnackbar.show(context, key.tr());
+            final text = key.contains('.') ? key.tr() : key;
+            StitchAuthSnackbar.show(context, text);
             context.read<AddMemberBloc>().add(const AddMemberMessageCleared());
           }
         },
@@ -119,7 +120,7 @@ class _AddMemberScreenState extends State<AddMemberScreen>
                             emailController: _emailController,
                             state: state,
                           ),
-                          const _InviteStubTab(),
+                          _InviteMemberTab(state: state),
                         ],
                       ),
                     ),
@@ -135,10 +136,7 @@ class _AddMemberScreenState extends State<AddMemberScreen>
 }
 
 class _LinkExistingTab extends StatelessWidget {
-  const _LinkExistingTab({
-    required this.emailController,
-    required this.state,
-  });
+  const _LinkExistingTab({required this.emailController, required this.state});
 
   final TextEditingController emailController;
   final AddMemberState state;
@@ -313,44 +311,175 @@ class _LinkExistingTab extends StatelessWidget {
   }
 }
 
-class _InviteStubTab extends StatelessWidget {
-  const _InviteStubTab();
+/// FEAT-62 live Invite form — email or username + optional name/plan.
+class _InviteMemberTab extends StatefulWidget {
+  const _InviteMemberTab({required this.state});
+
+  final AddMemberState state;
+
+  @override
+  State<_InviteMemberTab> createState() => _InviteMemberTabState();
+}
+
+class _InviteMemberTabState extends State<_InviteMemberTab> {
+  final _identifierController = TextEditingController();
+  final _displayNameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _identifierController.dispose();
+    _displayNameController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    context.read<AddMemberBloc>().add(
+      AddMemberInviteRequested(
+        identifier: _identifierController.text,
+        displayName: _displayNameController.text,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return ListView(
-      padding: const EdgeInsetsDirectional.only(top: 24),
-      children: [
-        Text(
-          'add_member.invite_heading'.tr(),
-          style: textTheme.labelLarge?.copyWith(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 2,
-            color: KineticTokens.zincGray,
+    final state = widget.state;
+    final busy = state.busy;
+    final inviting = state.status == AddMemberStatus.inviting;
+
+    return BlocListener<AddMemberBloc, AddMemberState>(
+      listenWhen: (prev, next) =>
+          next.messageKey == 'add_member.success.invite_sent' &&
+          prev.messageKey != next.messageKey,
+      listener: (context, state) {
+        _identifierController.clear();
+        _displayNameController.clear();
+      },
+      child: ListView(
+        padding: const EdgeInsetsDirectional.only(top: 24),
+        children: [
+          Text(
+            'add_member.invite_heading'.tr(),
+            style: textTheme.labelLarge?.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+              color: KineticTokens.zincGray,
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          'add_member.invite_body'.tr(),
-          style: textTheme.bodyMedium?.copyWith(
-            color: KineticTokens.onSurface,
+          const SizedBox(height: 8),
+          Text(
+            'add_member.invite_body'.tr(),
+            style: textTheme.bodyMedium?.copyWith(
+              color: KineticTokens.onSurface,
+            ),
           ),
-        ),
-        const SizedBox(height: 24),
-        OutlinedButton.icon(
-          onPressed: null,
-          icon: const Icon(Icons.mail_outline),
-          label: Text('add_member.cta.send_invite_later'.tr()),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: KineticTokens.electricLime,
-            disabledForegroundColor: KineticTokens.zincGray,
-            side: const BorderSide(color: KineticTokens.zincGray),
-            minimumSize: const Size.fromHeight(48),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _identifierController,
+            enabled: !busy,
+            keyboardType: TextInputType.emailAddress,
+            autofillHints: const [AutofillHints.email, AutofillHints.username],
+            style: const TextStyle(color: KineticTokens.pureWhite),
+            decoration: InputDecoration(
+              labelText: 'add_member.field.identifier'.tr(),
+              hintText: 'add_member.field.identifier_hint'.tr(),
+              filled: true,
+              fillColor: KineticTokens.gunmetalCard,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(
+                  KineticTokens.dashboardCardRadius,
+                ),
+              ),
+            ),
+            onFieldSubmitted: busy ? null : (_) => _submit(),
           ),
-        ),
-      ],
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _displayNameController,
+            enabled: !busy,
+            textCapitalization: TextCapitalization.words,
+            style: const TextStyle(color: KineticTokens.pureWhite),
+            decoration: InputDecoration(
+              labelText: 'add_member.field.display_name'.tr(),
+              hintText: 'add_member.field.display_name_hint'.tr(),
+              filled: true,
+              fillColor: KineticTokens.gunmetalCard,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(
+                  KineticTokens.dashboardCardRadius,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'add_member.field.plan_optional'.tr(),
+            style: textTheme.labelMedium?.copyWith(
+              color: KineticTokens.zincGray,
+            ),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String?>(
+            initialValue: state.invitePlanId,
+            dropdownColor: KineticTokens.gunmetalCard,
+            style: const TextStyle(color: KineticTokens.pureWhite),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: KineticTokens.gunmetalCard,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(
+                  KineticTokens.dashboardCardRadius,
+                ),
+              ),
+            ),
+            items: [
+              DropdownMenuItem<String?>(
+                value: null,
+                child: Text('add_member.plan.none'.tr()),
+              ),
+              ...state.plans.map(
+                (MembershipPlan plan) => DropdownMenuItem<String?>(
+                  value: plan.id,
+                  child: Text(plan.name),
+                ),
+              ),
+            ],
+            onChanged: busy
+                ? null
+                : (value) => context.read<AddMemberBloc>().add(
+                    AddMemberInvitePlanSelected(value),
+                  ),
+          ),
+          const SizedBox(height: 24),
+          FilledButton.icon(
+            onPressed: busy ? null : _submit,
+            icon: inviting
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.mail_outline),
+            label: Text('add_member.cta.send_invite'.tr()),
+            style: FilledButton.styleFrom(
+              backgroundColor: KineticTokens.electricLime,
+              foregroundColor: KineticTokens.deepCharcoal,
+              disabledBackgroundColor: KineticTokens.zincGray,
+              minimumSize: const Size.fromHeight(48),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'add_member.visual_spec'.tr(),
+            style: textTheme.bodySmall?.copyWith(
+              fontSize: 11,
+              color: KineticTokens.zincGray,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

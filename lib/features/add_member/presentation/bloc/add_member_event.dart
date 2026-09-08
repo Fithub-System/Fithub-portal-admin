@@ -27,8 +27,27 @@ final class AddMemberPlanSelected extends AddMemberEvent {
   List<Object?> get props => [planId];
 }
 
+final class AddMemberInvitePlanSelected extends AddMemberEvent {
+  const AddMemberInvitePlanSelected(this.planId);
+  final String? planId;
+
+  @override
+  List<Object?> get props => [planId];
+}
+
 final class AddMemberEnrollRequested extends AddMemberEvent {
   const AddMemberEnrollRequested();
+}
+
+/// FEAT-62 Invite tab — [identifier] is email or username.
+final class AddMemberInviteRequested extends AddMemberEvent {
+  const AddMemberInviteRequested({required this.identifier, this.displayName});
+
+  final String identifier;
+  final String? displayName;
+
+  @override
+  List<Object?> get props => [identifier, displayName];
 }
 
 final class AddMemberMessageCleared extends AddMemberEvent {
