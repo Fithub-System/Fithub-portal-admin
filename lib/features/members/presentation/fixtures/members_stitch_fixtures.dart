@@ -1,7 +1,8 @@
 import '../../../access_scanner/domain/entities/member_roster_entry.dart';
 
-/// Stitch Member Management sample chrome (§4.1 fixtures).
+/// Stitch Member Management sample chrome (widget tests / explicit demo only).
 ///
+/// FEAT-59: do **not** mask an empty live roster with [sampleRows] in production.
 /// Screen `9b35dd57f15443e99f7e798f6867acb6` — Active Roster sample rows/stats.
 abstract final class MembersStitchFixtures {
   static const String eliteTierValue = '124';

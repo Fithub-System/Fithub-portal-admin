@@ -39,7 +39,7 @@ void main() {
     });
   });
 
-  group('FEAT-16 VF2 Members regions + §4.1 fixtures', () {
+  group('FEAT-16 VF2 Members regions (FEAT-59 empty = live chrome)', () {
     late _MockMembershipsCubit membershipsCubit;
     late _MockMemberRosterCubit rosterCubit;
 
@@ -66,9 +66,10 @@ void main() {
         ),
       );
       when(() => rosterCubit.load()).thenAnswer((_) async {});
+      when(() => rosterCubit.refreshFromCloud()).thenAnswer((_) async {});
     });
 
-    testWidgets('empty cache ships Stitch fixture rows and chrome', (
+    testWidgets('empty live roster shows chrome without Stitch sample rows', (
       tester,
     ) async {
       await tester.binding.setSurfaceSize(const Size(1400, 1200));
@@ -91,34 +92,20 @@ void main() {
 
       expect(find.byType(TabBar), findsNothing);
       expect(find.byType(MembersStatsBento), findsOneWidget);
-      expect(find.byType(MemberRosterTable), findsOneWidget);
-      expect(find.byType(MembersRosterPagination), findsOneWidget);
+      expect(find.byType(MemberRosterTable), findsNothing);
+      expect(find.byType(MembersRosterPagination), findsNothing);
       expect(find.byType(MembersSyncFooter), findsOneWidget);
 
       expect(find.text('ACTIVE ROSTER'), findsOneWidget);
       expect(find.text('ELITE TIER'), findsOneWidget);
-      expect(find.text('124'), findsOneWidget);
-      expect(find.text('68.2'), findsOneWidget);
-      expect(find.text('42'), findsWidgets);
-      expect(find.text('Optimal'), findsOneWidget);
-
-      expect(find.text('Dominic Russo'), findsOneWidget);
-      expect(find.text('Sarah Miller'), findsOneWidget);
-      expect(find.text('Jason Kang'), findsOneWidget);
-      expect(find.text('Elena Belova'), findsOneWidget);
-      expect(find.text('ELITE'), findsWidgets);
-      expect(find.text('STANDARD'), findsOneWidget);
-      expect(find.text('BASIC'), findsOneWidget);
-      expect(find.text('FREEZE'), findsWidgets);
-      expect(find.text('RENEW'), findsWidgets);
-      expect(find.text('FULL EVALUATION'), findsWidgets);
       expect(find.text('Filter Type'), findsOneWidget);
       expect(find.text('Add New Member'), findsOneWidget);
-      expect(find.textContaining('1,240'), findsOneWidget);
       expect(find.text('SYNC ACTIVE'), findsOneWidget);
       expect(find.text('API V2.4'), findsOneWidget);
 
-      // Forbidden empty shells
+      expect(find.text('Dominic Russo'), findsNothing);
+      expect(find.text('Sarah Miller'), findsNothing);
+      expect(find.textContaining('No members in this gym'), findsOneWidget);
       expect(find.text('—'), findsNothing);
     });
 

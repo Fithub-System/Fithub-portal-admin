@@ -425,9 +425,9 @@
       "renew": "RENEW",
       "full_evaluation": "FULL EVALUATION"
     },
-    "empty_roster": "No members cached — sync roster from Scan tab or check in online.",
+    "empty_roster": "No members in this gym yet — add a member or sync when online.",
     "error": {
-      "roster": "Could not load cached roster — showing Stitch sample roster."
+      "roster": "Could not refresh members — tap Retry."
     }
   },
   "add_member": {

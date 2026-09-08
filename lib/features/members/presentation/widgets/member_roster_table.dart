@@ -21,11 +21,6 @@ class MemberRosterTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(
-      members.isNotEmpty,
-      '§4.1: roster table must never render empty — use Stitch fixtures',
-    );
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final tableWidth = constraints.maxWidth < _minTableWidth

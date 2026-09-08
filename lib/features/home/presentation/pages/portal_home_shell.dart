@@ -161,7 +161,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                             create: (_) => members_di.createMemberRosterCubit(
                               getIt: InjectionContainer.locator,
                               tenantId: tenantId,
-                            )..load(),
+                            )..refreshFromCloud(),
                           ),
                         ],
                         child: MemberManagementScreen(

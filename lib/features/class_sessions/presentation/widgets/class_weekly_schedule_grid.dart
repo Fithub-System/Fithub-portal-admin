@@ -200,8 +200,6 @@ class _DayHourCell extends StatelessWidget {
       child: matches.isEmpty
           ? _EmptySlot(
               canWrite: canWrite,
-              showScheduleNewChrome:
-                  sessions.isEmpty && hour == 9 && day.weekday == DateTime.wednesday,
               onSchedule: () => onScheduleSlot(slotStart),
             )
           : Padding(
@@ -227,63 +225,80 @@ class _DayHourCell extends StatelessWidget {
   }
 }
 
-class _EmptySlot extends StatelessWidget {
+class _EmptySlot extends StatefulWidget {
   const _EmptySlot({
     required this.canWrite,
-    required this.showScheduleNewChrome,
     required this.onSchedule,
   });
 
   final bool canWrite;
-  final bool showScheduleNewChrome;
   final VoidCallback onSchedule;
 
   @override
+  State<_EmptySlot> createState() => _EmptySlotState();
+}
+
+class _EmptySlotState extends State<_EmptySlot> {
+  bool _hovered = false;
+  bool _focused = false;
+
+  bool get _showFullChrome => _hovered || _focused;
+
+  @override
   Widget build(BuildContext context) {
-    if (!canWrite) {
+    if (!widget.canWrite) {
       return const SizedBox.expand();
     }
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onSchedule,
-        child: Center(
-          child: showScheduleNewChrome
-              ? Container(
-                  margin: const EdgeInsetsDirectional.all(6),
-                  width: double.infinity,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: KineticTokens.zincGray.withValues(alpha: 0.35),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.add,
-                        size: 18,
-                        color: KineticTokens.primaryContainer,
-                      ),
-                      Text(
-                        'classes.manager.schedule_new'.tr().toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w700,
-                          color: KineticTokens.zincGray.withValues(alpha: 0.9),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: Focus(
+        onFocusChange: (focused) => setState(() => _focused = focused),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: widget.onSchedule,
+            child: Center(
+              child: _showFullChrome
+                  ? Container(
+                      margin: const EdgeInsetsDirectional.all(6),
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: KineticTokens.zincGray
+                              .withValues(alpha: 0.35),
                         ),
                       ),
-                    ],
-                  ),
-                )
-              : Icon(
-                  Icons.add,
-                  size: 16,
-                  color: KineticTokens.zincGray.withValues(alpha: 0.35),
-                ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.add,
+                            size: 18,
+                            color: KineticTokens.primaryContainer,
+                          ),
+                          Text(
+                            'classes.manager.schedule_new'.tr().toUpperCase(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w700,
+                              color: KineticTokens.zincGray
+                                  .withValues(alpha: 0.9),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Icon(
+                      Icons.add,
+                      size: 16,
+                      color: KineticTokens.zincGray.withValues(alpha: 0.35),
+                    ),
+            ),
+          ),
         ),
       ),
     );
