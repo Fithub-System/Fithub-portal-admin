@@ -52,8 +52,9 @@
 
 ## Tests
 
-- `test/feat60_home_metrics_test.dart`
-- Regression: `test/feat16_vf1_overview_fidelity_test.dart`
+- `test/feat60_home_metrics_test.dart` — **7 passed**
+- Related regression (`feat16_vf1_overview_fidelity_test.dart`) — **5 passed**
+- Combined — **12 passed**
 
 ```text
 flutter test \
@@ -61,6 +62,7 @@ flutter test \
   test/feat16_vf1_overview_fidelity_test.dart
 ```
 
+**PR:** https://github.com/Fithub-System/Fithub-portal-admin/pull/41 → `dev` (do not merge)
 ## Residuals
 
 1. Live Admin smoke vs Backend `dev` paid charges + attendance for UTC today.
