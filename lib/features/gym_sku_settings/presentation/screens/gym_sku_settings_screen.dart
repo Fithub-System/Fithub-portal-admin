@@ -258,6 +258,14 @@ class _GymSkuSettingsScreenState extends State<GymSkuSettingsScreen> {
                 ),
               ),
             ],
+            // FEAT-61: Freeze policy above SKU Save so it is not below the fold.
+            const SizedBox(height: 32),
+            Divider(
+              height: 1,
+              color: KineticTokens.zincGray.withValues(alpha: 0.35),
+            ),
+            const SizedBox(height: 24),
+            FreezePolicySettingsSection(canWrite: widget.canWrite),
             if (widget.canWrite) ...[
               const SizedBox(height: 24),
               Align(
@@ -279,9 +287,7 @@ class _GymSkuSettingsScreenState extends State<GymSkuSettingsScreen> {
                 ),
               ),
             ],
-            const SizedBox(height: 32),
-            FreezePolicySettingsSection(canWrite: widget.canWrite),
-            const SizedBox(height: 24),
+            const SizedBox(height: 48),
           ],
         ),
         if (state.busy)

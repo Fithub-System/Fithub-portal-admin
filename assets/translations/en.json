@@ -600,7 +600,7 @@
   },
   "gym_settings": {
     "title": "GYM SETTINGS",
-    "subtitle": "SKU mode and Marketplace boundary for this gym.",
+    "subtitle": "SKU mode, Marketplace boundary, and Freeze policy for this gym.",
     "close": "Close settings",
     "retry": "Retry",
     "read_only_hint": "Receptionist view — only Admins can change SKU settings.",
