@@ -21,4 +21,29 @@ class AdminPayoutQueueRepositoryImpl implements AdminPayoutQueueRepository {
   }) {
     return _remote.fulfill(requestId: requestId, action: action);
   }
+
+  @override
+  Future<CoachPayoutRequest> approve({required String requestId}) {
+    return _remote.approve(requestId: requestId);
+  }
+
+  @override
+  Future<CoachPayoutRequest> beginSettlement({required String requestId}) {
+    return _remote.beginSettlement(requestId: requestId);
+  }
+
+  @override
+  Future<CoachPayoutRequest> applySettlement({
+    required String requestId,
+    required String settlementTxnId,
+    required bool success,
+    String? note,
+  }) {
+    return _remote.applySettlement(
+      requestId: requestId,
+      settlementTxnId: settlementTxnId,
+      success: success,
+      note: note,
+    );
+  }
 }

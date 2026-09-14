@@ -27,11 +27,15 @@ final class AdminPayoutQueueState extends Equatable {
         return requests;
       case AdminPayoutFilter.pending:
         return requests
-            .where((r) => r.status == CoachPayoutRequestStatus.pending)
+            .where((r) => r.status.isOpen)
             .toList(growable: false);
       case AdminPayoutFilter.paid:
         return requests
-            .where((r) => r.status == CoachPayoutRequestStatus.paid)
+            .where(
+              (r) =>
+                  r.status == CoachPayoutRequestStatus.paid ||
+                  r.status == CoachPayoutRequestStatus.settled,
+            )
             .toList(growable: false);
       case AdminPayoutFilter.rejected:
         return requests
@@ -40,14 +44,16 @@ final class AdminPayoutQueueState extends Equatable {
     }
   }
 
-  int get pendingCount => requests
-      .where((r) => r.status == CoachPayoutRequestStatus.pending)
-      .length;
+  int get pendingCount =>
+      requests.where((r) => r.status.isOpen).length;
 
   int get paidTodayCount {
     final now = DateTime.now().toUtc();
     return requests.where((r) {
-      if (r.status != CoachPayoutRequestStatus.paid) return false;
+      if (r.status != CoachPayoutRequestStatus.paid &&
+          r.status != CoachPayoutRequestStatus.settled) {
+        return false;
+      }
       final at = r.updatedAt ?? r.createdAt;
       return _isSameUtcDay(at, now);
     }).length;

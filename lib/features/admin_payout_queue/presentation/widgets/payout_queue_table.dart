@@ -11,7 +11,9 @@ class PayoutQueueTable extends StatelessWidget {
     required this.canWrite,
     required this.busyRequestId,
     required this.currencyFormat,
-    required this.onMarkPaid,
+    required this.onApprove,
+    required this.onBeginSettlement,
+    required this.onRecordSettlement,
     required this.onReject,
   });
 
@@ -19,7 +21,9 @@ class PayoutQueueTable extends StatelessWidget {
   final bool canWrite;
   final String? busyRequestId;
   final NumberFormat currencyFormat;
-  final ValueChanged<String> onMarkPaid;
+  final ValueChanged<String> onApprove;
+  final ValueChanged<String> onBeginSettlement;
+  final ValueChanged<String> onRecordSettlement;
   final ValueChanged<String> onReject;
 
   @override
@@ -49,7 +53,9 @@ class PayoutQueueTable extends StatelessWidget {
                 canWrite: canWrite,
                 busy: busyRequestId == row.id,
                 currencyFormat: currencyFormat,
-                onMarkPaid: onMarkPaid,
+                onApprove: onApprove,
+                onBeginSettlement: onBeginSettlement,
+                onRecordSettlement: onRecordSettlement,
                 onReject: onReject,
               ),
         ],
@@ -72,7 +78,7 @@ class _HeaderRow extends StatelessWidget {
           _HeadCell('payouts.table.amount'.tr(), flex: 2),
           _HeadCell('payouts.table.status'.tr(), flex: 2),
           _HeadCell('payouts.table.requested_at'.tr(), flex: 3),
-          _HeadCell('payouts.table.actions'.tr(), flex: 3),
+          _HeadCell('payouts.table.actions'.tr(), flex: 4),
         ],
       ),
     );
@@ -109,7 +115,9 @@ class _DataRow extends StatelessWidget {
     required this.canWrite,
     required this.busy,
     required this.currencyFormat,
-    required this.onMarkPaid,
+    required this.onApprove,
+    required this.onBeginSettlement,
+    required this.onRecordSettlement,
     required this.onReject,
   });
 
@@ -117,7 +125,9 @@ class _DataRow extends StatelessWidget {
   final bool canWrite;
   final bool busy;
   final NumberFormat currencyFormat;
-  final ValueChanged<String> onMarkPaid;
+  final ValueChanged<String> onApprove;
+  final ValueChanged<String> onBeginSettlement;
+  final ValueChanged<String> onRecordSettlement;
   final ValueChanged<String> onReject;
 
   @override
@@ -180,12 +190,15 @@ class _DataRow extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 3,
-            child: request.isPending
+            flex: 4,
+            child: request.status.isOpen
                 ? _ActionButtons(
+                    status: request.status,
                     canWrite: canWrite,
                     busy: busy,
-                    onMarkPaid: () => onMarkPaid(request.id),
+                    onApprove: () => onApprove(request.id),
+                    onBeginSettlement: () => onBeginSettlement(request.id),
+                    onRecordSettlement: () => onRecordSettlement(request.id),
                     onReject: () => onReject(request.id),
                   )
                 : Text(
@@ -214,9 +227,22 @@ class _StatusBadge extends StatelessWidget {
           'payouts.status.pending',
           KineticTokens.electricLime,
         ),
-      CoachPayoutRequestStatus.paid => (
-          'payouts.status.paid',
+      CoachPayoutRequestStatus.approved => (
+          'payouts.status.approved',
+          KineticTokens.electricLime,
+        ),
+      CoachPayoutRequestStatus.settling => (
+          'payouts.status.settling',
           KineticTokens.secondaryContainer,
+        ),
+      CoachPayoutRequestStatus.settled ||
+      CoachPayoutRequestStatus.paid => (
+          'payouts.status.settled',
+          KineticTokens.secondaryContainer,
+        ),
+      CoachPayoutRequestStatus.failed => (
+          'payouts.status.failed',
+          KineticTokens.peakCoral,
         ),
       CoachPayoutRequestStatus.rejected => (
           'payouts.status.rejected',
@@ -246,15 +272,21 @@ class _StatusBadge extends StatelessWidget {
 
 class _ActionButtons extends StatelessWidget {
   const _ActionButtons({
+    required this.status,
     required this.canWrite,
     required this.busy,
-    required this.onMarkPaid,
+    required this.onApprove,
+    required this.onBeginSettlement,
+    required this.onRecordSettlement,
     required this.onReject,
   });
 
+  final CoachPayoutRequestStatus status;
   final bool canWrite;
   final bool busy;
-  final VoidCallback onMarkPaid;
+  final VoidCallback onApprove;
+  final VoidCallback onBeginSettlement;
+  final VoidCallback onRecordSettlement;
   final VoidCallback onReject;
 
   @override
@@ -269,56 +301,78 @@ class _ActionButtons extends StatelessWidget {
       );
     }
 
+    final primary = switch (status) {
+      CoachPayoutRequestStatus.pending => (
+          'payouts.actions.approve',
+          onApprove,
+        ),
+      CoachPayoutRequestStatus.approved => (
+          'payouts.actions.begin_settlement',
+          onBeginSettlement,
+        ),
+      CoachPayoutRequestStatus.settling => (
+          'payouts.actions.record_settlement',
+          onRecordSettlement,
+        ),
+      _ => null,
+    };
+
+    final showReject = status == CoachPayoutRequestStatus.pending ||
+        status == CoachPayoutRequestStatus.approved;
+
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
-        FilledButton(
-          onPressed: busy ? null : onMarkPaid,
-          style: FilledButton.styleFrom(
-            backgroundColor: KineticTokens.electricLime,
-            disabledBackgroundColor:
-                KineticTokens.electricLime.withValues(alpha: 0.4),
-            foregroundColor: KineticTokens.deepCharcoal,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+        if (primary != null)
+          FilledButton(
+            onPressed: busy ? null : primary.$2,
+            style: FilledButton.styleFrom(
+              backgroundColor: KineticTokens.electricLime,
+              disabledBackgroundColor:
+                  KineticTokens.electricLime.withValues(alpha: 0.4),
+              foregroundColor: KineticTokens.deepCharcoal,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
             ),
-          ),
-          child: busy
-              ? const SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Text(
-                  'payouts.actions.mark_paid'.tr(),
-                  style: const TextStyle(
-                    fontFamily: 'Lexend',
-                    fontWeight: FontWeight.w800,
-                    fontSize: 12,
+            child: busy
+                ? const SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(
+                    primary.$1.tr(),
+                    style: const TextStyle(
+                      fontFamily: 'Lexend',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12,
+                    ),
                   ),
-                ),
-        ),
-        OutlinedButton(
-          onPressed: busy ? null : onReject,
-          style: OutlinedButton.styleFrom(
-            foregroundColor: KineticTokens.peakCoral,
-            side: const BorderSide(color: KineticTokens.peakCoral),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+          ),
+        if (showReject)
+          OutlinedButton(
+            onPressed: busy ? null : onReject,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: KineticTokens.peakCoral,
+              side: const BorderSide(color: KineticTokens.peakCoral),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+            child: Text(
+              'payouts.actions.reject'.tr(),
+              style: const TextStyle(
+                fontFamily: 'Lexend',
+                fontWeight: FontWeight.w800,
+                fontSize: 12,
+              ),
             ),
           ),
-          child: Text(
-            'payouts.actions.reject'.tr(),
-            style: const TextStyle(
-              fontFamily: 'Lexend',
-              fontWeight: FontWeight.w800,
-              fontSize: 12,
-            ),
-          ),
-        ),
       ],
     );
   }

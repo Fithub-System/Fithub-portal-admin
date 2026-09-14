@@ -33,3 +33,64 @@ class FulfillAdminPayoutUseCase {
     return _repository.fulfill(requestId: requestId, action: action);
   }
 }
+
+class ApproveAdminPayoutUseCase {
+  ApproveAdminPayoutUseCase(
+    this._repository, {
+    required CloudMutationGuard cloudGuard,
+  }) : _cloudGuard = cloudGuard;
+
+  final AdminPayoutQueueRepository _repository;
+  final CloudMutationGuard _cloudGuard;
+
+  Future<CoachPayoutRequest> call({required String requestId}) {
+    if (!_cloudGuard.isOnline) {
+      throw const AdminPayoutOfflineFailure();
+    }
+    return _repository.approve(requestId: requestId);
+  }
+}
+
+class BeginAdminPayoutSettlementUseCase {
+  BeginAdminPayoutSettlementUseCase(
+    this._repository, {
+    required CloudMutationGuard cloudGuard,
+  }) : _cloudGuard = cloudGuard;
+
+  final AdminPayoutQueueRepository _repository;
+  final CloudMutationGuard _cloudGuard;
+
+  Future<CoachPayoutRequest> call({required String requestId}) {
+    if (!_cloudGuard.isOnline) {
+      throw const AdminPayoutOfflineFailure();
+    }
+    return _repository.beginSettlement(requestId: requestId);
+  }
+}
+
+class ApplyAdminPayoutSettlementUseCase {
+  ApplyAdminPayoutSettlementUseCase(
+    this._repository, {
+    required CloudMutationGuard cloudGuard,
+  }) : _cloudGuard = cloudGuard;
+
+  final AdminPayoutQueueRepository _repository;
+  final CloudMutationGuard _cloudGuard;
+
+  Future<CoachPayoutRequest> call({
+    required String requestId,
+    required String settlementTxnId,
+    required bool success,
+    String? note,
+  }) {
+    if (!_cloudGuard.isOnline) {
+      throw const AdminPayoutOfflineFailure();
+    }
+    return _repository.applySettlement(
+      requestId: requestId,
+      settlementTxnId: settlementTxnId,
+      success: success,
+      note: note,
+    );
+  }
+}

@@ -52,16 +52,46 @@ class _FakePayoutRepo implements AdminPayoutQueueRepository {
       amountCents: current.amountCents,
       currency: current.currency,
       status: action == AdminPayoutFulfillAction.paid
-          ? CoachPayoutRequestStatus.paid
+          ? CoachPayoutRequestStatus.settled
           : CoachPayoutRequestStatus.rejected,
       createdAt: current.createdAt,
       updatedAt: DateTime.now().toUtc(),
     );
-    rows = [
-      for (var i = 0; i < rows.length; i++)
-        if (i == idx) updated else rows[i],
-    ];
+    rows = [...rows]..[idx] = updated;
     return updated;
+  }
+
+  @override
+  Future<CoachPayoutRequest> approve({required String requestId}) async {
+    return fulfill(
+      requestId: requestId,
+      action: AdminPayoutFulfillAction.paid,
+    );
+  }
+
+  @override
+  Future<CoachPayoutRequest> beginSettlement({
+    required String requestId,
+  }) async {
+    return fulfill(
+      requestId: requestId,
+      action: AdminPayoutFulfillAction.paid,
+    );
+  }
+
+  @override
+  Future<CoachPayoutRequest> applySettlement({
+    required String requestId,
+    required String settlementTxnId,
+    required bool success,
+    String? note,
+  }) async {
+    return fulfill(
+      requestId: requestId,
+      action: success
+          ? AdminPayoutFulfillAction.paid
+          : AdminPayoutFulfillAction.rejected,
+    );
   }
 }
 
@@ -73,12 +103,15 @@ void main() {
   });
 
   AdminPayoutQueueBloc buildBloc({bool online = true}) {
+    final guard = CloudMutationGuard(isOnline: () => online);
     return AdminPayoutQueueBloc(
       listRequests: ListAdminPayoutRequestsUseCase(repo),
-      fulfill: FulfillAdminPayoutUseCase(
-        repo,
-        cloudGuard: CloudMutationGuard(isOnline: () => online),
-      ),
+      fulfill: FulfillAdminPayoutUseCase(repo, cloudGuard: guard),
+      approve: ApproveAdminPayoutUseCase(repo, cloudGuard: guard),
+      beginSettlement:
+          BeginAdminPayoutSettlementUseCase(repo, cloudGuard: guard),
+      applySettlement:
+          ApplyAdminPayoutSettlementUseCase(repo, cloudGuard: guard),
     );
   }
 
@@ -263,7 +296,7 @@ void main() {
   });
 
   group('AdminPayoutQueueScreen UI', () {
-    testWidgets('renders header, KPIs, filters, Mark paid for Admin',
+    testWidgets('renders header, KPIs, filters, Approve for Admin',
         (tester) async {
       repo.rows = [pending()];
 
@@ -278,14 +311,14 @@ void main() {
 
       expect(find.text('Payout Queue'), findsOneWidget);
       expect(
-        find.textContaining('fulfill without live PSP'),
+        find.textContaining('approve, settle, and audit'),
         findsOneWidget,
       );
-      expect(find.text('Mark paid'), findsOneWidget);
+      expect(find.text('Approve'), findsOneWidget);
       expect(find.text('Reject'), findsOneWidget);
       expect(find.text('Maya Okonkwo'), findsOneWidget);
       expect(
-        find.textContaining('no bank transfer'),
+        find.textContaining('unique txn id'),
         findsOneWidget,
       );
     });
@@ -341,10 +374,10 @@ void main() {
           child: const AdminPayoutQueueScreen(canWrite: true),
         ),
         locale: AppLocales.ar,
-        waitFor: find.text('تعليم كمدفوع'),
+        waitFor: find.text('موافقة'),
       );
       expect(find.text('طابور السحوبات'), findsOneWidget);
-      expect(find.text('تعليم كمدفوع'), findsOneWidget);
+      expect(find.text('موافقة'), findsOneWidget);
       expect(find.text('رفض'), findsOneWidget);
     });
   });
