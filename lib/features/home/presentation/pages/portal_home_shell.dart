@@ -172,7 +172,10 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                       PortalSettingsHubScreen(
                         canWriteSku: canManageSkuSettings,
                       ),
-                      ReportsShellPage(onOpenGymSettings: _openSettingsTab),
+                      ReportsShellPage(
+                        onOpenGymSettings: _openSettingsTab,
+                        canAdmin: canFulfillPayouts,
+                      ),
                     ],
                   );
 

@@ -151,14 +151,37 @@
   },
   "reports": {
     "coming_soon": {
-      "title": "التقارير — قريبًا",
-      "body": "التحليلات والتقارير غير متاحة في هذا التثبيت.",
-      "hint": "الحضور والإيرادات قريبًا"
+      "title": "التقارير",
+      "body": "تصدير المحاسبة والفواتير متاحة أدناه. التحليلات قادمة لاحقاً.",
+      "hint": "FEAT-89 / FEAT-90"
     },
     "settings_nest": {
       "heading": "الإعدادات",
       "gym_settings": "إعدادات الصالة",
       "gym_settings_body": "وضع SKU والاشتراك في Marketplace لهذه الصالة."
+    },
+    "accounting": {
+      "title": "تصدير المحاسبة",
+      "subtitle": "تصدير CSV للطلبات أو الدفاتر (يُنسخ إلى الحافظة).",
+      "export_csv": "تصدير CSV",
+      "admin_only": "للمسؤول فقط.",
+      "export_ok": "تم نسخ CSV ({rows} سطر).",
+      "export_fail": "فشل التصدير.",
+      "range": "{from} – {to}",
+      "dataset": {
+        "payment_orders": "طلبات الدفع",
+        "coach_ledger": "دفتر المدرب",
+        "athlete_ledger": "دفتر الرياضي"
+      }
+    },
+    "invoice": {
+      "section": "فاتورة الدفع",
+      "title": "فاتورة / إيصال",
+      "order_id": "معرف الطلب",
+      "order_required": "أدخل معرف الطلب.",
+      "fetch": "جلب الفاتورة",
+      "fail": "الفاتورة غير موجودة أو غير مدفوعة.",
+      "close": "إغلاق"
     }
   },
   "connectivity": {
