@@ -151,14 +151,37 @@
   },
   "reports": {
     "coming_soon": {
-      "title": "Reports — Coming Soon",
-      "body": "Analytics and reporting are not available in this install.",
-      "hint": "Attendance & revenue soon"
+      "title": "Reports",
+      "body": "Accounting CSV export and payment invoices are live below. Analytics stay upcoming.",
+      "hint": "FEAT-89 / FEAT-90"
     },
     "settings_nest": {
       "heading": "SETTINGS",
       "gym_settings": "Gym Settings",
       "gym_settings_body": "SKU mode and Marketplace opt-in for this gym."
+    },
+    "accounting": {
+      "title": "Accounting export",
+      "subtitle": "Download tenant CSV for payment orders or ledgers (copied to clipboard).",
+      "export_csv": "Export CSV",
+      "admin_only": "Admin only.",
+      "export_ok": "CSV copied ({rows} lines).",
+      "export_fail": "Export failed.",
+      "range": "{from} – {to}",
+      "dataset": {
+        "payment_orders": "Payment orders",
+        "coach_ledger": "Coach ledger",
+        "athlete_ledger": "Athlete ledger"
+      }
+    },
+    "invoice": {
+      "section": "Payment invoice",
+      "title": "Invoice / receipt",
+      "order_id": "Order id",
+      "order_required": "Enter an order id.",
+      "fetch": "Fetch invoice",
+      "fail": "Invoice not found or not paid.",
+      "close": "Close"
     }
   },
   "connectivity": {

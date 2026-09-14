@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
+import '../../../accounting_export/presentation/accounting_reports_panel.dart';
 
 /// Kinetic Coming soon empty — FEAT-11 Classes / Reports placeholders.
 ///
@@ -137,13 +138,16 @@ class ReportsComingSoonPage extends StatelessWidget {
   }
 }
 
-/// Reports destination — Coming soon + Gym Settings nest (FEAT-10 Install I3).
-///
-/// Stitch G2 entry: Reports → Gym Settings (also via avatar menu).
+/// Reports destination — FEAT-89/90 accounting + Gym Settings nest.
 class ReportsShellPage extends StatelessWidget {
-  const ReportsShellPage({super.key, required this.onOpenGymSettings});
+  const ReportsShellPage({
+    super.key,
+    required this.onOpenGymSettings,
+    this.canAdmin = false,
+  });
 
   final VoidCallback onOpenGymSettings;
+  final bool canAdmin;
 
   static const String stitchScreenIdEn = ReportsComingSoonPage.stitchScreenIdEn;
   static const String stitchScreenIdAr = ReportsComingSoonPage.stitchScreenIdAr;
@@ -194,18 +198,8 @@ class ReportsShellPage extends StatelessWidget {
               color: KineticTokens.electricLime,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'home.coming_soon.stitch_ref'.tr(
-              namedArgs: {
-                'id': isAr ? stitchScreenIdAr : stitchScreenIdEn,
-              },
-            ),
-            style: textTheme.labelSmall?.copyWith(
-              fontSize: 10,
-              color: KineticTokens.zincGray.withValues(alpha: 0.7),
-            ),
-          ),
+          const SizedBox(height: 24),
+          AccountingReportsPanel(canAdmin: canAdmin),
           const SizedBox(height: 32),
           Text(
             'reports.settings_nest.heading'.tr(),
