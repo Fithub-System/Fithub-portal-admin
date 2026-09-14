@@ -11,6 +11,17 @@ abstract class AdminPayoutQueueRemoteDataSource {
     required String requestId,
     required AdminPayoutFulfillAction action,
   });
+
+  Future<CoachPayoutRequest> approve({required String requestId});
+
+  Future<CoachPayoutRequest> beginSettlement({required String requestId});
+
+  Future<CoachPayoutRequest> applySettlement({
+    required String requestId,
+    required String settlementTxnId,
+    required bool success,
+    String? note,
+  });
 }
 
 /// User-JWT Supabase client only — never service_role (FEAT-30).
@@ -26,7 +37,8 @@ class AdminPayoutQueueSupabaseRemoteDataSource
 
   static const _selectColumns =
       'id, tenant_id, coach_employee_id, coach_display_name, '
-      'amount_cents, currency, status, created_at, updated_at';
+      'amount_cents, currency, status, settlement_txn_id, '
+      'created_at, updated_at';
 
   SupabaseClient? get _supabase {
     if (_client != null) return _client;
@@ -90,6 +102,64 @@ class AdminPayoutQueueSupabaseRemoteDataSource
     }
   }
 
+  @override
+  Future<CoachPayoutRequest> approve({required String requestId}) {
+    return _rpcMap('admin_approve_coach_payout', {
+      'p_request_id': requestId,
+    }, requestId);
+  }
+
+  @override
+  Future<CoachPayoutRequest> beginSettlement({required String requestId}) {
+    return _rpcMap('admin_begin_coach_payout_settlement', {
+      'p_request_id': requestId,
+    }, requestId);
+  }
+
+  @override
+  Future<CoachPayoutRequest> applySettlement({
+    required String requestId,
+    required String settlementTxnId,
+    required bool success,
+    String? note,
+  }) {
+    return _rpcMap('apply_payout_settlement', {
+      'p_request_id': requestId,
+      'p_settlement_txn_id': settlementTxnId,
+      'p_success': success,
+      'p_note': note,
+    }, requestId);
+  }
+
+  Future<CoachPayoutRequest> _rpcMap(
+    String fn,
+    Map<String, dynamic> params,
+    String requestId,
+  ) async {
+    final client = _requireClient();
+    try {
+      final result = await client.rpc(fn, params: params);
+      if (result is Map) {
+        return _mapRequest(Map<String, dynamic>.from(result));
+      }
+      final rows = await client
+          .from('coach_payout_requests_for_admin')
+          .select(_selectColumns)
+          .eq('id', requestId)
+          .limit(1);
+      final list = rows as List<dynamic>;
+      if (list.isEmpty) {
+        throw const AdminPayoutNotFoundFailure();
+      }
+      return _mapRequest(list.first as Map<String, dynamic>);
+    } on PostgrestException catch (e) {
+      throw _mapException(e);
+    } catch (e) {
+      if (e is AdminPayoutFailure) rethrow;
+      throw const AdminPayoutUnknownFailure();
+    }
+  }
+
   SupabaseClient _requireClient() {
     final client = _supabase;
     if (client == null) {
@@ -100,6 +170,7 @@ class AdminPayoutQueueSupabaseRemoteDataSource
 
   CoachPayoutRequest _mapRequest(Map<String, dynamic> row) {
     final name = row['coach_display_name'];
+    final txn = row['settlement_txn_id']?.toString().trim();
     return CoachPayoutRequest(
       id: '${row['id']}',
       tenantId: '${row['tenant_id']}',
@@ -112,6 +183,7 @@ class AdminPayoutQueueSupabaseRemoteDataSource
       status: CoachPayoutRequestStatus.fromApi('${row['status'] ?? 'pending'}'),
       createdAt: _asDate(row['created_at']) ?? DateTime.now().toUtc(),
       updatedAt: _asDate(row['updated_at']),
+      settlementTxnId: (txn == null || txn.isEmpty) ? null : txn,
     );
   }
 

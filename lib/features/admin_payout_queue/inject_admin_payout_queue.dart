@@ -36,11 +36,41 @@ void registerAdminPayoutQueueDependencies(GetIt getIt) {
     );
   }
 
+  if (!getIt.isRegistered<ApproveAdminPayoutUseCase>()) {
+    getIt.registerLazySingleton(
+      () => ApproveAdminPayoutUseCase(
+        getIt(),
+        cloudGuard: getIt<CloudMutationGuard>(),
+      ),
+    );
+  }
+
+  if (!getIt.isRegistered<BeginAdminPayoutSettlementUseCase>()) {
+    getIt.registerLazySingleton(
+      () => BeginAdminPayoutSettlementUseCase(
+        getIt(),
+        cloudGuard: getIt<CloudMutationGuard>(),
+      ),
+    );
+  }
+
+  if (!getIt.isRegistered<ApplyAdminPayoutSettlementUseCase>()) {
+    getIt.registerLazySingleton(
+      () => ApplyAdminPayoutSettlementUseCase(
+        getIt(),
+        cloudGuard: getIt<CloudMutationGuard>(),
+      ),
+    );
+  }
+
   if (!getIt.isRegistered<AdminPayoutQueueBloc>()) {
     getIt.registerFactory(
       () => AdminPayoutQueueBloc(
         listRequests: getIt(),
         fulfill: getIt(),
+        approve: getIt(),
+        beginSettlement: getIt(),
+        applySettlement: getIt(),
       ),
     );
   }

@@ -104,13 +104,21 @@ class _AdminPayoutQueueScreenState extends State<AdminPayoutQueueScreen> {
                     canWrite: widget.canWrite,
                     busyRequestId: state.busyRequestId,
                     currencyFormat: _amountFormat(context),
-                    onMarkPaid: (id) => context.read<AdminPayoutQueueBloc>().add(
-                          AdminPayoutQueueFulfillRequested(
+                    onApprove: (id) => context.read<AdminPayoutQueueBloc>().add(
+                          AdminPayoutQueueApproveRequested(
                             requestId: id,
-                            action: AdminPayoutFulfillAction.paid,
                             canWrite: widget.canWrite,
                           ),
                         ),
+                    onBeginSettlement: (id) =>
+                        context.read<AdminPayoutQueueBloc>().add(
+                              AdminPayoutQueueBeginSettlementRequested(
+                                requestId: id,
+                                canWrite: widget.canWrite,
+                              ),
+                            ),
+                    onRecordSettlement: (id) =>
+                        _promptSettlement(context, requestId: id),
                     onReject: (id) => context.read<AdminPayoutQueueBloc>().add(
                           AdminPayoutQueueFulfillRequested(
                             requestId: id,
@@ -143,6 +151,84 @@ class _AdminPayoutQueueScreenState extends State<AdminPayoutQueueScreen> {
       symbol: '',
       decimalDigits: 2,
     );
+  }
+
+  Future<void> _promptSettlement(
+    BuildContext context, {
+    required String requestId,
+  }) async {
+    final txnController = TextEditingController();
+    final noteController = TextEditingController();
+    var success = true;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setLocal) {
+            return AlertDialog(
+              backgroundColor: KineticTokens.surfaceContainerLow,
+              title: Text('payouts.settlement.dialog_title'.tr()),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: txnController,
+                    decoration: InputDecoration(
+                      labelText: 'payouts.settlement.txn_id'.tr(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: noteController,
+                    decoration: InputDecoration(
+                      labelText: 'payouts.settlement.note'.tr(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text('payouts.settlement.success_toggle'.tr()),
+                    value: success,
+                    onChanged: (v) => setLocal(() => success = v),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, false),
+                  child: Text('payouts.actions.cancel'.tr()),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    if (txnController.text.trim().isEmpty) return;
+                    Navigator.pop(dialogContext, true);
+                  },
+                  child: Text('payouts.actions.record_settlement'.tr()),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    final txn = txnController.text.trim();
+    final note = noteController.text.trim();
+    txnController.dispose();
+    noteController.dispose();
+
+    if (confirmed != true || !context.mounted || txn.isEmpty) return;
+
+    context.read<AdminPayoutQueueBloc>().add(
+          AdminPayoutQueueApplySettlementRequested(
+            requestId: requestId,
+            settlementTxnId: txn,
+            success: success,
+            note: note.isEmpty ? null : note,
+            canWrite: widget.canWrite,
+          ),
+        );
   }
 }
 

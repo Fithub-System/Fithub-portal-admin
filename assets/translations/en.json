@@ -708,7 +708,7 @@
   "payouts": {
     "header": {
       "title": "Payout Queue",
-      "subtitle": "Coach payout requests — fulfill without live PSP"
+      "subtitle": "Coach payout requests — approve, settle, and audit"
     },
     "filter": {
       "all": "All",
@@ -734,28 +734,46 @@
     "status": {
       "pending": "Pending",
       "paid": "Paid",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "approved": "Approved",
+      "settling": "Settling",
+      "settled": "Settled",
+      "failed": "Failed"
     },
     "actions": {
       "mark_paid": "Mark paid",
       "reject": "Reject",
-      "retry": "Retry"
+      "retry": "Retry",
+      "approve": "Approve",
+      "begin_settlement": "Start settling",
+      "record_settlement": "Record settlement",
+      "cancel": "Cancel"
     },
     "footer": {
-      "ops_only": "Mark paid records ops fulfillment only — no bank transfer."
+      "ops_only": "Settlement requires a unique txn id. No automatic bank disburse in this release."
     },
     "success": {
-      "marked_paid": "Payout marked paid.",
-      "rejected": "Payout rejected — reserve released."
+      "marked_paid": "Payout settled (ops audit id).",
+      "rejected": "Payout rejected — reserve released.",
+      "approved": "Payout approved.",
+      "settling": "Settlement started.",
+      "settled": "Payout settled.",
+      "failed": "Settlement marked failed — reserve released."
     },
     "error": {
       "not_configured": "Payouts backend is not configured.",
       "forbidden": "Admin only — fulfill is forbidden for this role.",
       "not_found": "Payout request not found.",
-      "invalid_state": "Request is not pending.",
+      "invalid_state": "Request is not in a valid state for this action.",
       "invalid_input": "Invalid fulfill action.",
       "unknown": "Something went wrong with payouts.",
       "offline": "Cloud required — reconnect to fulfill payouts."
+    },
+    "settlement": {
+      "dialog_title": "Record settlement",
+      "txn_id": "Settlement txn id",
+      "note": "Note (optional)",
+      "success_toggle": "Settlement succeeded"
     }
   }
 }

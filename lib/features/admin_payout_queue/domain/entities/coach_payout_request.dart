@@ -1,13 +1,26 @@
 import 'package:equatable/equatable.dart';
 
-/// Row from `coach_payout_requests_for_admin` (FEAT-30 §4.2).
+/// Row from `coach_payout_requests_for_admin` (FEAT-30/87).
 enum CoachPayoutRequestStatus {
   pending,
-  paid,
-  rejected;
+  approved,
+  settling,
+  settled,
+  failed,
+  rejected,
+  /// Legacy FEAT-30 terminal (= settled).
+  paid;
 
   static CoachPayoutRequestStatus fromApi(String raw) {
     switch (raw.trim().toLowerCase()) {
+      case 'approved':
+        return CoachPayoutRequestStatus.approved;
+      case 'settling':
+        return CoachPayoutRequestStatus.settling;
+      case 'settled':
+        return CoachPayoutRequestStatus.settled;
+      case 'failed':
+        return CoachPayoutRequestStatus.failed;
       case 'paid':
         return CoachPayoutRequestStatus.paid;
       case 'rejected':
@@ -18,6 +31,12 @@ enum CoachPayoutRequestStatus {
   }
 
   String get apiValue => name;
+
+  bool get isTerminal =>
+      this == settled || this == paid || this == rejected || this == failed;
+
+  bool get isOpen =>
+      this == pending || this == approved || this == settling;
 }
 
 enum AdminPayoutFulfillAction {
@@ -38,6 +57,7 @@ class CoachPayoutRequest extends Equatable {
     required this.status,
     required this.createdAt,
     this.updatedAt,
+    this.settlementTxnId,
   });
 
   final String id;
@@ -49,6 +69,7 @@ class CoachPayoutRequest extends Equatable {
   final CoachPayoutRequestStatus status;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final String? settlementTxnId;
 
   bool get isPending => status == CoachPayoutRequestStatus.pending;
 
@@ -63,5 +84,6 @@ class CoachPayoutRequest extends Equatable {
         status,
         createdAt,
         updatedAt,
+        settlementTxnId,
       ];
 }

@@ -14,17 +14,29 @@ class AdminPayoutQueueBloc
   AdminPayoutQueueBloc({
     required ListAdminPayoutRequestsUseCase listRequests,
     required FulfillAdminPayoutUseCase fulfill,
+    required ApproveAdminPayoutUseCase approve,
+    required BeginAdminPayoutSettlementUseCase beginSettlement,
+    required ApplyAdminPayoutSettlementUseCase applySettlement,
   })  : _listRequests = listRequests,
         _fulfill = fulfill,
+        _approve = approve,
+        _beginSettlement = beginSettlement,
+        _applySettlement = applySettlement,
         super(const AdminPayoutQueueState()) {
     on<AdminPayoutQueueLoadRequested>(_onLoad);
     on<AdminPayoutQueueFilterChanged>(_onFilterChanged);
     on<AdminPayoutQueueFulfillRequested>(_onFulfill);
+    on<AdminPayoutQueueApproveRequested>(_onApprove);
+    on<AdminPayoutQueueBeginSettlementRequested>(_onBeginSettlement);
+    on<AdminPayoutQueueApplySettlementRequested>(_onApplySettlement);
     on<AdminPayoutQueueMessageCleared>(_onClearMessage);
   }
 
   final ListAdminPayoutRequestsUseCase _listRequests;
   final FulfillAdminPayoutUseCase _fulfill;
+  final ApproveAdminPayoutUseCase _approve;
+  final BeginAdminPayoutSettlementUseCase _beginSettlement;
+  final ApplyAdminPayoutSettlementUseCase _applySettlement;
 
   Future<void> _onLoad(
     AdminPayoutQueueLoadRequested event,
@@ -82,22 +94,8 @@ class AdminPayoutQueueBloc
     AdminPayoutQueueFulfillRequested event,
     Emitter<AdminPayoutQueueState> emit,
   ) async {
-    if (!event.canWrite) {
-      emit(
-        state.copyWith(
-          messageKey: const AdminPayoutForbiddenFailure().messageKey,
-        ),
-      );
-      return;
-    }
-    if (state.usingFixtures) {
-      emit(
-        state.copyWith(
-          messageKey: 'payouts.error.not_configured',
-        ),
-      );
-      return;
-    }
+    final blocked = _guardWrite(event.canWrite, emit);
+    if (blocked) return;
 
     emit(state.copyWith(busyRequestId: event.requestId, clearMessage: true));
     try {
@@ -105,16 +103,93 @@ class AdminPayoutQueueBloc
         requestId: event.requestId,
         action: event.action,
       );
-      final next = state.requests
-          .map((r) => r.id == updated.id ? updated : r)
-          .toList(growable: false);
       emit(
-        state.copyWith(
-          requests: next,
-          clearBusy: true,
-          messageKey: event.action == AdminPayoutFulfillAction.paid
+        _success(
+          updated,
+          event.action == AdminPayoutFulfillAction.paid
               ? 'payouts.success.marked_paid'
               : 'payouts.success.rejected',
+        ),
+      );
+    } on AdminPayoutFailure catch (e) {
+      emit(state.copyWith(clearBusy: true, messageKey: e.messageKey));
+    } catch (_) {
+      emit(
+        state.copyWith(
+          clearBusy: true,
+          messageKey: const AdminPayoutUnknownFailure().messageKey,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onApprove(
+    AdminPayoutQueueApproveRequested event,
+    Emitter<AdminPayoutQueueState> emit,
+  ) async {
+    final blocked = _guardWrite(event.canWrite, emit);
+    if (blocked) return;
+
+    emit(state.copyWith(busyRequestId: event.requestId, clearMessage: true));
+    try {
+      final updated = await _approve(requestId: event.requestId);
+      emit(_success(updated, 'payouts.success.approved'));
+    } on AdminPayoutFailure catch (e) {
+      emit(state.copyWith(clearBusy: true, messageKey: e.messageKey));
+    } catch (_) {
+      emit(
+        state.copyWith(
+          clearBusy: true,
+          messageKey: const AdminPayoutUnknownFailure().messageKey,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onBeginSettlement(
+    AdminPayoutQueueBeginSettlementRequested event,
+    Emitter<AdminPayoutQueueState> emit,
+  ) async {
+    final blocked = _guardWrite(event.canWrite, emit);
+    if (blocked) return;
+
+    emit(state.copyWith(busyRequestId: event.requestId, clearMessage: true));
+    try {
+      final updated = await _beginSettlement(requestId: event.requestId);
+      emit(_success(updated, 'payouts.success.settling'));
+    } on AdminPayoutFailure catch (e) {
+      emit(state.copyWith(clearBusy: true, messageKey: e.messageKey));
+    } catch (_) {
+      emit(
+        state.copyWith(
+          clearBusy: true,
+          messageKey: const AdminPayoutUnknownFailure().messageKey,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onApplySettlement(
+    AdminPayoutQueueApplySettlementRequested event,
+    Emitter<AdminPayoutQueueState> emit,
+  ) async {
+    final blocked = _guardWrite(event.canWrite, emit);
+    if (blocked) return;
+
+    emit(state.copyWith(busyRequestId: event.requestId, clearMessage: true));
+    try {
+      final updated = await _applySettlement(
+        requestId: event.requestId,
+        settlementTxnId: event.settlementTxnId,
+        success: event.success,
+        note: event.note,
+      );
+      emit(
+        _success(
+          updated,
+          event.success
+              ? 'payouts.success.settled'
+              : 'payouts.success.failed',
         ),
       );
     } on AdminPayoutFailure catch (e) {
@@ -134,5 +209,36 @@ class AdminPayoutQueueBloc
     Emitter<AdminPayoutQueueState> emit,
   ) {
     emit(state.copyWith(clearMessage: true));
+  }
+
+  bool _guardWrite(bool canWrite, Emitter<AdminPayoutQueueState> emit) {
+    if (!canWrite) {
+      emit(
+        state.copyWith(
+          messageKey: const AdminPayoutForbiddenFailure().messageKey,
+        ),
+      );
+      return true;
+    }
+    if (state.usingFixtures) {
+      emit(
+        state.copyWith(
+          messageKey: 'payouts.error.not_configured',
+        ),
+      );
+      return true;
+    }
+    return false;
+  }
+
+  AdminPayoutQueueState _success(CoachPayoutRequest updated, String key) {
+    final next = state.requests
+        .map((r) => r.id == updated.id ? updated : r)
+        .toList(growable: false);
+    return state.copyWith(
+      requests: next,
+      clearBusy: true,
+      messageKey: key,
+    );
   }
 }
