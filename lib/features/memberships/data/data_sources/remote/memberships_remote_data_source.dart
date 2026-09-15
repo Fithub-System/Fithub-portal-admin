@@ -15,6 +15,7 @@ abstract class MembershipsRemoteDataSource {
     required int durationDays,
     required int priceCents,
     String currency = 'EGP',
+    MembershipPassKind passKind = MembershipPassKind.singleBranch,
   });
 
   Future<void> deactivatePlan(String planId);
@@ -30,10 +31,7 @@ abstract class MembershipsRemoteDataSource {
   Future<String> renewMembership(String membershipId);
 
   /// FEAT-61 — Admin / Receptionist JWT.
-  Future<String> freezeMembership({
-    required String membershipId,
-    int? days,
-  });
+  Future<String> freezeMembership({required String membershipId, int? days});
 
   /// FEAT-61 — Admin / Receptionist JWT.
   Future<String> unfreezeMembership(String membershipId);
@@ -70,7 +68,7 @@ class MembershipsSupabaseRemoteDataSource
                 .from('membership_plans')
                 .select(
                   'id, tenant_id, name, description, duration_days, '
-                  'price_cents, currency, is_active',
+                  'price_cents, currency, is_active, pass_kind',
                 )
                 .eq('is_active', true)
                 .order('created_at', ascending: false)
@@ -78,7 +76,7 @@ class MembershipsSupabaseRemoteDataSource
                 .from('membership_plans')
                 .select(
                   'id, tenant_id, name, description, duration_days, '
-                  'price_cents, currency, is_active',
+                  'price_cents, currency, is_active, pass_kind',
                 )
                 .order('created_at', ascending: false);
       return (rows as List<dynamic>)
@@ -100,6 +98,7 @@ class MembershipsSupabaseRemoteDataSource
     required int durationDays,
     required int priceCents,
     String currency = 'EGP',
+    MembershipPassKind passKind = MembershipPassKind.singleBranch,
   }) async {
     final client = _requireClient();
     try {
@@ -110,6 +109,7 @@ class MembershipsSupabaseRemoteDataSource
         'price_cents': priceCents,
         'currency': currency,
         'is_active': true,
+        'pass_kind': membershipPassKindToWire(passKind),
       };
       final trimmedDescription = description?.trim();
       if (trimmedDescription != null && trimmedDescription.isNotEmpty) {
@@ -120,7 +120,7 @@ class MembershipsSupabaseRemoteDataSource
           .insert(payload)
           .select(
             'id, tenant_id, name, description, duration_days, price_cents, '
-            'currency, is_active',
+            'currency, is_active, pass_kind',
           )
           .single();
       return _mapPlan(row);
@@ -160,10 +160,7 @@ class MembershipsSupabaseRemoteDataSource
     try {
       final result = await client.rpc(
         'assign_membership',
-        params: {
-          'p_plan_id': planId,
-          'p_athlete_id': athleteId,
-        },
+        params: {'p_plan_id': planId, 'p_athlete_id': athleteId},
       );
       return result as String;
     } on PostgrestException catch (e) {
@@ -223,9 +220,7 @@ class MembershipsSupabaseRemoteDataSource
   }) async {
     final client = _requireClient();
     try {
-      final params = <String, dynamic>{
-        'p_membership_id': membershipId,
-      };
+      final params = <String, dynamic>{'p_membership_id': membershipId};
       if (days != null) {
         params['p_days'] = days;
       }
@@ -316,6 +311,7 @@ class MembershipsSupabaseRemoteDataSource
       priceCents: (row['price_cents'] as num).toInt(),
       currency: row['currency'] as String? ?? 'EGP',
       isActive: row['is_active'] as bool? ?? true,
+      passKind: membershipPassKindFromWire(row['pass_kind']),
     );
   }
 
@@ -336,8 +332,7 @@ class MembershipsSupabaseRemoteDataSource
       return const MembershipsForbiddenFailure();
     }
     if (code == '22023' || message.contains('invalid_input')) {
-      if (message.contains('no freeze policy') ||
-          message.contains('policy')) {
+      if (message.contains('no freeze policy') || message.contains('policy')) {
         return const MembershipsValidationFailure(
           'members.error.freeze_no_policy',
         );

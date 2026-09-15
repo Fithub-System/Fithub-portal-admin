@@ -12,7 +12,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -28,6 +28,12 @@ class AppDatabase extends _$AppDatabase {
       if (from < 3) {
         await m.addColumn(localMembers, localMembers.membershipId);
         await m.addColumn(localMembers, localMembers.membershipPlanId);
+      }
+      if (from < 4) {
+        await m.addColumn(
+          localAttendanceQueue,
+          localAttendanceQueue.checkedOutAt,
+        );
       }
     },
   );
@@ -69,8 +75,37 @@ class AppDatabase extends _$AppDatabase {
     return into(localAttendanceQueue).insert(entry);
   }
 
+  /// Open visit for this athlete (checked_out_at IS NULL).
+  Future<LocalAttendanceQueueItem?> openVisit({
+    required String tenantId,
+    required String athleteId,
+  }) {
+    return (select(localAttendanceQueue)..where(
+          (q) =>
+              q.tenantId.equals(tenantId) &
+              q.athleteId.equals(athleteId) &
+              q.checkedOutAt.isNull(),
+        ))
+        .getSingleOrNull();
+  }
+
+  Future<void> checkoutVisit({
+    required String visitId,
+    required DateTime checkedOutAt,
+    bool isSynced = false,
+  }) {
+    return (update(
+      localAttendanceQueue,
+    )..where((q) => q.id.equals(visitId))).write(
+      LocalAttendanceQueueCompanion(
+        checkedOutAt: Value(checkedOutAt),
+        isSynced: Value(isSynced),
+      ),
+    );
+  }
+
   /// True if any local queue row exists for this athlete/tenant on the UTC day
-  /// of [day] (Hardening Gate — mirrors cloud same-day unique index).
+  /// of [day] (legacy helper — FEAT-92 toggle uses [openVisit] instead).
   Future<bool> hasAttendanceOnUtcDay({
     required String tenantId,
     required String athleteId,
@@ -117,12 +152,25 @@ class AppDatabase extends _$AppDatabase {
     return into(localGymCache).insertOnConflictUpdate(entry);
   }
 
-  Future<int> incrementOccupancy(String tenantId) async {
+  Future<int> incrementOccupancy(String tenantId) {
+    return applyOccupancyDelta(tenantId, 1);
+  }
+
+  Future<int> applyOccupancyDelta(String tenantId, int delta) async {
     final gym = await gymForTenant(tenantId);
     if (gym == null) {
       return 0;
     }
-    final next = gym.currentOccupancy + 1;
+    final next = gym.currentOccupancy + delta;
+    return setOccupancy(tenantId, next);
+  }
+
+  Future<int> setOccupancy(String tenantId, int occupancy) async {
+    final gym = await gymForTenant(tenantId);
+    if (gym == null) {
+      return 0;
+    }
+    final next = occupancy < 0 ? 0 : occupancy;
     await (update(localGymCache)..where((g) => g.tenantId.equals(tenantId)))
         .write(LocalGymCacheCompanion(currentOccupancy: Value(next)));
     return next;
@@ -132,11 +180,7 @@ class AppDatabase extends _$AppDatabase {
     if (members.isEmpty) return;
     await batch((batch) {
       for (final member in members) {
-        batch.insert(
-          localMembers,
-          member,
-          mode: InsertMode.insertOrReplace,
-        );
+        batch.insert(localMembers, member, mode: InsertMode.insertOrReplace);
       }
     });
   }

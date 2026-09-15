@@ -10,6 +10,7 @@ abstract class MembershipsRepository {
     required int durationDays,
     required int priceCents,
     String currency = 'EGP',
+    MembershipPassKind passKind = MembershipPassKind.singleBranch,
   });
 
   Future<void> deactivatePlan(String planId);
@@ -23,10 +24,7 @@ abstract class MembershipsRepository {
 
   Future<String> renewMembership(String membershipId);
 
-  Future<String> freezeMembership({
-    required String membershipId,
-    int? days,
-  });
+  Future<String> freezeMembership({required String membershipId, int? days});
 
   Future<String> unfreezeMembership(String membershipId);
 

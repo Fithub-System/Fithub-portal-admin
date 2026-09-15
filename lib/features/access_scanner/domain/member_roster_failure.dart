@@ -16,8 +16,7 @@ class MemberRosterPolicyFailure extends MemberRosterFailure {
 }
 
 class MemberRosterEmptyFailure extends MemberRosterFailure {
-  const MemberRosterEmptyFailure()
-    : super('access_scanner.roster.error.empty');
+  const MemberRosterEmptyFailure() : super('access_scanner.roster.error.empty');
 }
 
 class MemberRosterUnknownFailure extends MemberRosterFailure {

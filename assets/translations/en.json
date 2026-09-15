@@ -279,6 +279,8 @@
       "system_log": "System Log"
     },
     "success": {
+      "check_in": "Checked in",
+      "check_out": "Checked out",
       "active_badge": "Active",
       "expired_badge": "Expired",
       "paused_badge": "Paused",
@@ -394,14 +396,19 @@
       "confirm_assign": "Confirm assign",
       "deactivate": "Deactivate"
     },
-    "field": {
-      "name": "Plan name",
-      "description": "Description (optional)",
-      "duration_days": "Duration (days)",
-      "price_cents": "Price (cents)",
-      "plan": "Plan",
-      "athlete": "Athlete"
-    },
+      "field": {
+        "name": "Plan name",
+        "description": "Description (optional)",
+        "duration_days": "Duration (days)",
+        "price_cents": "Price (cents)",
+        "pass_kind": "Pass type",
+        "plan": "Plan",
+        "athlete": "Athlete"
+      },
+      "pass_kind": {
+        "single_branch": "Single Branch",
+        "roaming": "Roaming"
+      },
     "validation": {
       "duration": "Duration must be at least 1 day",
       "price": "Price must be 0 or greater"

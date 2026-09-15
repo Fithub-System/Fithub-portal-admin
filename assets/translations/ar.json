@@ -279,6 +279,8 @@
       "system_log": "سجل النظام"
     },
     "success": {
+      "check_in": "تم تسجيل الدخول",
+      "check_out": "تم تسجيل الخروج",
       "active_badge": "نشط",
       "expired_badge": "منتهية",
       "paused_badge": "موقوفة",
@@ -394,14 +396,19 @@
       "confirm_assign": "تأكيد التعيين",
       "deactivate": "إلغاء التفعيل"
     },
-    "field": {
-      "name": "اسم الخطة",
-      "description": "الوصف (اختياري)",
-      "duration_days": "المدة (أيام)",
-      "price_cents": "السعر (سنتات)",
-      "plan": "الخطة",
-      "athlete": "الرياضي"
-    },
+      "field": {
+        "name": "اسم الخطة",
+        "description": "الوصف (اختياري)",
+        "duration_days": "المدة (أيام)",
+        "price_cents": "السعر (سنتات)",
+        "pass_kind": "نوع الباقة",
+        "plan": "الخطة",
+        "athlete": "الرياضي"
+      },
+      "pass_kind": {
+        "single_branch": "فرع واحد",
+        "roaming": "تجوال"
+      },
     "validation": {
       "duration": "يجب أن تكون المدة يومًا واحدًا على الأقل",
       "price": "يجب أن يكون السعر 0 أو أكثر"

@@ -10,14 +10,19 @@ class ScanSuccessBanner extends StatelessWidget {
     required this.memberName,
     this.avatarUrl,
     this.membershipStatus,
+    this.event = 'CHECK_IN',
     required this.onDismiss,
   });
 
   final String memberName;
   final String? avatarUrl;
+
   /// Cached FEAT-07 status; null → fallback Active badge (offline unknown).
   final String? membershipStatus;
+  final String event;
   final VoidCallback onDismiss;
+
+  bool get _isCheckOut => event == 'CHECK_OUT';
 
   String get _badgeLabel {
     final status = membershipStatus?.toLowerCase();
@@ -70,11 +75,22 @@ class ScanSuccessBanner extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          memberName,
+                          _isCheckOut
+                              ? 'access_scanner.success.check_out'.tr()
+                              : 'access_scanner.success.check_in'.tr(),
                           style: const TextStyle(
                             color: KineticTokens.pureWhite,
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          memberName,
+                          style: const TextStyle(
+                            color: KineticTokens.pureWhite,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -134,7 +150,11 @@ class _Avatar extends StatelessWidget {
         child: url.isEmpty ? _initials() : null,
       );
     }
-    return CircleAvatar(radius: 24, backgroundColor: KineticTokens.gunmetalCard, child: _initials());
+    return CircleAvatar(
+      radius: 24,
+      backgroundColor: KineticTokens.gunmetalCard,
+      child: _initials(),
+    );
   }
 
   Widget _initials() {

@@ -31,10 +31,7 @@ class FreezePolicy extends Equatable {
 }
 
 /// Per-plan override wins over general when [planId] matches.
-FreezePolicy? resolveFreezePolicy(
-  List<FreezePolicy> policies,
-  String? planId,
-) {
+FreezePolicy? resolveFreezePolicy(List<FreezePolicy> policies, String? planId) {
   if (planId != null) {
     for (final p in policies) {
       if (p.planId == planId) return p;

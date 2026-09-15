@@ -99,6 +99,7 @@ class MembershipsCubit extends Cubit<MembershipsState> {
     String? description,
     required int durationDays,
     required int priceCents,
+    MembershipPassKind passKind = MembershipPassKind.singleBranch,
   }) async {
     emit(state.copyWith(busy: true, clearMessage: true));
     try {
@@ -107,6 +108,7 @@ class MembershipsCubit extends Cubit<MembershipsState> {
         description: description,
         durationDays: durationDays,
         priceCents: priceCents,
+        passKind: passKind,
       );
       final plans = await _listPlans();
       emit(
@@ -160,10 +162,7 @@ class MembershipsCubit extends Cubit<MembershipsState> {
     try {
       await _assignMembership(planId: planId, athleteId: athleteId);
       emit(
-        state.copyWith(
-          busy: false,
-          messageKey: 'memberships.success.assigned',
-        ),
+        state.copyWith(busy: false, messageKey: 'memberships.success.assigned'),
       );
     } on MembershipsFailure catch (e) {
       emit(state.copyWith(busy: false, messageKey: e.messageKey));

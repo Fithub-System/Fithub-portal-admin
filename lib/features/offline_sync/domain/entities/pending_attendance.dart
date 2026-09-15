@@ -5,10 +5,12 @@ class PendingAttendance {
     required this.tenantId,
     required this.athleteId,
     required this.checkedInAt,
+    this.checkedOutAt,
   });
 
   final String id;
   final String tenantId;
   final String athleteId;
   final DateTime checkedInAt;
+  final DateTime? checkedOutAt;
 }
