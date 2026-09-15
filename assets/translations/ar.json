@@ -266,6 +266,7 @@
       "ready_waiting": "Ready - Waiting for Scan",
       "confirm": "تأكيد تسجيل الدخول",
       "access_granted": "تم منح الدخول",
+      "access_denied": "تم رفض المسح",
       "system_id": "معرّف النظام: {id}",
       "encryption": "التشفير: {algo}",
       "peak_intensity": "ذروة الشدة",

@@ -92,6 +92,55 @@ void main() {
 
       expect(result.isValid, isFalse);
     });
+
+    test('accepts Flutter-web JSON where timestamp is a double', () {
+      const validator = QrSignatureValidator();
+      final now = DateTime.utc(2026, 7, 16, 12, 0, 10);
+      final timestampSeconds =
+          DateTime.utc(2026, 7, 16, 12, 0, 0).millisecondsSinceEpoch ~/ 1000;
+      final signature = validator.sign(
+        athleteId: athleteId,
+        timestampSeconds: timestampSeconds,
+        salt: salt,
+      );
+      final payload =
+          '{"athlete_id":"$athleteId","timestamp":$timestampSeconds.0,'
+          '"signature":"$signature"}';
+
+      final result = validator.validate(
+        rawPayload: payload,
+        cryptoSalt: salt,
+        now: now,
+      );
+
+      expect(result.isValid, isTrue);
+      expect(result.athleteId, athleteId);
+    });
+
+    test('accepts athlete clock up to 5 seconds ahead of portal', () {
+      const validator = QrSignatureValidator();
+      final issued = DateTime.utc(2026, 7, 16, 12, 0, 3);
+      final portalNow = DateTime.utc(2026, 7, 16, 12, 0, 0);
+      final timestampSeconds = issued.millisecondsSinceEpoch ~/ 1000;
+      final signature = validator.sign(
+        athleteId: athleteId,
+        timestampSeconds: timestampSeconds,
+        salt: salt,
+      );
+      final payload = jsonEncode({
+        'athlete_id': athleteId,
+        'timestamp': timestampSeconds,
+        'signature': signature,
+      });
+
+      final result = validator.validate(
+        rawPayload: payload,
+        cryptoSalt: salt,
+        now: portalNow,
+      );
+
+      expect(result.isValid, isTrue);
+    });
   });
 
   group('Offline scan flow (airplane mode simulation)', () {

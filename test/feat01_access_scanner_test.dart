@@ -207,9 +207,24 @@ void main() {
         ]),
       );
       expect(states.last.rosterCount, 1);
-      verify(
-        () => repository.syncRoster(tenantId: 'tenant-1'),
-      ).called(1);
+      verify(() => repository.syncRoster(tenantId: 'tenant-1')).called(1);
+      await cubit.close();
+    });
+
+    test('onQrDetected clears processing after processQrScan throws', () async {
+      when(
+        () => processQrScan(
+          tenantId: any(named: 'tenantId'),
+          rawPayload: any(named: 'rawPayload'),
+          online: any(named: 'online'),
+        ),
+      ).thenThrow(Exception('decode failed'));
+
+      final cubit = buildCubit();
+      await cubit.onQrDetected('{"athlete_id":"x"}');
+
+      expect(cubit.state.isProcessing, isFalse);
+      expect(cubit.state.errorKey, 'access_scanner.scan.rejected');
       await cubit.close();
     });
 
@@ -225,35 +240,34 @@ void main() {
       await cubit.close();
     });
 
-    testWidgets(
-      'post-frame scheduling avoids setState during build',
-      (tester) async {
-        var useManual = false;
+    testWidgets('post-frame scheduling avoids setState during build', (
+      tester,
+    ) async {
+      var useManual = false;
 
-        await tester.pumpWidget(
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: StatefulBuilder(
-              builder: (context, setState) {
-                // Mirrors AccessScannerScreen camera fallback: schedule after
-                // frame instead of setState inside MobileScanner errorBuilder.
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  setState(() => useManual = true);
-                });
-                return Text(useManual ? 'manual' : 'camera');
-              },
-            ),
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              // Mirrors AccessScannerScreen camera fallback: schedule after
+              // frame instead of setState inside MobileScanner errorBuilder.
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() => useManual = true);
+              });
+              return Text(useManual ? 'manual' : 'camera');
+            },
           ),
-        );
+        ),
+      );
 
-        expect(tester.takeException(), isNull);
-        expect(find.text('camera'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      expect(find.text('camera'), findsOneWidget);
 
-        await tester.pump();
-        expect(tester.takeException(), isNull);
-        expect(find.text('manual'), findsOneWidget);
-      },
-    );
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      expect(find.text('manual'), findsOneWidget);
+    });
   });
 
   group('FEAT-01 AC1 — offline session restore', () {
@@ -287,27 +301,32 @@ void main() {
       return states;
     }
 
-    test('AuthStarted without session restores cached portal profile', () async {
-      when(() => repository.currentSession).thenReturn(null);
-      when(() => repository.readCachedProfile()).thenAnswer((_) async => adminProfile);
+    test(
+      'AuthStarted without session restores cached portal profile',
+      () async {
+        when(() => repository.currentSession).thenReturn(null);
+        when(
+          () => repository.readCachedProfile(),
+        ).thenAnswer((_) async => adminProfile);
 
-      final bloc = AuthBloc(authRepository: repository);
-      final states = await _collect(bloc);
+        final bloc = AuthBloc(authRepository: repository);
+        final states = await _collect(bloc);
 
-      expect(states.last, isA<AuthAuthenticated>());
-      final auth = states.last as AuthAuthenticated;
-      expect(auth.profile, adminProfile);
-      expect(auth.restoredFromCache, isTrue);
-      await bloc.close();
-    });
+        expect(states.last, isA<AuthAuthenticated>());
+        final auth = states.last as AuthAuthenticated;
+        expect(auth.profile, adminProfile);
+        expect(auth.restoredFromCache, isTrue);
+        await bloc.close();
+      },
+    );
 
     test(
       'AuthStarted with session but resolve failure falls back to cache',
       () async {
         when(() => repository.currentSession).thenReturn(_FakeSession());
-        when(() => repository.resolveEmployeeProfile()).thenThrow(
-          Exception('network'),
-        );
+        when(
+          () => repository.resolveEmployeeProfile(),
+        ).thenThrow(Exception('network'));
         when(
           () => repository.readCachedProfile(),
         ).thenAnswer((_) async => adminProfile);

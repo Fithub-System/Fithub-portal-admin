@@ -81,10 +81,23 @@ class ProcessQrScanUseCase {
         at: DateTime.now().toUtc(),
       );
     } on GymAttendanceToggleFailure catch (e) {
-      if (e.code == 'at_capacity') {
-        return const ScanProcessResult.rejected('Gym is at capacity.');
+      switch (e.code) {
+        case 'at_capacity':
+          return const ScanProcessResult.rejected('Gym is at capacity.');
+        case 'not_member':
+          return const ScanProcessResult.rejected(
+            'Athlete is not a member of this gym.',
+          );
+        case 'not_found':
+          return const ScanProcessResult.rejected('Athlete not found.');
+        case 'forbidden':
+          return const ScanProcessResult.rejected(
+            'Staff role cannot check members in.',
+          );
+        default:
+          // Network / malformed RPC — SafeMode local toggle.
+          return null;
       }
-      return null;
     } catch (_) {
       return null;
     }

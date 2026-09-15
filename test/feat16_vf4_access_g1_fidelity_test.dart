@@ -33,6 +33,15 @@ class _TestScannerCubit extends AccessScannerCubit {
   void seedSuccess(ScanSuccessNotification success) {
     emit(state.copyWith(success: success));
   }
+
+  void seedError(String reason) {
+    emit(
+      state.copyWith(
+        errorKey: 'access_scanner.scan.rejected',
+        rejectReason: reason,
+      ),
+    );
+  }
 }
 
 void main() {
@@ -141,6 +150,30 @@ void main() {
       expect(find.byType(CheckInGateLayout), findsOneWidget);
       expect(find.text('scanner-body'), findsOneWidget);
       expect(find.text('—'), findsNothing);
+    });
+
+    testWidgets('rejected scan flips Confirm CTA to SCAN REJECTED', (
+      tester,
+    ) async {
+      await pumpLocalizedApp(
+        tester,
+        BlocProvider<AccessScannerCubit>.value(
+          value: cubit,
+          child: AccessScannerFocusHost(
+            onClose: () {},
+            occupancyCurrent: 42,
+            occupancyCapacity: 100,
+            scanner: const SizedBox.expand(),
+          ),
+        ),
+        waitFor: find.byKey(const Key('check-in-gate-confirm')),
+      );
+
+      cubit.seedError('QR token expired.');
+      await tester.pump();
+
+      expect(find.text('SCAN REJECTED'), findsOneWidget);
+      expect(find.text('CONFIRM CHECK-IN'), findsNothing);
     });
 
     testWidgets('granted success flips Confirm CTA + last member name', (

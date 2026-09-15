@@ -164,11 +164,24 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
       state.copyWith(isProcessing: true, clearSuccess: true, clearError: true),
     );
 
-    final result = await _processQrScan(
-      tenantId: _tenantId,
-      rawPayload: trimmed,
-      online: _isOnline(),
-    );
+    late final ScanProcessResult result;
+    try {
+      result = await _processQrScan(
+        tenantId: _tenantId,
+        rawPayload: trimmed,
+        online: _isOnline(),
+      );
+    } catch (_) {
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          isProcessing: false,
+          errorKey: 'access_scanner.scan.rejected',
+          rejectReason: 'Scan failed. Try again.',
+        ),
+      );
+      return;
+    }
 
     if (isClosed) return;
 
