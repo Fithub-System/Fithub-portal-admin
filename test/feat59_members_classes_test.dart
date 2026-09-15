@@ -151,12 +151,12 @@ void main() {
           ],
           child: const MemberManagementScreen(canWrite: true, canEnroll: true),
         ),
-        waitFor: find.textContaining('No members in this gym'),
+        waitFor: find.textContaining('No members enrolled'),
       );
 
       expect(find.text('Dominic Russo'), findsNothing);
       expect(find.text('Sarah Miller'), findsNothing);
-      expect(find.textContaining('No members in this gym'), findsOneWidget);
+      expect(find.textContaining('No members enrolled'), findsOneWidget);
       expect(find.text('Retry'), findsOneWidget);
     });
 

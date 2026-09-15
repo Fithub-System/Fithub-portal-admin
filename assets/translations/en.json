@@ -457,7 +457,7 @@
       "system_health_value": "Optimal"
     },
     "cta": {
-      "filter_type": "Filter Type"
+      "filter_type": "Plans"
     },
     "pagination": {
       "showing": "SHOWING",
@@ -502,7 +502,7 @@
       "frozen": "Membership frozen.",
       "unfrozen": "Membership unfrozen."
     },
-    "empty_roster": "No members in this gym yet — add a member or sync when online.",
+    "empty_roster": "No members enrolled at this gym yet. Admin: tap Add New Member to invite an athlete, then open Plans to create and assign a membership.",
     "error": {
       "roster": "Could not refresh members — tap Retry.",
       "freeze_no_policy": "Freeze disabled — configure Freeze policy in Gym Settings.",
