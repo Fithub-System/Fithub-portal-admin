@@ -1,25 +1,39 @@
 import '../../../offline_sync/domain/offline_sync_failure.dart';
 import '../../../offline_sync/domain/use_cases/offline_sync_use_case.dart';
+import '../../../scan/data/data_sources/remote/toggle_gym_attendance_remote_data_source.dart';
 import '../../../scan/data/repositories/scan_repository.dart';
 
-/// QR scan branch — local Drift first (FEAT-01 AC2), then cloud flush when online.
-///
-/// Online success must upsert `attendance_logs` so FEAT-09 award triggers fire.
-/// Occupancy cloud push alone is not sufficient (P0-A 2026-07-30).
+/// QR scan — local Drift first (FEAT-01 AC2). Online path calls
+/// `toggle_gym_attendance` (FEAT-92). Offline SafeMode queues upsert.
 class ProcessQrScanUseCase {
   const ProcessQrScanUseCase(
     this._scanRepository, {
     SyncPendingAttendanceUseCase? syncPendingAttendance,
-  }) : _syncPendingAttendance = syncPendingAttendance;
+    ToggleGymAttendanceRemoteDataSource? toggleAttendance,
+  }) : _syncPendingAttendance = syncPendingAttendance,
+       _toggleAttendance = toggleAttendance;
 
   final ScanRepository _scanRepository;
   final SyncPendingAttendanceUseCase? _syncPendingAttendance;
+  final ToggleGymAttendanceRemoteDataSource? _toggleAttendance;
 
   Future<ScanProcessResult> call({
     required String tenantId,
     required String rawPayload,
     bool online = false,
   }) async {
+    if (online) {
+      final toggle = _toggleAttendance;
+      if (toggle != null) {
+        final rpcResult = await _tryOnlineToggle(
+          tenantId: tenantId,
+          rawPayload: rawPayload,
+          toggle: toggle,
+        );
+        if (rpcResult != null) return rpcResult;
+      }
+    }
+
     final result = await _scanRepository.processOfflineScan(
       tenantId: tenantId,
       rawPayload: rawPayload,
@@ -35,7 +49,6 @@ class ProcessQrScanUseCase {
     }
 
     try {
-      // Upserts pending attendance_logs first, then gyms.current_occupancy.
       await sync(tenantId: tenantId);
     } on OfflineSyncFailure {
       // Local queue retained; OfflineSyncCubit retries on reconnect.
@@ -44,5 +57,36 @@ class ProcessQrScanUseCase {
     }
 
     return result;
+  }
+
+  Future<ScanProcessResult?> _tryOnlineToggle({
+    required String tenantId,
+    required String rawPayload,
+    required ToggleGymAttendanceRemoteDataSource toggle,
+  }) async {
+    final validated = await _scanRepository.validateScan(
+      tenantId: tenantId,
+      rawPayload: rawPayload,
+    );
+    if (validated.result != null) return validated.result;
+    final member = validated.member;
+    if (member == null) return null;
+
+    try {
+      final rpc = await toggle.toggle(member.id);
+      return _scanRepository.mirrorCloudToggle(
+        tenantId: tenantId,
+        member: member,
+        rpc: rpc,
+        at: DateTime.now().toUtc(),
+      );
+    } on GymAttendanceToggleFailure catch (e) {
+      if (e.code == 'at_capacity') {
+        return const ScanProcessResult.rejected('Gym is at capacity.');
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 }

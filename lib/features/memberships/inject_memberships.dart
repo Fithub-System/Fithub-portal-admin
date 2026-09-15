@@ -37,9 +37,7 @@ void registerMembershipsDependencies(GetIt getIt) {
     getIt.registerLazySingleton(() => CreateMembershipPlanUseCase(getIt()));
   }
   if (!getIt.isRegistered<DeactivateMembershipPlanUseCase>()) {
-    getIt.registerLazySingleton(
-      () => DeactivateMembershipPlanUseCase(getIt()),
-    );
+    getIt.registerLazySingleton(() => DeactivateMembershipPlanUseCase(getIt()));
   }
   if (!getIt.isRegistered<AssignMembershipUseCase>()) {
     getIt.registerLazySingleton(() => AssignMembershipUseCase(getIt()));

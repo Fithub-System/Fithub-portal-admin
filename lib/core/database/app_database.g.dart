@@ -812,6 +812,17 @@ class $LocalAttendanceQueueTable extends LocalAttendanceQueue
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _checkedOutAtMeta = const VerificationMeta(
+    'checkedOutAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> checkedOutAt = GeneratedColumn<DateTime>(
+    'checked_out_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _isSyncedMeta = const VerificationMeta(
     'isSynced',
   );
@@ -833,6 +844,7 @@ class $LocalAttendanceQueueTable extends LocalAttendanceQueue
     tenantId,
     athleteId,
     checkedInAt,
+    checkedOutAt,
     isSynced,
   ];
   @override
@@ -879,6 +891,15 @@ class $LocalAttendanceQueueTable extends LocalAttendanceQueue
     } else if (isInserting) {
       context.missing(_checkedInAtMeta);
     }
+    if (data.containsKey('checked_out_at')) {
+      context.handle(
+        _checkedOutAtMeta,
+        checkedOutAt.isAcceptableOrUnknown(
+          data['checked_out_at']!,
+          _checkedOutAtMeta,
+        ),
+      );
+    }
     if (data.containsKey('is_synced')) {
       context.handle(
         _isSyncedMeta,
@@ -913,6 +934,10 @@ class $LocalAttendanceQueueTable extends LocalAttendanceQueue
         DriftSqlType.dateTime,
         data['${effectivePrefix}checked_in_at'],
       )!,
+      checkedOutAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}checked_out_at'],
+      ),
       isSynced: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_synced'],
@@ -932,12 +957,14 @@ class LocalAttendanceQueueItem extends DataClass
   final String tenantId;
   final String athleteId;
   final DateTime checkedInAt;
+  final DateTime? checkedOutAt;
   final bool isSynced;
   const LocalAttendanceQueueItem({
     required this.id,
     required this.tenantId,
     required this.athleteId,
     required this.checkedInAt,
+    this.checkedOutAt,
     required this.isSynced,
   });
   @override
@@ -947,6 +974,9 @@ class LocalAttendanceQueueItem extends DataClass
     map['tenant_id'] = Variable<String>(tenantId);
     map['athlete_id'] = Variable<String>(athleteId);
     map['checked_in_at'] = Variable<DateTime>(checkedInAt);
+    if (!nullToAbsent || checkedOutAt != null) {
+      map['checked_out_at'] = Variable<DateTime>(checkedOutAt);
+    }
     map['is_synced'] = Variable<bool>(isSynced);
     return map;
   }
@@ -957,6 +987,9 @@ class LocalAttendanceQueueItem extends DataClass
       tenantId: Value(tenantId),
       athleteId: Value(athleteId),
       checkedInAt: Value(checkedInAt),
+      checkedOutAt: checkedOutAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(checkedOutAt),
       isSynced: Value(isSynced),
     );
   }
@@ -971,6 +1004,7 @@ class LocalAttendanceQueueItem extends DataClass
       tenantId: serializer.fromJson<String>(json['tenantId']),
       athleteId: serializer.fromJson<String>(json['athleteId']),
       checkedInAt: serializer.fromJson<DateTime>(json['checkedInAt']),
+      checkedOutAt: serializer.fromJson<DateTime?>(json['checkedOutAt']),
       isSynced: serializer.fromJson<bool>(json['isSynced']),
     );
   }
@@ -982,6 +1016,7 @@ class LocalAttendanceQueueItem extends DataClass
       'tenantId': serializer.toJson<String>(tenantId),
       'athleteId': serializer.toJson<String>(athleteId),
       'checkedInAt': serializer.toJson<DateTime>(checkedInAt),
+      'checkedOutAt': serializer.toJson<DateTime?>(checkedOutAt),
       'isSynced': serializer.toJson<bool>(isSynced),
     };
   }
@@ -991,12 +1026,14 @@ class LocalAttendanceQueueItem extends DataClass
     String? tenantId,
     String? athleteId,
     DateTime? checkedInAt,
+    Value<DateTime?> checkedOutAt = const Value.absent(),
     bool? isSynced,
   }) => LocalAttendanceQueueItem(
     id: id ?? this.id,
     tenantId: tenantId ?? this.tenantId,
     athleteId: athleteId ?? this.athleteId,
     checkedInAt: checkedInAt ?? this.checkedInAt,
+    checkedOutAt: checkedOutAt.present ? checkedOutAt.value : this.checkedOutAt,
     isSynced: isSynced ?? this.isSynced,
   );
   LocalAttendanceQueueItem copyWithCompanion(
@@ -1009,6 +1046,9 @@ class LocalAttendanceQueueItem extends DataClass
       checkedInAt: data.checkedInAt.present
           ? data.checkedInAt.value
           : this.checkedInAt,
+      checkedOutAt: data.checkedOutAt.present
+          ? data.checkedOutAt.value
+          : this.checkedOutAt,
       isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
     );
   }
@@ -1020,6 +1060,7 @@ class LocalAttendanceQueueItem extends DataClass
           ..write('tenantId: $tenantId, ')
           ..write('athleteId: $athleteId, ')
           ..write('checkedInAt: $checkedInAt, ')
+          ..write('checkedOutAt: $checkedOutAt, ')
           ..write('isSynced: $isSynced')
           ..write(')'))
         .toString();
@@ -1027,7 +1068,7 @@ class LocalAttendanceQueueItem extends DataClass
 
   @override
   int get hashCode =>
-      Object.hash(id, tenantId, athleteId, checkedInAt, isSynced);
+      Object.hash(id, tenantId, athleteId, checkedInAt, checkedOutAt, isSynced);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1036,6 +1077,7 @@ class LocalAttendanceQueueItem extends DataClass
           other.tenantId == this.tenantId &&
           other.athleteId == this.athleteId &&
           other.checkedInAt == this.checkedInAt &&
+          other.checkedOutAt == this.checkedOutAt &&
           other.isSynced == this.isSynced);
 }
 
@@ -1045,6 +1087,7 @@ class LocalAttendanceQueueCompanion
   final Value<String> tenantId;
   final Value<String> athleteId;
   final Value<DateTime> checkedInAt;
+  final Value<DateTime?> checkedOutAt;
   final Value<bool> isSynced;
   final Value<int> rowid;
   const LocalAttendanceQueueCompanion({
@@ -1052,6 +1095,7 @@ class LocalAttendanceQueueCompanion
     this.tenantId = const Value.absent(),
     this.athleteId = const Value.absent(),
     this.checkedInAt = const Value.absent(),
+    this.checkedOutAt = const Value.absent(),
     this.isSynced = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -1060,6 +1104,7 @@ class LocalAttendanceQueueCompanion
     required String tenantId,
     required String athleteId,
     required DateTime checkedInAt,
+    this.checkedOutAt = const Value.absent(),
     this.isSynced = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -1071,6 +1116,7 @@ class LocalAttendanceQueueCompanion
     Expression<String>? tenantId,
     Expression<String>? athleteId,
     Expression<DateTime>? checkedInAt,
+    Expression<DateTime>? checkedOutAt,
     Expression<bool>? isSynced,
     Expression<int>? rowid,
   }) {
@@ -1079,6 +1125,7 @@ class LocalAttendanceQueueCompanion
       if (tenantId != null) 'tenant_id': tenantId,
       if (athleteId != null) 'athlete_id': athleteId,
       if (checkedInAt != null) 'checked_in_at': checkedInAt,
+      if (checkedOutAt != null) 'checked_out_at': checkedOutAt,
       if (isSynced != null) 'is_synced': isSynced,
       if (rowid != null) 'rowid': rowid,
     });
@@ -1089,6 +1136,7 @@ class LocalAttendanceQueueCompanion
     Value<String>? tenantId,
     Value<String>? athleteId,
     Value<DateTime>? checkedInAt,
+    Value<DateTime?>? checkedOutAt,
     Value<bool>? isSynced,
     Value<int>? rowid,
   }) {
@@ -1097,6 +1145,7 @@ class LocalAttendanceQueueCompanion
       tenantId: tenantId ?? this.tenantId,
       athleteId: athleteId ?? this.athleteId,
       checkedInAt: checkedInAt ?? this.checkedInAt,
+      checkedOutAt: checkedOutAt ?? this.checkedOutAt,
       isSynced: isSynced ?? this.isSynced,
       rowid: rowid ?? this.rowid,
     );
@@ -1117,6 +1166,9 @@ class LocalAttendanceQueueCompanion
     if (checkedInAt.present) {
       map['checked_in_at'] = Variable<DateTime>(checkedInAt.value);
     }
+    if (checkedOutAt.present) {
+      map['checked_out_at'] = Variable<DateTime>(checkedOutAt.value);
+    }
     if (isSynced.present) {
       map['is_synced'] = Variable<bool>(isSynced.value);
     }
@@ -1133,6 +1185,7 @@ class LocalAttendanceQueueCompanion
           ..write('tenantId: $tenantId, ')
           ..write('athleteId: $athleteId, ')
           ..write('checkedInAt: $checkedInAt, ')
+          ..write('checkedOutAt: $checkedOutAt, ')
           ..write('isSynced: $isSynced, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -1843,6 +1896,7 @@ typedef $$LocalAttendanceQueueTableCreateCompanionBuilder =
       required String tenantId,
       required String athleteId,
       required DateTime checkedInAt,
+      Value<DateTime?> checkedOutAt,
       Value<bool> isSynced,
       Value<int> rowid,
     });
@@ -1852,6 +1906,7 @@ typedef $$LocalAttendanceQueueTableUpdateCompanionBuilder =
       Value<String> tenantId,
       Value<String> athleteId,
       Value<DateTime> checkedInAt,
+      Value<DateTime?> checkedOutAt,
       Value<bool> isSynced,
       Value<int> rowid,
     });
@@ -1882,6 +1937,11 @@ class $$LocalAttendanceQueueTableFilterComposer
 
   ColumnFilters<DateTime> get checkedInAt => $composableBuilder(
     column: $table.checkedInAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get checkedOutAt => $composableBuilder(
+    column: $table.checkedOutAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1920,6 +1980,11 @@ class $$LocalAttendanceQueueTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get checkedOutAt => $composableBuilder(
+    column: $table.checkedOutAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isSynced => $composableBuilder(
     column: $table.isSynced,
     builder: (column) => ColumnOrderings(column),
@@ -1946,6 +2011,11 @@ class $$LocalAttendanceQueueTableAnnotationComposer
 
   GeneratedColumn<DateTime> get checkedInAt => $composableBuilder(
     column: $table.checkedInAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get checkedOutAt => $composableBuilder(
+    column: $table.checkedOutAt,
     builder: (column) => column,
   );
 
@@ -2000,6 +2070,7 @@ class $$LocalAttendanceQueueTableTableManager
                 Value<String> tenantId = const Value.absent(),
                 Value<String> athleteId = const Value.absent(),
                 Value<DateTime> checkedInAt = const Value.absent(),
+                Value<DateTime?> checkedOutAt = const Value.absent(),
                 Value<bool> isSynced = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalAttendanceQueueCompanion(
@@ -2007,6 +2078,7 @@ class $$LocalAttendanceQueueTableTableManager
                 tenantId: tenantId,
                 athleteId: athleteId,
                 checkedInAt: checkedInAt,
+                checkedOutAt: checkedOutAt,
                 isSynced: isSynced,
                 rowid: rowid,
               ),
@@ -2016,6 +2088,7 @@ class $$LocalAttendanceQueueTableTableManager
                 required String tenantId,
                 required String athleteId,
                 required DateTime checkedInAt,
+                Value<DateTime?> checkedOutAt = const Value.absent(),
                 Value<bool> isSynced = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalAttendanceQueueCompanion.insert(
@@ -2023,6 +2096,7 @@ class $$LocalAttendanceQueueTableTableManager
                 tenantId: tenantId,
                 athleteId: athleteId,
                 checkedInAt: checkedInAt,
+                checkedOutAt: checkedOutAt,
                 isSynced: isSynced,
                 rowid: rowid,
               ),

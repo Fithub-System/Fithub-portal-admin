@@ -12,10 +12,7 @@ import '../../../memberships/presentation/cubit/memberships_cubit.dart';
 ///
 /// Visual Spec Card: `Docs/feat61-visual-spec-freeze-policy.md`
 class FreezePolicySettingsSection extends StatefulWidget {
-  const FreezePolicySettingsSection({
-    super.key,
-    required this.canWrite,
-  });
+  const FreezePolicySettingsSection({super.key, required this.canWrite});
 
   final bool canWrite;
 
@@ -317,9 +314,9 @@ class _PoliciesList extends StatelessWidget {
     if (policies.isEmpty) {
       return Text(
         'gym_settings.freeze.empty'.tr(),
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: KineticTokens.zincGray,
-        ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: KineticTokens.zincGray),
       );
     }
     return Column(
@@ -345,9 +342,9 @@ class _PoliciesList extends StatelessWidget {
                   'max': '${p.maxFreezeDaysPerTime}',
                 },
               ),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: KineticTokens.pureWhite,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: KineticTokens.pureWhite),
             ),
           ),
       ],

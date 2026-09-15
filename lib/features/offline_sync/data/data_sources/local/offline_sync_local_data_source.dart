@@ -27,6 +27,7 @@ class OfflineSyncDriftLocalDataSource implements OfflineSyncLocalDataSource {
             tenantId: row.tenantId,
             athleteId: row.athleteId,
             checkedInAt: row.checkedInAt,
+            checkedOutAt: row.checkedOutAt,
           ),
         )
         .toList(growable: false);
