@@ -192,11 +192,14 @@ class ScanRepository {
   String? _decodeAthleteId(String rawPayload) {
     try {
       final decoded = jsonDecode(rawPayload);
-      if (decoded is! Map<String, dynamic>) {
+      if (decoded is! Map) {
         return null;
       }
-      return decoded['athlete_id'] as String?;
-    } on FormatException {
+      final id = Map<String, dynamic>.from(decoded)['athlete_id'];
+      if (id == null) return null;
+      final asString = id.toString();
+      return asString.isEmpty ? null : asString;
+    } catch (_) {
       return null;
     }
   }

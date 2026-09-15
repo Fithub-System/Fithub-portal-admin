@@ -181,30 +181,20 @@ class _ScanViewportState extends State<_ScanViewport>
                 if (state.cameraReady) {
                   return IgnorePointer(
                     child: Align(
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.qr_code_scanner,
-                            size: 96,
-                            color: KineticTokens.primaryContainer.withValues(
-                              alpha: 0.2,
-                            ),
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text(
+                          key: const Key('access-scanner-ready-label'),
+                          'access_scanner.gate.ready_waiting'.tr(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 4.4,
+                            color: KineticTokens.primaryContainer,
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            key: const Key('access-scanner-ready-label'),
-                            'access_scanner.gate.ready_waiting'.tr(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 4.4,
-                              color: KineticTokens.primaryContainer,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   );
@@ -357,33 +347,55 @@ class _ConfirmCheckInButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AccessScannerCubit, AccessScannerState>(
-      buildWhen: (p, c) => p.success != c.success,
+      buildWhen: (p, c) =>
+          p.success != c.success ||
+          p.errorKey != c.errorKey ||
+          p.rejectReason != c.rejectReason,
       builder: (context, state) {
         final granted = state.success != null;
+        final rejected = !granted && state.errorKey != null;
+        final isCheckOut = state.success?.event == 'CHECK_OUT';
         return SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
             key: const Key('check-in-gate-confirm'),
             onPressed: () {
-              // Chrome mirrors Stitch grant flash; success already from FEAT-01.
+              final cubit = context.read<AccessScannerCubit>();
               if (granted) {
-                context.read<AccessScannerCubit>().dismissSuccess();
+                cubit.dismissSuccess();
+              } else if (rejected) {
+                cubit.dismissError();
               }
             },
             style: FilledButton.styleFrom(
               backgroundColor: granted
                   ? KineticTokens.secondaryContainer
+                  : rejected
+                  ? const Color(0xFFB71C1C)
                   : KineticTokens.primaryContainer,
               foregroundColor: granted
                   ? const Color(0xFF00285B)
+                  : rejected
+                  ? KineticTokens.pureWhite
                   : KineticTokens.onPrimaryContainer,
               padding: const EdgeInsets.symmetric(vertical: 24),
               shape: const RoundedRectangleBorder(),
             ),
-            icon: Icon(granted ? Icons.verified : Icons.check_circle, size: 28),
+            icon: Icon(
+              granted
+                  ? Icons.verified
+                  : rejected
+                  ? Icons.error_outline
+                  : Icons.check_circle,
+              size: 28,
+            ),
             label: Text(
               granted
-                  ? 'access_scanner.gate.access_granted'.tr()
+                  ? (isCheckOut
+                        ? 'access_scanner.success.check_out'.tr()
+                        : 'access_scanner.gate.access_granted'.tr())
+                  : rejected
+                  ? 'access_scanner.gate.access_denied'.tr()
                   : 'access_scanner.gate.confirm'.tr(),
               style: const TextStyle(
                 fontSize: 22,

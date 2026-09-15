@@ -266,6 +266,7 @@
       "ready_waiting": "Ready - Waiting for Scan",
       "confirm": "CONFIRM CHECK-IN",
       "access_granted": "ACCESS GRANTED",
+      "access_denied": "SCAN REJECTED",
       "system_id": "System ID: {id}",
       "encryption": "Encryption: {algo}",
       "peak_intensity": "Peak Intensity",

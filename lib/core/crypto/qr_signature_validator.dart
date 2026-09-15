@@ -19,15 +19,20 @@ class QrSignatureValidator {
     final clock = now ?? DateTime.now().toUtc();
     try {
       final decoded = jsonDecode(rawPayload);
-      if (decoded is! Map<String, dynamic>) {
+      final payload = _asStringKeyedMap(decoded);
+      if (payload == null) {
         return const QrValidationResult.invalid('Malformed QR payload.');
       }
 
-      final athleteId = decoded['athlete_id'] as String?;
-      final timestamp = decoded['timestamp'];
-      final signature = decoded['signature'] as String?;
+      final athleteId = payload['athlete_id']?.toString();
+      final timestamp = payload['timestamp'];
+      final signature = payload['signature']?.toString();
 
-      if (athleteId == null || timestamp == null || signature == null) {
+      if (athleteId == null ||
+          athleteId.isEmpty ||
+          timestamp == null ||
+          signature == null ||
+          signature.isEmpty) {
         return const QrValidationResult.invalid('Missing QR fields.');
       }
 
@@ -37,7 +42,9 @@ class QrSignatureValidator {
       }
 
       final age = clock.difference(issuedAt);
-      if (age.isNegative || age > tokenLifetime) {
+      // Flutter web / device clocks can be a few seconds apart. Reject only
+      // tokens issued more than 5s in the future, or older than lifetime.
+      if (age > tokenLifetime || age < const Duration(seconds: -5)) {
         return const QrValidationResult.invalid('QR token expired.');
       }
 
@@ -54,6 +61,8 @@ class QrSignatureValidator {
       return QrValidationResult.valid(athleteId: athleteId, issuedAt: issuedAt);
     } on FormatException {
       return const QrValidationResult.invalid('Invalid JSON payload.');
+    } catch (_) {
+      return const QrValidationResult.invalid('Malformed QR payload.');
     }
   }
 
@@ -74,15 +83,29 @@ class QrSignatureValidator {
     return sha256.convert(utf8.encode(material)).toString();
   }
 
-  static DateTime? _parseTimestamp(Object value) {
-    if (value is int) {
-      return DateTime.fromMillisecondsSinceEpoch(value * 1000, isUtc: true);
+  /// Flutter web `jsonDecode` yields [Map] that may not be `Map<String, dynamic>`.
+  static Map<String, dynamic>? _asStringKeyedMap(Object? decoded) {
+    if (decoded is Map<String, dynamic>) return decoded;
+    if (decoded is Map) {
+      return {
+        for (final entry in decoded.entries) entry.key.toString(): entry.value,
+      };
+    }
+    return null;
+  }
+
+  /// Flutter web `jsonDecode` yields [num] (often [double]) for JSON numbers.
+  static DateTime? _parseTimestamp(Object? value) {
+    if (value is num) {
+      return DateTime.fromMillisecondsSinceEpoch(
+        value.toInt() * 1000,
+        isUtc: true,
+      );
     }
     if (value is String) {
-      final parsed = int.tryParse(value);
-      if (parsed != null) {
-        return DateTime.fromMillisecondsSinceEpoch(parsed * 1000, isUtc: true);
-      }
+      final parsed = num.tryParse(value)?.toInt();
+      if (parsed == null) return null;
+      return DateTime.fromMillisecondsSinceEpoch(parsed * 1000, isUtc: true);
     }
     return null;
   }

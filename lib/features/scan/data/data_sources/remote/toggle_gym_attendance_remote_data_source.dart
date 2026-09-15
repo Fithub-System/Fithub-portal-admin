@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
@@ -93,21 +95,46 @@ class ToggleGymAttendanceSupabaseRemoteDataSource
 
   Map<String, dynamic> _asMap(dynamic raw) {
     if (raw is Map<String, dynamic>) return raw;
-    if (raw is Map) return Map<String, dynamic>.from(raw);
+    if (raw is Map) {
+      return raw.map((key, value) => MapEntry(key.toString(), value));
+    }
+    if (raw is String && raw.trim().isNotEmpty) {
+      try {
+        final decoded = jsonDecode(raw);
+        if (decoded is Map) {
+          return decoded.map((key, value) => MapEntry(key.toString(), value));
+        }
+      } catch (_) {
+        return const {};
+      }
+    }
     return const {};
   }
 
   int _asInt(dynamic raw) {
     if (raw is int) return raw;
+    if (raw is num) return raw.toInt();
     return int.tryParse(raw?.toString() ?? '') ?? 0;
   }
 
   String _mapCode(PostgrestException e) {
     final hay = '${e.message} ${e.code} ${e.details}'.toLowerCase();
-    if (hay.contains('capacity') || hay.contains('full')) {
+    if (hay.contains('feat92_gym_full') ||
+        hay.contains('capacity') ||
+        hay.contains('full')) {
       return 'at_capacity';
     }
-    if (hay.contains('42501') || hay.contains('forbidden')) {
+    if (hay.contains('feat92_athlete_not_member')) {
+      return 'not_member';
+    }
+    if (hay.contains('feat92_athlete_not_found')) {
+      return 'not_found';
+    }
+    if (hay.contains('feat92_forbidden_role') ||
+        hay.contains('feat92_employee_only') ||
+        hay.contains('feat92_auth_required') ||
+        hay.contains('42501') ||
+        hay.contains('forbidden')) {
       return 'forbidden';
     }
     return 'unknown';
