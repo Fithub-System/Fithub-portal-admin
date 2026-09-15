@@ -18,7 +18,8 @@ import '../widgets/members_stats_bento.dart';
 ///
 /// FEAT-59: opens with cloud refresh; empty live roster shows empty chrome
 /// (fixtures only for widget tests / explicit demo). FEAT-07 assign + plans
-/// (via Filter Type sheet), FEAT-13 Add Member, FEAT-61 renew/freeze preserved.
+/// (Plans CTA → sheet, not a rail tab), FEAT-13 Add Member, FEAT-61
+/// renew/freeze preserved.
 class MemberManagementScreen extends StatefulWidget {
   const MemberManagementScreen({
     super.key,
@@ -64,9 +65,8 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
     await Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
         builder: (_) => BlocProvider(
-          create: (_) => add_member_di.createAddMemberBloc(
-            InjectionContainer.locator,
-          ),
+          create: (_) =>
+              add_member_di.createAddMemberBloc(InjectionContainer.locator),
           child: AddMemberScreen(
             onEnrolled: (messageKey) {
               context.read<MemberRosterCubit>().refreshFromCloud();
@@ -138,9 +138,7 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
         if (state.status == MemberRosterStatus.loading ||
             state.status == MemberRosterStatus.initial) {
           return const Center(
-            child: CircularProgressIndicator(
-              color: KineticTokens.electricLime,
-            ),
+            child: CircularProgressIndicator(color: KineticTokens.electricLime),
           );
         }
 
@@ -191,10 +189,7 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
                   onFilter: () => _openPlansSheet(context),
                 ),
                 const SizedBox(height: 32),
-                MembersStatsBento(
-                  members: rows,
-                  usingFixtures: false,
-                ),
+                MembersStatsBento(members: rows, usingFixtures: false),
                 const SizedBox(height: 32),
                 DecoratedBox(
                   decoration: BoxDecoration(
@@ -218,6 +213,7 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
                             onRetry: () => context
                                 .read<MemberRosterCubit>()
                                 .refreshFromCloud(),
+                            onOpenPlans: () => _openPlansSheet(context),
                           )
                         : Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -247,10 +243,7 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({
-    required this.onAdd,
-    required this.onFilter,
-  });
+  const _Header({required this.onAdd, required this.onFilter});
 
   final VoidCallback? onAdd;
   final VoidCallback onFilter;
@@ -293,8 +286,9 @@ class _Header extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             OutlinedButton.icon(
+              key: const Key('members-plans-cta'),
               onPressed: onFilter,
-              icon: const Icon(Icons.filter_list, size: 16),
+              icon: const Icon(Icons.card_membership, size: 16),
               label: Text('members.cta.filter_type'.tr()),
               style: OutlinedButton.styleFrom(
                 foregroundColor: KineticTokens.onSurface,
@@ -346,11 +340,7 @@ class _Header extends StatelessWidget {
         if (stack) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              titleBlock,
-              const SizedBox(height: 24),
-              actions,
-            ],
+            children: [titleBlock, const SizedBox(height: 24), actions],
           );
         }
 
@@ -368,9 +358,10 @@ class _Header extends StatelessWidget {
 
 /// Empty live roster — actionable chrome (FEAT-59 AC-A2 / AC-A3).
 class _EmptyRosterChrome extends StatelessWidget {
-  const _EmptyRosterChrome({required this.onRetry});
+  const _EmptyRosterChrome({required this.onRetry, required this.onOpenPlans});
 
   final VoidCallback onRetry;
+  final VoidCallback onOpenPlans;
 
   @override
   Widget build(BuildContext context) {
@@ -387,14 +378,23 @@ class _EmptyRosterChrome extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 16),
-          TextButton(
-            onPressed: onRetry,
-            child: Text('memberships.retry'.tr()),
+          const SizedBox(height: 24),
+          OutlinedButton.icon(
+            key: const Key('members-empty-plans-cta'),
+            onPressed: onOpenPlans,
+            icon: const Icon(Icons.card_membership, size: 16),
+            label: Text('members.cta.filter_type'.tr()),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: KineticTokens.onSurface,
+              side: BorderSide(
+                color: const Color(0xFF444933).withValues(alpha: 0.3),
+              ),
+            ),
           ),
+          const SizedBox(height: 8),
+          TextButton(onPressed: onRetry, child: Text('memberships.retry'.tr())),
         ],
       ),
     );
   }
 }
-

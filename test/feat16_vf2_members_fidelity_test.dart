@@ -56,11 +56,13 @@ void main() {
         ),
       );
       when(() => membershipsCubit.load()).thenAnswer((_) async {});
-      when(() => membershipsCubit.loadFreezePolicies()).thenAnswer((_) async {});
+      when(
+        () => membershipsCubit.loadFreezePolicies(),
+      ).thenAnswer((_) async {});
 
-      when(() => rosterCubit.state).thenReturn(
-        const MemberRosterState(status: MemberRosterStatus.ready),
-      );
+      when(
+        () => rosterCubit.state,
+      ).thenReturn(const MemberRosterState(status: MemberRosterStatus.ready));
       when(() => rosterCubit.stream).thenAnswer(
         (_) => Stream.value(
           const MemberRosterState(status: MemberRosterStatus.ready),
@@ -83,10 +85,7 @@ void main() {
             BlocProvider<MembershipsCubit>.value(value: membershipsCubit),
             BlocProvider<MemberRosterCubit>.value(value: rosterCubit),
           ],
-          child: const MemberManagementScreen(
-            canWrite: true,
-            canEnroll: true,
-          ),
+          child: const MemberManagementScreen(canWrite: true, canEnroll: true),
         ),
         waitFor: find.text('ACTIVE ROSTER'),
       );
@@ -99,14 +98,15 @@ void main() {
 
       expect(find.text('ACTIVE ROSTER'), findsOneWidget);
       expect(find.text('ELITE TIER'), findsOneWidget);
-      expect(find.text('Filter Type'), findsOneWidget);
+      expect(find.byKey(const Key('members-plans-cta')), findsOneWidget);
+      expect(find.text('Plans'), findsWidgets);
       expect(find.text('Add New Member'), findsOneWidget);
       expect(find.text('SYNC ACTIVE'), findsOneWidget);
       expect(find.text('API V2.4'), findsOneWidget);
 
       expect(find.text('Dominic Russo'), findsNothing);
       expect(find.text('Sarah Miller'), findsNothing);
-      expect(find.textContaining('No members in this gym'), findsOneWidget);
+      expect(find.textContaining('No members enrolled'), findsOneWidget);
       expect(find.text('—'), findsNothing);
     });
 
@@ -171,10 +171,9 @@ void main() {
       );
 
       expect(find.text('Add New Member'), findsOneWidget);
-      final button = tester.widget<FilledButton>(find.widgetWithText(
-        FilledButton,
-        'Add New Member',
-      ));
+      final button = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Add New Member'),
+      );
       expect(button.onPressed, isNull);
     });
   });

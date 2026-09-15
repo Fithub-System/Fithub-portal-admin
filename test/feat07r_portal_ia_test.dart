@@ -32,10 +32,7 @@ void main() {
         MemberManagementScreen.stitchScreenId,
         '9b35dd57f15443e99f7e798f6867acb6',
       );
-      expect(
-        MemberManagementScreen.stitchScreenTitle,
-        'Member Management',
-      );
+      expect(MemberManagementScreen.stitchScreenTitle, 'Member Management');
     });
   });
 
@@ -56,7 +53,9 @@ void main() {
         ),
       );
       when(() => membershipsCubit.load()).thenAnswer((_) async {});
-      when(() => membershipsCubit.loadFreezePolicies()).thenAnswer((_) async {});
+      when(
+        () => membershipsCubit.loadFreezePolicies(),
+      ).thenAnswer((_) async {});
 
       when(() => rosterCubit.state).thenReturn(
         MemberRosterState(
@@ -117,7 +116,7 @@ void main() {
       expect(find.byType(TabBar), findsNothing);
     });
 
-    testWidgets('Filter Type opens plans sheet (FEAT-07, no freehand tab)', (
+    testWidgets('Plans CTA opens plans sheet (FEAT-07, no freehand tab)', (
       tester,
     ) async {
       await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -130,14 +129,12 @@ void main() {
             BlocProvider<MembershipsCubit>.value(value: membershipsCubit),
             BlocProvider<MemberRosterCubit>.value(value: rosterCubit),
           ],
-          child: const Scaffold(
-            body: MemberManagementScreen(canWrite: false),
-          ),
+          child: const Scaffold(body: MemberManagementScreen(canWrite: false)),
         ),
-        waitFor: find.text('Filter Type'),
+        waitFor: find.byKey(const Key('members-plans-cta')),
       );
 
-      await tester.tap(find.text('Filter Type'));
+      await tester.tap(find.byKey(const Key('members-plans-cta')));
       await tester.pumpAndSettle();
 
       expect(find.text('PLANS'), findsWidgets);
