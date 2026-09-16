@@ -41,7 +41,12 @@ class MemberRosterSupabaseRemoteDataSource
           await _fetchViaGymMembers(client) ??
           await _fetchAthletesDirect(client);
 
-      final membershipByAthlete = await _fetchOperableMemberships(client);
+      var membershipByAthlete = const <String, _CachedMembership>{};
+      try {
+        membershipByAthlete = await _fetchOperableMemberships(client);
+      } catch (_) {
+        // Roster rows must still bind when membership overlay mapping fails.
+      }
       if (membershipByAthlete.isEmpty) return athletes;
 
       return athletes
@@ -74,18 +79,22 @@ class MemberRosterSupabaseRemoteDataSource
     SupabaseClient client,
   ) async {
     try {
-      final rows = await client
-          .from('gym_members')
-          .select(
-            'athlete_id, athletes!inner(id, full_name, avatar_url, power_score, crypto_salt, created_at)',
-          );
+      final rows = asJsonMapList(
+        await client
+            .from('gym_members')
+            .select(
+              'athlete_id, athletes!inner(id, full_name, avatar_url, power_score, crypto_salt, created_at)',
+            ),
+      );
 
       final athletes = <MemberRosterEntry>[];
-      for (final row in rows as List<dynamic>) {
-        final data = asJsonMap(row);
+      for (final data in rows) {
         final mapped = mapAthleteRosterRow(embeddedAthlete(data['athletes']));
         if (mapped != null) athletes.add(mapped);
       }
+      // Mapped-empty with source rows means the embed did not bind — fall
+      // through to `athletes` SELECT (same 200 payload the Network tab shows).
+      if (athletes.isEmpty && rows.isNotEmpty) return null;
       return athletes;
     } on PostgrestException catch (error) {
       if (_isPolicyDenial(error)) {
@@ -101,14 +110,16 @@ class MemberRosterSupabaseRemoteDataSource
   Future<List<MemberRosterEntry>> _fetchAthletesDirect(
     SupabaseClient client,
   ) async {
-    final rows = await client
-        .from('athletes')
-        .select(
-          'id, full_name, avatar_url, power_score, crypto_salt, created_at',
-        );
+    final rows = asJsonMapList(
+      await client
+          .from('athletes')
+          .select(
+            'id, full_name, avatar_url, power_score, crypto_salt, created_at',
+          ),
+    );
 
     final athletes = <MemberRosterEntry>[];
-    for (final row in rows as List<dynamic>) {
+    for (final row in rows) {
       final mapped = mapAthleteRosterRow(row);
       if (mapped != null) athletes.add(mapped);
     }
@@ -128,8 +139,7 @@ class MemberRosterSupabaseRemoteDataSource
           .inFilter('status', ['active', 'paused', 'scheduled']);
 
       final map = <String, _CachedMembership>{};
-      for (final row in rows as List<dynamic>) {
-        final data = asJsonMap(row);
+      for (final data in asJsonMapList(rows)) {
         final athleteId = data['athlete_id']?.toString();
         final membershipId = data['id']?.toString();
         if (athleteId == null ||

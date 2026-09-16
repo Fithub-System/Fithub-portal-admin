@@ -1,3 +1,4 @@
+import 'package:fithub_portal_admin/core/network/postgrest_row.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/core/storage/secure_storage_service.dart';
 import 'package:fithub_portal_admin/features/auth/data/models/employee_profile_model.dart';
@@ -91,7 +92,7 @@ class AuthRepositoryImpl implements AuthRepository {
       throw const EmployeeProfileMissingFailure();
     }
 
-    final profile = EmployeeProfileModel.fromJson(row);
+    final profile = EmployeeProfileModel.fromJson(asJsonMap(row));
 
     // Portal M1: Admin | Receptionist only (deny Coach).
     if (!_allowedRoles.contains(profile.role)) {

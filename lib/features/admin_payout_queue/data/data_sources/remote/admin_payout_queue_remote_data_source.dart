@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:fithub_portal_admin/core/network/postgrest_row.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/features/admin_payout_queue/domain/admin_payout_failure.dart';
 import 'package:fithub_portal_admin/features/admin_payout_queue/domain/entities/coach_payout_request.dart';
@@ -31,7 +32,7 @@ abstract class AdminPayoutQueueRemoteDataSource {
 class AdminPayoutQueueSupabaseRemoteDataSource
     implements AdminPayoutQueueRemoteDataSource {
   AdminPayoutQueueSupabaseRemoteDataSource({SupabaseClient? client})
-      : _client = client;
+    : _client = client;
 
   final SupabaseClient? _client;
 
@@ -55,9 +56,7 @@ class AdminPayoutQueueSupabaseRemoteDataSource
           .select(_selectColumns)
           .order('created_at', ascending: false)
           .limit(limit);
-      return (rows as List<dynamic>)
-          .map((row) => _mapRequest(row as Map<String, dynamic>))
-          .toList(growable: false);
+      return asJsonMapList(rows).map(_mapRequest).toList(growable: false);
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -75,13 +74,10 @@ class AdminPayoutQueueSupabaseRemoteDataSource
     try {
       final result = await client.rpc(
         'admin_fulfill_coach_payout',
-        params: {
-          'p_request_id': requestId,
-          'p_action': action.apiValue,
-        },
+        params: {'p_request_id': requestId, 'p_action': action.apiValue},
       );
       if (result is Map) {
-        return _mapRequest(Map<String, dynamic>.from(result));
+        return _mapRequest(asJsonMap(result));
       }
       // Some RPC shapes return void / bool — re-fetch row by id via view.
       final rows = await client
@@ -89,11 +85,11 @@ class AdminPayoutQueueSupabaseRemoteDataSource
           .select(_selectColumns)
           .eq('id', requestId)
           .limit(1);
-      final list = rows as List<dynamic>;
+      final list = asJsonMapList(rows);
       if (list.isEmpty) {
         throw const AdminPayoutNotFoundFailure();
       }
-      return _mapRequest(list.first as Map<String, dynamic>);
+      return _mapRequest(list.first);
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -140,18 +136,18 @@ class AdminPayoutQueueSupabaseRemoteDataSource
     try {
       final result = await client.rpc(fn, params: params);
       if (result is Map) {
-        return _mapRequest(Map<String, dynamic>.from(result));
+        return _mapRequest(asJsonMap(result));
       }
       final rows = await client
           .from('coach_payout_requests_for_admin')
           .select(_selectColumns)
           .eq('id', requestId)
           .limit(1);
-      final list = rows as List<dynamic>;
+      final list = asJsonMapList(rows);
       if (list.isEmpty) {
         throw const AdminPayoutNotFoundFailure();
       }
-      return _mapRequest(list.first as Map<String, dynamic>);
+      return _mapRequest(list.first);
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {

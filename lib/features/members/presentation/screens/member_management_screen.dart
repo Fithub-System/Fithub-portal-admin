@@ -145,8 +145,9 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
         // FEAT-59 AC-A2: never mask empty live roster with Stitch sample rows.
         final rows = state.members;
         final showRetryBanner =
-            state.status == MemberRosterStatus.failure ||
-            (state.errorKey != null && state.errorKey!.isNotEmpty);
+            rows.isEmpty &&
+            (state.status == MemberRosterStatus.failure ||
+                (state.errorKey != null && state.errorKey!.isNotEmpty));
 
         return ColoredBox(
           color: KineticTokens.stitchBackground,

@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:fithub_portal_admin/core/network/postgrest_row.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/features/billing/domain/billing_failure.dart';
 import 'package:fithub_portal_admin/features/billing/domain/entities/membership_charge.dart';
@@ -48,9 +49,7 @@ class BillingSupabaseRemoteDataSource implements BillingRemoteDataSource {
           .eq('tenant_id', tenantId)
           .order('due_at', ascending: false)
           .limit(limit);
-      return (rows as List<dynamic>)
-          .map((row) => _mapCharge(row as Map<String, dynamic>))
-          .toList(growable: false);
+      return asJsonMapList(rows).map(_mapCharge).toList(growable: false);
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -72,7 +71,7 @@ class BillingSupabaseRemoteDataSource implements BillingRemoteDataSource {
           .eq('id', chargeId)
           .select(_selectColumns)
           .single();
-      return _mapCharge(row);
+      return _mapCharge(asJsonMap(row));
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -109,29 +108,29 @@ class BillingSupabaseRemoteDataSource implements BillingRemoteDataSource {
   }
 
   MembershipCharge _mapCharge(Map<String, dynamic> row) {
-    final athletes = row['athletes'];
-    final plans = row['membership_plans'];
     String? athleteName;
     String? planName;
-    if (athletes is Map<String, dynamic>) {
-      athleteName = athletes['full_name'] as String?;
+    final athletes = row['athletes'];
+    final plans = row['membership_plans'];
+    if (athletes is Map) {
+      athleteName = jsonStringOrNull(asJsonMap(athletes)['full_name']);
     }
-    if (plans is Map<String, dynamic>) {
-      planName = plans['name'] as String?;
+    if (plans is Map) {
+      planName = jsonStringOrNull(asJsonMap(plans)['name']);
     }
     return MembershipCharge(
-      id: row['id'] as String,
-      tenantId: row['tenant_id'] as String,
-      athleteId: row['athlete_id'] as String,
-      athleteMembershipId: row['athlete_membership_id'] as String,
-      planId: row['plan_id'] as String,
-      amountCents: (row['amount_cents'] as num).toInt(),
-      currency: row['currency'] as String? ?? 'EGP',
-      status: MembershipChargeStatus.fromApi(row['status'] as String? ?? ''),
-      dueAt: DateTime.parse(row['due_at'] as String),
-      paidAt: row['paid_at'] == null
-          ? null
-          : DateTime.parse(row['paid_at'] as String),
+      id: jsonStringOrNull(row['id']) ?? '',
+      tenantId: jsonStringOrNull(row['tenant_id']) ?? '',
+      athleteId: jsonStringOrNull(row['athlete_id']) ?? '',
+      athleteMembershipId: jsonStringOrNull(row['athlete_membership_id']) ?? '',
+      planId: jsonStringOrNull(row['plan_id']) ?? '',
+      amountCents: asJsonInt(row['amount_cents']),
+      currency: jsonStringOrNull(row['currency']) ?? 'EGP',
+      status: MembershipChargeStatus.fromApi(
+        jsonStringOrNull(row['status']) ?? '',
+      ),
+      dueAt: parseJsonUtc(row['due_at']) ?? DateTime.now().toUtc(),
+      paidAt: parseJsonUtc(row['paid_at']),
       athleteName: athleteName,
       planName: planName,
     );

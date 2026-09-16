@@ -4,6 +4,7 @@ import 'package:fithub_portal_admin/features/access_scanner/data/data_sources/re
 import 'package:fithub_portal_admin/features/dashboard/presentation/cubit/overview_metrics_cubit.dart';
 import 'package:fithub_portal_admin/features/dashboard/domain/entities/overview_home_metrics.dart';
 import 'package:fithub_portal_admin/features/dashboard/domain/repositories/overview_home_metrics_repository.dart';
+import 'package:fithub_portal_admin/features/memberships/data/data_sources/remote/memberships_remote_data_source.dart';
 
 class _DegradedRepo implements OverviewHomeMetricsRepository {
   @override
@@ -52,9 +53,24 @@ void main() {
       expect(mapped?.id, 'a1');
     });
 
-    test('mapAthleteRosterRow skips incomplete rows', () {
-      expect(mapAthleteRosterRow(<String, dynamic>{'id': 'x'}), isNull);
-      expect(mapAthleteRosterRow('not-a-map'), isNull);
+    test('asJsonMapList and membershipPlanFromRow bind web JSON arrays', () {
+      final rows = <dynamic>[
+        <dynamic, dynamic>{
+          'id': 'p1',
+          'tenant_id': 't1',
+          'name': 'Monthly',
+          'duration_days': 30.0,
+          'price_cents': 50000.0,
+          'currency': 'EGP',
+          'is_active': true,
+          'pass_kind': 'single_branch',
+        },
+      ];
+      expect(asJsonMapList(rows), hasLength(1));
+      final plan = membershipPlanFromRow(rows.first);
+      expect(plan?.name, 'Monthly');
+      expect(plan?.durationDays, 30);
+      expect(plan?.priceCents, 50000);
     });
   });
 

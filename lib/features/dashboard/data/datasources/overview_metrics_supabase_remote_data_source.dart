@@ -32,7 +32,7 @@ class OverviewMetricsSupabaseRemoteDataSource
         .select('id')
         .eq('tenant_id', tenantId)
         .gte('checked_in_at', dayStartUtc.toUtc().toIso8601String());
-    return (rows as List<dynamic>).length;
+    return asJsonMapList(rows).length;
   }
 
   @override
@@ -50,8 +50,7 @@ class OverviewMetricsSupabaseRemoteDataSource
 
     var total = 0;
     var currency = 'EGP';
-    for (final row in rows as List<dynamic>) {
-      final data = asJsonMap(row);
+    for (final data in asJsonMapList(rows)) {
       total += asJsonInt(data['amount_cents']);
       final c = data['currency']?.toString();
       if (c != null && c.isNotEmpty) currency = c;
@@ -66,7 +65,7 @@ class OverviewMetricsSupabaseRemoteDataSource
         .from('gym_members')
         .select('athlete_id')
         .eq('tenant_id', tenantId);
-    return (rows as List<dynamic>).length;
+    return asJsonMapList(rows).length;
   }
 
   SupabaseClient _requireClient() {
