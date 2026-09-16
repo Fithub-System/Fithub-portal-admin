@@ -171,13 +171,13 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
         rawPayload: trimmed,
         online: _isOnline(),
       );
-    } catch (_) {
+    } catch (error) {
       if (isClosed) return;
       emit(
         state.copyWith(
           isProcessing: false,
           errorKey: 'access_scanner.scan.rejected',
-          rejectReason: 'Scan failed. Try again.',
+          rejectReason: _rejectReasonFromError(error),
         ),
       );
       return;
@@ -214,6 +214,16 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
 
   Future<void> processManualPayload(String rawPayload) {
     return onQrDetected(rawPayload);
+  }
+
+  static String _rejectReasonFromError(Object error) {
+    final text = error.toString().toLowerCase();
+    if (text.contains('drift') ||
+        text.contains('sqlite') ||
+        text.contains('database')) {
+      return 'Local member cache failed. Retry roster sync.';
+    }
+    return 'Scan failed. Try again.';
   }
 
   void dismissSuccess() {
