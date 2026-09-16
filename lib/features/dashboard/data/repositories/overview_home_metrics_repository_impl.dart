@@ -45,17 +45,36 @@ class OverviewHomeMetricsRepositoryImpl
     final dayStart = DateTime.utc(now.year, now.month, now.day);
     final windowEnd = now.add(OverviewHomeMetrics.expiringSoonWindow);
 
-    final checkIns = await _remote.countCheckInsSince(
-      tenantId: tenantId,
-      dayStartUtc: dayStart,
-    );
-    final paid = await _remote.sumPaidChargesSince(
-      tenantId: tenantId,
-      dayStartUtc: dayStart,
-    );
+    var degraded = false;
+    var membersCount = members.length;
+    try {
+      membersCount = await _remote.countGymMembers(tenantId: tenantId);
+    } catch (_) {
+      degraded = true;
+    }
+
+    var checkIns = 0;
+    try {
+      checkIns = await _remote.countCheckInsSince(
+        tenantId: tenantId,
+        dayStartUtc: dayStart,
+      );
+    } catch (_) {
+      degraded = true;
+    }
+
+    var paid = (totalCents: 0, currency: OverviewHomeMetrics.defaultCurrency);
+    try {
+      paid = await _remote.sumPaidChargesSince(
+        tenantId: tenantId,
+        dayStartUtc: dayStart,
+      );
+    } catch (_) {
+      degraded = true;
+    }
 
     return OverviewHomeMetrics(
-      membersCount: members.length,
+      membersCount: membersCount,
       checkInsToday: checkIns,
       revenueTodayCents: paid.totalCents,
       revenueCurrency: paid.currency.isEmpty
@@ -66,6 +85,7 @@ class OverviewHomeMetricsRepositoryImpl
         now: now,
         windowEnd: windowEnd,
       ),
+      cloudDegraded: degraded,
     );
   }
 

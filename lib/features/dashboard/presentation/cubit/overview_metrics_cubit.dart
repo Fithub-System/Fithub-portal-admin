@@ -77,15 +77,21 @@ class OverviewMetricsCubit extends Cubit<OverviewMetricsState> {
       final metrics = await _repository.load(tenantId: _tenantId);
       emit(
         OverviewMetricsState(
-          status: OverviewMetricsStatus.ready,
+          status: metrics.cloudDegraded
+              ? OverviewMetricsStatus.failure
+              : OverviewMetricsStatus.ready,
           metrics: metrics,
+          statusMessageKey: metrics.cloudDegraded
+              ? 'dashboard.metrics.load_failed'
+              : null,
         ),
       );
     } catch (_) {
       emit(
         OverviewMetricsState(
           status: OverviewMetricsStatus.failure,
-          metrics: state.metrics ??
+          metrics:
+              state.metrics ??
               const OverviewHomeMetrics(
                 membersCount: 0,
                 checkInsToday: 0,
