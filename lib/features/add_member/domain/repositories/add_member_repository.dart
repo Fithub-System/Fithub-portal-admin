@@ -9,6 +9,9 @@ abstract class AddMemberRepository {
   /// `find_athlete_for_enroll` — null when no match (empty jsonb).
   Future<AthleteEnrollMatch?> findAthleteForEnroll(String email);
 
+  /// `search_athletes_for_desk` — Admin+Receptionist; empty query → `[]`.
+  Future<List<AthleteEnrollMatch>> searchAthletesForDesk(String query);
+
   /// `enroll_gym_member` — Admin-only, tenant forced server-side.
   Future<EnrollGymMemberResult> enrollGymMember(String athleteId);
 

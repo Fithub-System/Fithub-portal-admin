@@ -511,7 +511,18 @@
   },
   "add_member": {
     "title": "ADD NEW MEMBER",
-    "subtitle": "Link an existing athlete, or invite by email / username. Invitees accept with a membership OTP in the Athlete app.",
+    "subtitle": "PROVISIONING ATHLETE PROFILE",
+    "step": {
+      "find": "Find or Invite",
+      "plan": "Assign Plan"
+    },
+    "search_label": "Search Existing Athlete Database",
+    "search_hint": "917-555-0198",
+    "searching": "Searching...",
+    "no_matches": "No athlete found for that search.",
+    "create_divider": "or create new",
+    "verify_title": "Data Verification",
+    "verify_body": "Profiles created here will automatically trigger a \"Welcome & Waiver\" digital sequence via SMS and Email once the plan is assigned.",
     "tab": {
       "link": "Link existing",
       "invite": "Invite"
@@ -524,14 +535,23 @@
       "add_new": "Add New Member",
       "find": "Find athlete",
       "enroll": "Enroll member",
+      "enroll_assign": "Enroll & Assign Athlete",
       "send_invite": "Send invite",
-      "send_invite_later": "Send invite later"
+      "send_invite_later": "Send invite later",
+      "cancel_request": "Cancel Request",
+      "next_step": "Next: Step 2",
+      "back_step": "Back: Step 1"
     },
     "field": {
       "email": "Athlete email",
       "email_hint": "athlete@example.com",
       "identifier": "Email or username",
       "identifier_hint": "athlete@example.com or username",
+      "legal_name": "Full Legal Name",
+      "legal_name_hint": "e.g. Johnathan Miller",
+      "phone": "Phone Number",
+      "phone_hint": "(000) 000-0000",
+      "phone_prefix": "+20",
       "display_name": "Display name (optional)",
       "display_name_hint": "Preferred name",
       "plan_optional": "Membership plan (optional)"
@@ -559,7 +579,7 @@
       "invalid": "Invalid enroll input.",
       "unknown": "Could not enroll member."
     },
-    "visual_spec": "Visual Spec Card: Docs/feat62-visual-spec-add-member-invite.md (Stitch Add New Member)."
+    "visual_spec": "Visual Spec Card: Docs/feat95-visual-spec-g4.md (Stitch Add New Member dialog)."
   },
   "marketing": {
     "growth_engine": "GROWTH ENGINE",

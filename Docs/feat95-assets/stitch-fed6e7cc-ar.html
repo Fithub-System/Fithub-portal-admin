@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>إضافة عضو جديد | Pulse Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&amp;family=Lexend:wght@400;600;700;900&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-primary-fixed": "#161e00",
+                "primary": "#ffffff",
+                "surface-container-low": "#1c1b1b",
+                "secondary-fixed-dim": "#adc7ff",
+                "surface": "#131313",
+                "inverse-surface": "#e5e2e1",
+                "on-primary-container": "#556d00",
+                "error": "#ffb4ab",
+                "on-tertiary-fixed-variant": "#374956",
+                "on-secondary-fixed": "#001a41",
+                "outline-variant": "#444933",
+                "background": "#131313",
+                "on-tertiary-container": "#556774",
+                "on-error": "#690005",
+                "surface-container-high": "#2a2a2a",
+                "secondary": "#adc7ff",
+                "inverse-on-surface": "#313030",
+                "surface-dim": "#131313",
+                "primary-container": "#c3f400",
+                "on-secondary": "#002e68",
+                "tertiary-fixed-dim": "#b6c9d8",
+                "tertiary-fixed": "#d2e5f5",
+                "surface-tint": "#abd600",
+                "primary-fixed": "#c3f400",
+                "surface-container-highest": "#353534",
+                "on-error-container": "#ffdad6",
+                "surface-bright": "#393939",
+                "on-tertiary": "#21323e",
+                "secondary-container": "#4a8eff",
+                "on-surface": "#e5e2e1",
+                "secondary-fixed": "#d8e2ff",
+                "primary-fixed-dim": "#abd600",
+                "surface-container-lowest": "#0e0e0e",
+                "on-primary-fixed-variant": "#3c4d00",
+                "inverse-primary": "#506600",
+                "on-background": "#e5e2e1",
+                "on-tertiary-fixed": "#0b1d29",
+                "on-surface-variant": "#c4c9ac",
+                "surface-variant": "#353534",
+                "outline": "#8e9379",
+                "tertiary-container": "#d2e5f5",
+                "on-secondary-container": "#00285b",
+                "on-secondary-fixed-variant": "#004493",
+                "tertiary": "#ffffff",
+                "error-container": "#93000a",
+                "surface-container": "#201f1f",
+                "on-primary": "#283500"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+        },
+        "spacing": {},
+        "fontFamily": {
+                "headline": [
+                        "Lexend", "Cairo"
+                ],
+                "display": [
+                        "Lexend", "Cairo"
+                ],
+                "body": [
+                        "Inter", "Cairo"
+                ],
+                "label": [
+                        "Inter", "Cairo"
+                ]
+        },
+        "fontSize": {}
+},
+    },
+  }
+</script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Cairo', sans-serif;
+        }
+        .font-lexend { font-family: 'Lexend', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .kinetic-glow {
+            box-shadow: 0 0 40px rgba(195, 244, 0, 0.1);
+        }
+        .glass-panel {
+            background: rgba(28, 27, 27, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        /* Custom RTL tweaks for icons */
+        .rtl-flip { transform: scaleX(-1); }
+        .scrim { background-color: rgba(0, 0, 0, 0.7); }
+        .glass-card {
+            background: rgba(42, 42, 42, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .step-active { color: #c3f400; border-bottom: 2px solid #c3f400; }
+        .kinetic-gradient {
+            background: linear-gradient(135deg, #c3f400 0%, #abd600 100%);
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- Sidebar Navigation (Mirrored RTL) -->
+<aside class="fixed right-0 top-0 h-full flex flex-col py-6 z-50 shadow-2xl bg-surface-container-lowest w-64 rtl:right-0 border-l border-white/5">
+<div class="px-6 mb-10">
+<h1 class="text-title-lg font-headline font-black text-primary-container flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl">bolt</span>
+<span>PULSE</span>
+</h1>
+<p class="text-[10px] font-label font-medium uppercase tracking-[0.2em] text-on-surface-variant opacity-60">Elite Performance</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">الرئيسية</span>
+</a>
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 mx-2 my-1 shadow-[0_0_20px_rgba(195,244,0,0.15)] translate-x-[-4px]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">الأعضاء</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">الموظفون</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">الفصول</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">التسويق</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">التقارير</span>
+</a>
+</nav>
+<div class="mt-auto px-2">
+<div class="p-4 bg-surface-container-low rounded-xl mb-4 mx-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a high-performance athletic facility manager with a focused expression, wearing sleek dark branded sportswear. The lighting is dramatic and cinematic, emphasizing a professional and authoritative gym management persona. The background is a blurred high-tech fitness environment with dark metallic surfaces and subtle lime green lighting accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1rtLJIccWPtAsKa8pU0bWzvtzViE_9507gq6_0re3zpDtHmd8v9IokIf2rT-8B6XBnd4i_zjzBswjGsSdQJ0MP3dD55h2yky0rlfzRL9m2BwyziY0Cbj8ohwsclSfkKPc_T2I3iM-wj1la6dD33XWJmoK06StT2phFW0QS5I1DhzppFYvpefTq3GFk7kkbZaF_VcjpG823dtpn2D68mtrukoBMC05AbfTEjWUWPbV_12OldMVsEmkZtP-kBps9J3p8UT69qPPHRvU"/>
+</div>
+<div>
+<p class="text-sm font-bold">Pulse Admin</p>
+<p class="text-[10px] text-on-surface-variant">المدير العام</p>
+</div>
+</div>
+</div>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high px-4 py-3 mx-2 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">تسجيل الخروج</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="mr-64 p-8 min-h-screen relative overflow-hidden bg-surface">
+<!-- Subtle Ambient Background -->
+<div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary-container opacity-[0.03] blur-[120px]"></div>
+<!-- Dashboard Header Background Placeholder -->
+<header class="mb-12 flex justify-between items-end">
+<div>
+<h2 class="text-headline-lg font-headline font-black tracking-tight text-on-surface">إدارة الرياضيين</h2>
+<p class="text-on-surface-variant mt-1">تتبع وتحسين أداء النخبة في منشأتك.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container-low px-6 py-3 rounded-lg border-b-2 border-primary-container/20">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mb-1">إجمالي الأعضاء</p>
+<p class="text-2xl font-lexend font-black">1,284</p>
+</div>
+<div class="bg-surface-container-low px-6 py-3 rounded-lg border-b-2 border-secondary-container/20">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mb-1">نشط الآن</p>
+<p class="text-2xl font-lexend font-black">42</p>
+</div>
+</div>
+</header>
+<!-- Dummy Content to Show Context -->
+<div class="grid grid-cols-12 gap-6 opacity-40 grayscale pointer-events-none">
+<div class="col-span-8 bg-surface-container-low h-[400px] rounded-xl flex items-center justify-center border border-white/5">
+<p class="font-bold text-on-surface-variant">جدول بيانات الرياضيين</p>
+</div>
+<div class="col-span-4 bg-surface-container-low h-[400px] rounded-xl flex items-center justify-center border border-white/5">
+<p class="font-bold text-on-surface-variant">توزيع الفئات</p>
+</div>
+</div>
+<!-- THE MODAL OVERLAY -->
+<div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-surface/90 backdrop-blur-md">
+<!-- Modal Container -->
+<div class="glass-card w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border border-outline-variant/20 flex flex-col">
+<!-- Modal Header -->
+<div class="p-8 pb-4 flex justify-between items-start">
+<div>
+<h2 class="text-3xl font-display font-bold text-white tracking-tight uppercase">إضافة عضو جديد</h2>
+<p class="text-on-surface-variant text-xs font-medium tracking-wide mt-1">تجهيز ملف تعريف الرياضي</p>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">close</span>
+</button>
+</div>
+<!-- Stepper -->
+<div class="px-8 flex gap-8 mb-8 border-b border-outline-variant/15">
+<div class="pb-4 step-active flex items-center gap-2 cursor-pointer">
+<span class="text-[10px] font-bold bg-primary-container text-on-primary-container w-5 h-5 rounded-full flex items-center justify-center">1</span>
+<span class="text-xs font-label font-bold uppercase tracking-widest">البحث أو الدعوة</span>
+</div>
+<div class="pb-4 text-on-surface-variant flex items-center gap-2 cursor-pointer hover:text-on-surface transition-colors">
+<span class="text-[10px] font-bold border border-on-surface-variant w-5 h-5 rounded-full flex items-center justify-center">2</span>
+<span class="text-xs font-label font-bold uppercase tracking-widest">تعيين الخطة</span>
+</div>
+</div>
+<!-- Step 1 Content -->
+<div class="px-8 pb-12 flex-1 space-y-8">
+<!-- Search Athlete -->
+<section>
+<label class="block text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant mb-3">البحث في قاعدة بيانات الرياضيين الحالية</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-none border-b-2 border-primary-fixed py-4 pr-4 pl-12 text-on-surface placeholder:text-surface-variant focus:ring-0 transition-all font-lexend" dir="ltr" placeholder="917-555-0198" type="text" value="917-555-0198"/>
+<div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-primary-container uppercase tracking-widest">جاري البحث...</span>
+<div class="w-1 h-1 rounded-full bg-primary-container animate-ping"></div>
+</div>
+<span class="material-symbols-outlined text-primary-container">search</span>
+</div>
+</div>
+</section>
+<div class="flex items-center gap-4">
+<div class="h-px flex-1 bg-outline-variant/20"></div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">أو إنشاء عضو جديد</span>
+<div class="h-px flex-1 bg-outline-variant/20"></div>
+</div>
+<!-- New Profile Fields -->
+<div class="grid grid-cols-2 gap-6">
+<div class="relative group">
+<label class="block text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant mb-1 group-focus-within:text-primary-container transition-colors">الاسم القانوني الكامل</label>
+<input class="w-full bg-transparent border-none border-b border-outline-variant p-0 py-2 focus:ring-0 focus:border-primary-container text-lg font-headline transition-all" placeholder="مثال: جون ميلر" type="text"/>
+</div>
+<div class="relative group">
+<label class="block text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant mb-1 group-focus-within:text-primary-container transition-colors">رقم الهاتف</label>
+<input class="w-full bg-transparent border-none border-b border-outline-variant p-0 py-2 focus:ring-0 focus:border-primary-container text-lg font-headline transition-all" dir="ltr" placeholder="+1 (000) 000-0000" type="tel"/>
+</div>
+</div>
+<div class="bg-surface-container-highest/30 p-4 rounded-lg flex items-start gap-4 border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary-container mt-0.5">info</span>
+<div>
+<p class="text-xs font-bold uppercase tracking-wide">التحقق من البيانات</p>
+<p class="text-[11px] text-on-surface-variant mt-1 leading-relaxed">
+                            الملفات الشخصية التي يتم إنشاؤها هنا ستقوم تلقائياً بتشغيل تسلسل رقمي "ترحيب وتنازل" عبر الرسائل القصيرة والبريد الإلكتروني بمجرد تعيين الخطة.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Modal Footer (Actions) -->
+<div class="p-8 pt-0 flex justify-between items-center">
+<button class="px-6 py-3 rounded text-on-surface-variant font-bold text-[11px] uppercase tracking-widest hover:bg-surface-bright transition-colors">
+                    إلغاء الطلب
+                </button>
+<div class="flex gap-4">
+<button class="px-6 py-3 rounded-lg bg-surface-container-highest text-on-surface font-bold text-[11px] uppercase tracking-widest hover:bg-surface-bright transition-all flex items-center gap-2">
+                        التالي: الخطوة 2
+                    </button>
+<button class="px-8 py-3 rounded-lg kinetic-gradient text-on-primary-container font-extrabold text-[11px] uppercase tracking-[0.1em] shadow-xl shadow-primary-container/20 flex items-center gap-2 active:scale-95 transition-transform">
+<span>تسجيل وتعيين الرياضي</span>
+<span class="material-symbols-outlined text-lg rtl-flip">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for the search bar
+        const searchInput = document.querySelector('input[type="text"][dir="ltr"]');
+        const searchStatus = document.querySelector('.animate-pulse');
+        
+        if (searchInput && searchStatus) {
+            searchInput.addEventListener('input', (e) => {
+                if (e.target.value.length > 0) {
+                    searchStatus.textContent = '...جاري البحث';
+                } else {
+                    searchStatus.textContent = '';
+                }
+            });
+        }
+    </script>
+</body></html>

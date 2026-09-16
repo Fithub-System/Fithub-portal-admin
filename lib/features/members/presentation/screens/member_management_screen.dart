@@ -62,21 +62,26 @@ class _MemberManagementScreenState extends State<MemberManagementScreen> {
   }
 
   Future<void> _openAddMember(BuildContext context) async {
-    await Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(
-        builder: (_) => BlocProvider(
+    final host = context;
+    await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'add_member.title'.tr(),
+      barrierColor: Colors.transparent,
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return BlocProvider(
           create: (_) =>
               add_member_di.createAddMemberBloc(InjectionContainer.locator),
           child: AddMemberScreen(
             onEnrolled: (messageKey) {
-              context.read<MemberRosterCubit>().refreshFromCloud();
-              if (context.mounted) {
-                StitchAuthSnackbar.show(context, messageKey.tr());
+              host.read<MemberRosterCubit>().refreshFromCloud();
+              if (host.mounted) {
+                StitchAuthSnackbar.show(host, messageKey.tr());
               }
             },
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

@@ -14,6 +14,15 @@ class FindAthleteForEnrollUseCase {
   }
 }
 
+class SearchAthletesForDeskUseCase {
+  const SearchAthletesForDeskUseCase(this._repository);
+  final AddMemberRepository _repository;
+
+  Future<List<AthleteEnrollMatch>> call(String query) {
+    return _repository.searchAthletesForDesk(query);
+  }
+}
+
 class EnrollGymMemberUseCase {
   const EnrollGymMemberUseCase(this._repository);
   final AddMemberRepository _repository;

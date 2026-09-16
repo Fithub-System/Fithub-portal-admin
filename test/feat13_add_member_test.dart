@@ -103,6 +103,7 @@ void main() {
       );
       bloc = AddMemberBloc(
         findAthlete: FindAthleteForEnrollUseCase(addRepo),
+        searchAthletes: SearchAthletesForDeskUseCase(addRepo),
         enrollGymMember: EnrollGymMemberUseCase(addRepo),
         inviteMember: InviteMemberUseCase(
           addRepo,

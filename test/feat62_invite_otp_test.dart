@@ -153,6 +153,7 @@ void main() {
       );
       bloc = AddMemberBloc(
         findAthlete: FindAthleteForEnrollUseCase(addRepo),
+        searchAthletes: SearchAthletesForDeskUseCase(addRepo),
         enrollGymMember: EnrollGymMemberUseCase(addRepo),
         inviteMember: InviteMemberUseCase(
           addRepo,
@@ -247,8 +248,15 @@ void main() {
           message: 'ok',
         ),
       );
+      when(
+        () => addRepo.searchAthletesForDesk(any()),
+      ).thenAnswer((_) async => const []);
+      when(
+        () => addRepo.findAthleteForEnroll(any()),
+      ).thenAnswer((_) async => null);
       bloc = AddMemberBloc(
         findAthlete: FindAthleteForEnrollUseCase(addRepo),
+        searchAthletes: SearchAthletesForDeskUseCase(addRepo),
         enrollGymMember: EnrollGymMemberUseCase(addRepo),
         inviteMember: InviteMemberUseCase(
           addRepo,
@@ -263,7 +271,7 @@ void main() {
       await bloc.close();
     });
 
-    testWidgets('Invite tab shows live Send invite CTA (not stub)', (
+    testWidgets('G4 dialog enroll CTA invites when no match selected', (
       tester,
     ) async {
       await pumpLocalizedApp(
@@ -272,18 +280,20 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Invite'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Send invite'), findsOneWidget);
+      expect(find.byType(TabBar), findsNothing);
+      expect(find.text('Find or Invite'), findsOneWidget);
+      expect(find.text('Enroll & Assign Athlete'), findsOneWidget);
       expect(find.text('Send invite later'), findsNothing);
       expect(find.textContaining('Visual Spec Card'), findsOneWidget);
 
       await tester.enterText(
-        find.byType(TextFormField).first,
+        find.byKey(const Key('add_member_search_field')),
         'athlete@example.com',
       );
-      await tester.tap(find.text('Send invite'));
+      await tester.ensureVisible(
+        find.byKey(const Key('add_member_enroll_assign')),
+      );
+      await tester.tap(find.byKey(const Key('add_member_enroll_assign')));
       await tester.pumpAndSettle();
 
       verify(() => addRepo.inviteMember(any())).called(1);

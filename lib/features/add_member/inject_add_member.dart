@@ -33,6 +33,9 @@ void registerAddMemberDependencies(GetIt getIt) {
   if (!getIt.isRegistered<FindAthleteForEnrollUseCase>()) {
     getIt.registerLazySingleton(() => FindAthleteForEnrollUseCase(getIt()));
   }
+  if (!getIt.isRegistered<SearchAthletesForDeskUseCase>()) {
+    getIt.registerLazySingleton(() => SearchAthletesForDeskUseCase(getIt()));
+  }
   if (!getIt.isRegistered<EnrollGymMemberUseCase>()) {
     getIt.registerLazySingleton(() => EnrollGymMemberUseCase(getIt()));
   }
@@ -47,6 +50,7 @@ void registerAddMemberDependencies(GetIt getIt) {
     getIt.registerFactory(
       () => AddMemberBloc(
         findAthlete: getIt(),
+        searchAthletes: getIt(),
         enrollGymMember: getIt(),
         inviteMember: getIt(),
         listPlans: getIt<ListMembershipPlansUseCase>(),
