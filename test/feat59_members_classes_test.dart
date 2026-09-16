@@ -266,6 +266,7 @@ void main() {
 
       final bloc = AddMemberBloc(
         findAthlete: FindAthleteForEnrollUseCase(addRepo),
+        searchAthletes: SearchAthletesForDeskUseCase(addRepo),
         enrollGymMember: EnrollGymMemberUseCase(addRepo),
         inviteMember: InviteMemberUseCase(
           addRepo,
@@ -302,7 +303,7 @@ void main() {
       final centered = find.byWidgetPredicate(
         (w) =>
             w is Align &&
-            w.alignment == Alignment.topCenter &&
+            w.alignment == Alignment.center &&
             w.child is ConstrainedBox &&
             (w.child! as ConstrainedBox).constraints.maxWidth ==
                 AddMemberScreen.formMaxWidth,

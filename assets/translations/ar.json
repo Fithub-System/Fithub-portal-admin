@@ -511,7 +511,18 @@
   },
   "add_member": {
     "title": "إضافة عضو جديد",
-    "subtitle": "اربط رياضيًا موجودًا، أو ادعُ بالبريد / اسم المستخدم. المدعو يقبل بعضوية عبر رمز OTP في تطبيق الرياضي.",
+    "subtitle": "تجهيز ملف تعريف الرياضي",
+    "step": {
+      "find": "البحث أو الدعوة",
+      "plan": "تعيين الخطة"
+    },
+    "search_label": "البحث في قاعدة بيانات الرياضيين الحالية",
+    "search_hint": "917-555-0198",
+    "searching": "جاري البحث",
+    "no_matches": "لا يوجد رياضي بهذه العبارة.",
+    "create_divider": "أو إنشاء عضو جديد",
+    "verify_title": "التحقق من البيانات",
+    "verify_body": "الملفات الشخصية التي يتم إنشاؤها هنا ستقوم تلقائياً بتشغيل تسلسل رقمي \"ترحيب وتنازل\" عبر الرسائل القصيرة والبريد الإلكتروني بمجرد تعيين الخطة.",
     "tab": {
       "link": "ربط موجود",
       "invite": "دعوة"
@@ -524,14 +535,23 @@
       "add_new": "إضافة عضو جديد",
       "find": "البحث عن رياضي",
       "enroll": "تسجيل العضو",
+      "enroll_assign": "تسجيل وتعيين الرياضي",
       "send_invite": "إرسال الدعوة",
-      "send_invite_later": "إرسال الدعوة لاحقًا"
+      "send_invite_later": "إرسال الدعوة لاحقًا",
+      "cancel_request": "إلغاء الطلب",
+      "next_step": "التالي: الخطوة 2",
+      "back_step": "رجوع: الخطوة 1"
     },
     "field": {
       "email": "بريد الرياضي",
       "email_hint": "athlete@example.com",
       "identifier": "البريد أو اسم المستخدم",
       "identifier_hint": "athlete@example.com أو username",
+      "legal_name": "الاسم القانوني الكامل",
+      "legal_name_hint": "مثال: جون ميلر",
+      "phone": "رقم الهاتف",
+      "phone_hint": "(000) 000-0000",
+      "phone_prefix": "+20",
       "display_name": "الاسم المعروض (اختياري)",
       "display_name_hint": "الاسم المفضّل",
       "plan_optional": "خطة العضوية (اختياري)"
@@ -559,7 +579,7 @@
       "invalid": "إدخال تسجيل غير صالح.",
       "unknown": "تعذّر تسجيل العضو."
     },
-    "visual_spec": "بطاقة المواصفات البصرية: Docs/feat62-visual-spec-add-member-invite.md (Stitch إضافة عضو جديد)."
+    "visual_spec": "بطاقة المواصفات البصرية: Docs/feat95-visual-spec-g4.md (Stitch إضافة عضو جديد)."
   },
   "marketing": {
     "growth_engine": "محرك النمو",

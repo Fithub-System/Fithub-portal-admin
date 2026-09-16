@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:fithub_portal_admin/core/network/postgrest_row.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/add_member_failure.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/entities/athlete_enroll_match.dart';
@@ -7,6 +10,8 @@ import 'package:fithub_portal_admin/features/add_member/domain/entities/enroll_g
 
 abstract class AddMemberRemoteDataSource {
   Future<AthleteEnrollMatch?> findAthleteForEnroll(String email);
+
+  Future<List<AthleteEnrollMatch>> searchAthletesForDesk(String query);
 
   Future<EnrollGymMemberResult> enrollGymMember(String athleteId);
 }
@@ -40,7 +45,29 @@ class AddMemberSupabaseRemoteDataSource implements AddMemberRemoteDataSource {
       return AthleteEnrollMatch(
         id: id,
         fullName: (fullName == null || fullName.isEmpty) ? id : fullName,
+        email: jsonStringOrNull(map['email']),
       );
+    } on PostgrestException catch (e) {
+      throw _mapException(e);
+    } catch (e) {
+      if (e is AddMemberFailure) rethrow;
+      throw const AddMemberUnknownFailure();
+    }
+  }
+
+  @override
+  Future<List<AthleteEnrollMatch>> searchAthletesForDesk(String query) async {
+    final client = _requireClient();
+    try {
+      final result = await client.rpc(
+        'search_athletes_for_desk',
+        params: {'p_query': query.trim()},
+      );
+      final rows = _deskRows(result);
+      return rows
+          .map(_matchFromDeskRow)
+          .where((match) => match.id.isNotEmpty)
+          .toList(growable: false);
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -85,6 +112,31 @@ class AddMemberSupabaseRemoteDataSource implements AddMemberRemoteDataSource {
       throw const AddMemberNotConfiguredFailure();
     }
     return client;
+  }
+
+  List<Map<String, dynamic>> _deskRows(Object? result) {
+    if (result == null) return const [];
+    if (result is String) {
+      final decoded = jsonDecode(result);
+      return asJsonMapList(decoded);
+    }
+    return asJsonMapList(result);
+  }
+
+  AthleteEnrollMatch _matchFromDeskRow(Map<String, dynamic> map) {
+    final id = jsonStringOrNull(map['id']) ?? '';
+    final fullName = jsonStringOrNull(map['full_name']);
+    return AthleteEnrollMatch(
+      id: id,
+      fullName: (fullName == null || fullName.isEmpty) ? id : fullName,
+      publicCode: jsonStringOrNull(map['public_code']),
+      email: jsonStringOrNull(map['email']),
+      phoneE164: jsonStringOrNull(map['phone_e164']),
+      avatarUrl: jsonStringOrNull(map['avatar_url']),
+      membershipStatus: jsonStringOrNull(map['membership_status']),
+      membershipPlanName: jsonStringOrNull(map['membership_plan_name']),
+      isMember: jsonBool(map['is_member']),
+    );
   }
 
   AddMemberFailure _mapException(PostgrestException e) {

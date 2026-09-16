@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>إضافة عضو جديد | Pulse Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&amp;family=Lexend:wght@400;600;700;900&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface-tint": "#abd600",
+                "on-error-container": "#ffdad6",
+                "surface": "#131313",
+                "inverse-surface": "#e5e2e1",
+                "surface-container-lowest": "#0e0e0e",
+                "surface-container-highest": "#353534",
+                "secondary-fixed-dim": "#adc7ff",
+                "secondary-fixed": "#d8e2ff",
+                "background": "#131313",
+                "tertiary-container": "#d2e5f5",
+                "on-secondary-container": "#00285b",
+                "surface-container-high": "#2a2a2a",
+                "primary-fixed": "#c3f400",
+                "surface-variant": "#353534",
+                "on-primary-fixed-variant": "#3c4d00",
+                "tertiary-fixed-dim": "#b6c9d8",
+                "primary": "#ffffff",
+                "inverse-on-surface": "#313030",
+                "on-secondary-fixed-variant": "#004493",
+                "on-secondary-fixed": "#001a41",
+                "on-background": "#e5e2e1",
+                "on-tertiary-container": "#556774",
+                "tertiary": "#ffffff",
+                "on-secondary": "#002e68",
+                "on-primary": "#283500",
+                "on-tertiary-fixed-variant": "#374956",
+                "outline-variant": "#444933",
+                "on-tertiary": "#21323e",
+                "secondary": "#adc7ff",
+                "on-surface-variant": "#c4c9ac",
+                "on-surface": "#e5e2e1",
+                "surface-dim": "#131313",
+                "primary-fixed-dim": "#abd600",
+                "secondary-container": "#4a8eff",
+                "on-error": "#690005",
+                "error": "#ffb4ab",
+                "error-container": "#93000a",
+                "on-tertiary-fixed": "#0b1d29",
+                "on-primary-container": "#556d00",
+                "outline": "#8e9379",
+                "surface-bright": "#393939",
+                "primary-container": "#c3f400",
+                "tertiary-fixed": "#d2e5f5",
+                "surface-container-low": "#1c1b1b",
+                "on-primary-fixed": "#161e00",
+                "inverse-primary": "#506600",
+                "surface-container": "#201f1f"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "fontFamily": {
+                "headline": ["Lexend", "Cairo"],
+                "display": ["Lexend", "Cairo"],
+                "body": ["Inter", "Cairo"],
+                "label": ["Inter", "Cairo"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Cairo', sans-serif;
+        }
+        .font-lexend { font-family: 'Lexend', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .kinetic-glow {
+            box-shadow: 0 0 40px rgba(195, 244, 0, 0.1);
+        }
+        .glass-panel {
+            background: rgba(28, 27, 27, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        /* Custom RTL tweaks for icons */
+        .rtl-flip { transform: scaleX(-1); }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- Sidebar Navigation (Mirrored RTL) -->
+<aside class="fixed right-0 top-0 h-full flex flex-col py-6 z-50 shadow-2xl bg-surface-container-lowest w-64 rtl:right-0 border-l border-white/5">
+<div class="px-6 mb-10">
+<h1 class="text-title-lg font-headline font-black text-primary-container flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl">bolt</span>
+<span>PULSE</span>
+</h1>
+<p class="text-[10px] font-label font-medium uppercase tracking-[0.2em] text-on-surface-variant opacity-60">Elite Performance</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">الرئيسية</span>
+</a>
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 mx-2 my-1 shadow-[0_0_20px_rgba(195,244,0,0.15)] translate-x-[-4px]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">الأعضاء</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">الموظفون</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">الفصول</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">التسويق</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-300 px-4 py-3 mx-2 my-1 rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">التقارير</span>
+</a>
+</nav>
+<div class="mt-auto px-2">
+<div class="p-4 bg-surface-container-low rounded-xl mb-4 mx-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a high-performance athletic facility manager with a focused expression, wearing sleek dark branded sportswear. The lighting is dramatic and cinematic, emphasizing a professional and authoritative gym management persona. The background is a blurred high-tech fitness environment with dark metallic surfaces and subtle lime green lighting accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1rtLJIccWPtAsKa8pU0bWzvtzViE_9507gq6_0re3zpDtHmd8v9IokIf2rT-8B6XBnd4i_zjzBswjGsSdQJ0MP3dD55h2yky0rlfzRL9m2BwyziY0Cbj8ohwsclSfkKPc_T2I3iM-wj1la6dD33XWJmoK06StT2phFW0QS5I1DhzppFYvpefTq3GFk7kkbZaF_VcjpG823dtpn2D68mtrukoBMC05AbfTEjWUWPbV_12OldMVsEmkZtP-kBps9J3p8UT69qPPHRvU"/>
+</div>
+<div>
+<p class="text-sm font-bold">Pulse Admin</p>
+<p class="text-[10px] text-on-surface-variant">المدير العام</p>
+</div>
+</div>
+</div>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high px-4 py-3 mx-2 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-sm font-medium uppercase tracking-[0.05em]">تسجيل الخروج</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="mr-64 p-8 min-h-screen relative overflow-hidden bg-surface">
+<!-- Subtle Ambient Background -->
+<div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary-container opacity-[0.03] blur-[120px]"></div>
+<!-- Dashboard Header Background Placeholder -->
+<header class="mb-12 flex justify-between items-end">
+<div>
+<h2 class="text-headline-lg font-headline font-black tracking-tight text-on-surface">إدارة الرياضيين</h2>
+<p class="text-on-surface-variant mt-1">تتبع وتحسين أداء النخبة في منشأتك.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container-low px-6 py-3 rounded-lg border-b-2 border-primary-container/20">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mb-1">إجمالي الأعضاء</p>
+<p class="text-2xl font-lexend font-black">1,284</p>
+</div>
+<div class="bg-surface-container-low px-6 py-3 rounded-lg border-b-2 border-secondary-container/20">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-widest mb-1">نشط الآن</p>
+<p class="text-2xl font-lexend font-black">42</p>
+</div>
+</div>
+</header>
+<!-- Dummy Content to Show Context -->
+<div class="grid grid-cols-12 gap-6 opacity-40 grayscale pointer-events-none">
+<div class="col-span-8 bg-surface-container-low h-[400px] rounded-xl flex items-center justify-center border border-white/5">
+<p class="font-bold text-on-surface-variant">جدول بيانات الرياضيين</p>
+</div>
+<div class="col-span-4 bg-surface-container-low h-[400px] rounded-xl flex items-center justify-center border border-white/5">
+<p class="font-bold text-on-surface-variant">توزيع الفئات</p>
+</div>
+</div>
+<!-- THE MODAL OVERLAY -->
+<div class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-surface/90 backdrop-blur-md">
+<!-- Modal Container -->
+<div class="w-full max-w-2xl bg-surface-container-low rounded-2xl shadow-2xl border border-white/5 relative overflow-hidden flex flex-col kinetic-glow">
+<!-- Animated Header Bar -->
+<div class="h-1 w-full bg-gradient-to-r from-primary-container via-secondary-container to-primary-container"></div>
+<!-- Modal Header -->
+<div class="px-8 pt-8 pb-6 border-b border-white/5">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-3xl font-headline font-black tracking-tight text-on-surface">إضافة عضو جديد</h3>
+<p class="text-on-surface-variant text-sm mt-1">تجهيز ملف تعريف الرياضي</p>
+</div>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Stepper -->
+<div class="flex items-center mt-8 gap-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-md bg-primary-container text-on-primary-container flex items-center justify-center font-lexend font-bold text-sm">01</div>
+<span class="text-sm font-bold text-primary-container tracking-wide">البحث أو الدعوة</span>
+</div>
+<div class="h-[2px] flex-1 bg-surface-container-high rounded-full relative overflow-hidden">
+<div class="absolute inset-0 bg-primary-container/20 w-1/2"></div>
+</div>
+<div class="flex items-center gap-3 opacity-40">
+<div class="w-8 h-8 rounded-md bg-surface-container-highest text-on-surface flex items-center justify-center font-lexend font-bold text-sm">02</div>
+<span class="text-sm font-bold text-on-surface tracking-wide">تعيين الخطة</span>
+</div>
+</div>
+</div>
+<!-- Modal Body -->
+<div class="p-8 space-y-8 flex-1 overflow-y-auto">
+<!-- Search Section -->
+<div class="space-y-4">
+<label class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest block">البحث في قاعدة بيانات الرياضيين الحالية</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-0 border-b-2 border-surface-container-highest focus:border-primary-container focus:ring-0 text-2xl font-lexend font-bold py-4 pr-4 pl-12 transition-all placeholder:opacity-30" dir="ltr" placeholder="917-555-0198" type="text"/>
+<div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-3 text-primary-container">
+<span class="text-xs font-bold animate-pulse">...جاري البحث</span>
+<span class="material-symbols-outlined">search</span>
+</div>
+</div>
+</div>
+<!-- Divider -->
+<div class="flex items-center gap-4 py-2">
+<div class="h-[1px] flex-1 bg-white/5"></div>
+<span class="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.3em]">أو إنشاء عضو جديد</span>
+<div class="h-[1px] flex-1 bg-white/5"></div>
+</div>
+<!-- Form Fields -->
+<div class="grid grid-cols-2 gap-8">
+<div class="space-y-2">
+<label class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest block">الاسم القانوني الكامل</label>
+<input class="w-full bg-transparent border-0 border-b border-white/10 focus:border-primary-container focus:ring-0 py-2 px-0 text-lg transition-all placeholder:text-on-surface-variant/40" placeholder="مثال: جون ميلر" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest block">رقم الهاتف</label>
+<input class="w-full bg-transparent border-0 border-b border-white/10 focus:border-primary-container focus:ring-0 py-2 px-0 text-lg font-lexend transition-all placeholder:text-on-surface-variant/40" dir="ltr" placeholder="+1 (000) 000-0000" type="text"/>
+</div>
+</div>
+<!-- Verification Alert -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-primary-container/10 flex gap-4 items-start relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-1 h-full bg-primary-container opacity-50"></div>
+<div class="bg-primary-container/10 p-2 rounded-lg text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">info</span>
+</div>
+<div class="space-y-1">
+<h4 class="text-sm font-black text-primary-container uppercase tracking-wider">التحقق من البيانات</h4>
+<p class="text-sm leading-relaxed text-on-surface-variant">
+                                الملفات الشخصية التي يتم إنشاؤها هنا ستقوم تلقائياً بتشغيل تسلسل رقمي <span class="text-on-surface font-bold">"ترحيب وتنازل"</span> عبر الرسائل القصيرة والبريد الإلكتروني بمجرد تعيين الخطة.
+                            </p>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-8 py-6 bg-surface-container-lowest/50 border-t border-white/5 flex items-center justify-between">
+<button class="px-6 py-3 rounded-md text-sm font-bold text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all uppercase tracking-widest">
+                        إلغاء الطلب
+                    </button>
+<div class="flex gap-4">
+<button class="px-6 py-3 bg-surface-container-high text-on-surface rounded-md text-sm font-bold hover:bg-surface-container-highest transition-all flex items-center gap-2">
+<span>التالي: الخطوة 2</span>
+</button>
+<button class="px-8 py-3 bg-primary-container text-on-primary-container rounded-md text-sm font-black hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-primary-container/10 group">
+<span>تسجيل وتعيين الرياضي</span>
+<span class="material-symbols-outlined rtl-flip group-hover:translate-x-[-4px] transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for the search bar
+        const searchInput = document.querySelector('input[type="text"][dir="ltr"]');
+        const searchStatus = document.querySelector('.animate-pulse');
+        
+        searchInput.addEventListener('input', (e) => {
+            if (e.target.value.length > 0) {
+                searchStatus.textContent = '...جاري البحث';
+            } else {
+                searchStatus.textContent = '';
+            }
+        });
+    </script>
+</body></html>

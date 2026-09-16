@@ -21,6 +21,11 @@ class AddMemberRepositoryImpl implements AddMemberRepository {
   }
 
   @override
+  Future<List<AthleteEnrollMatch>> searchAthletesForDesk(String query) {
+    return _remote.searchAthletesForDesk(query);
+  }
+
+  @override
   Future<EnrollGymMemberResult> enrollGymMember(String athleteId) {
     return _remote.enrollGymMember(athleteId);
   }

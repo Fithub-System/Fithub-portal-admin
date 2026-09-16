@@ -14,11 +14,13 @@ part 'add_member_state.dart';
 class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
   AddMemberBloc({
     required FindAthleteForEnrollUseCase findAthlete,
+    required SearchAthletesForDeskUseCase searchAthletes,
     required EnrollGymMemberUseCase enrollGymMember,
     required InviteMemberUseCase inviteMember,
     required ListMembershipPlansUseCase listPlans,
     required AssignMembershipUseCase assignMembership,
   }) : _findAthlete = findAthlete,
+       _searchAthletes = searchAthletes,
        _enrollGymMember = enrollGymMember,
        _inviteMember = inviteMember,
        _listPlans = listPlans,
@@ -26,6 +28,9 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
        super(const AddMemberState()) {
     on<AddMemberStarted>(_onStarted);
     on<AddMemberFindRequested>(_onFind);
+    on<AddMemberSearchRequested>(_onSearch);
+    on<AddMemberMatchSelected>(_onMatchSelected);
+    on<AddMemberWizardStepChanged>(_onWizardStep);
     on<AddMemberPlanSelected>(_onPlanSelected);
     on<AddMemberInvitePlanSelected>(_onInvitePlanSelected);
     on<AddMemberEnrollRequested>(_onEnroll);
@@ -35,6 +40,7 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
   }
 
   final FindAthleteForEnrollUseCase _findAthlete;
+  final SearchAthletesForDeskUseCase _searchAthletes;
   final EnrollGymMemberUseCase _enrollGymMember;
   final InviteMemberUseCase _inviteMember;
   final ListMembershipPlansUseCase _listPlans;
@@ -89,6 +95,7 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
       state.copyWith(
         status: AddMemberStatus.finding,
         email: email,
+        query: email,
         clearMatch: true,
         clearMessage: true,
       ),
@@ -106,7 +113,13 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
         );
         return;
       }
-      emit(state.copyWith(status: AddMemberStatus.found, match: match));
+      emit(
+        state.copyWith(
+          status: AddMemberStatus.found,
+          match: match,
+          matches: [match],
+        ),
+      );
     } on AddMemberFailure catch (e) {
       emit(
         state.copyWith(
@@ -126,6 +139,99 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
     }
   }
 
+  Future<void> _onSearch(
+    AddMemberSearchRequested event,
+    Emitter<AddMemberState> emit,
+  ) async {
+    final query = event.query.trim();
+    if (query.isEmpty) {
+      emit(
+        state.copyWith(
+          status: AddMemberStatus.idle,
+          query: '',
+          clearMatch: true,
+          clearMatches: true,
+          clearMessage: true,
+        ),
+      );
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        status: AddMemberStatus.finding,
+        query: query,
+        email: query.contains('@') ? query : state.email,
+        clearMatch: true,
+        clearMatches: true,
+        clearMessage: true,
+      ),
+    );
+
+    try {
+      var matches = await _searchAthletes(query);
+      if (matches.isEmpty && query.contains('@')) {
+        final found = await _findAthlete(query);
+        if (found != null) {
+          matches = [found];
+        }
+      }
+      final selected = matches.length == 1 ? matches.first : null;
+      emit(
+        state.copyWith(
+          status: matches.isEmpty
+              ? AddMemberStatus.idle
+              : AddMemberStatus.found,
+          matches: matches,
+          match: selected,
+          clearMatch: selected == null,
+        ),
+      );
+    } on AddMemberFailure catch (e) {
+      emit(
+        state.copyWith(
+          status: AddMemberStatus.idle,
+          clearMatch: true,
+          clearMatches: true,
+          messageKey: e.messageKey,
+        ),
+      );
+    } catch (_) {
+      emit(
+        state.copyWith(
+          status: AddMemberStatus.idle,
+          clearMatch: true,
+          clearMatches: true,
+          messageKey: 'add_member.error.unknown',
+        ),
+      );
+    }
+  }
+
+  void _onMatchSelected(
+    AddMemberMatchSelected event,
+    Emitter<AddMemberState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        match: event.match,
+        status: event.match == null
+            ? AddMemberStatus.idle
+            : AddMemberStatus.found,
+        clearMatch: event.match == null,
+        clearMessage: true,
+      ),
+    );
+  }
+
+  void _onWizardStep(
+    AddMemberWizardStepChanged event,
+    Emitter<AddMemberState> emit,
+  ) {
+    final step = event.step.clamp(1, 2);
+    emit(state.copyWith(wizardStep: step, clearMessage: true));
+  }
+
   void _onPlanSelected(
     AddMemberPlanSelected event,
     Emitter<AddMemberState> emit,
@@ -133,7 +239,9 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
     emit(
       state.copyWith(
         selectedPlanId: event.planId,
+        invitePlanId: event.planId,
         clearPlan: event.planId == null,
+        clearInvitePlan: event.planId == null,
       ),
     );
   }
@@ -145,7 +253,9 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
     emit(
       state.copyWith(
         invitePlanId: event.planId,
+        selectedPlanId: event.planId,
         clearInvitePlan: event.planId == null,
+        clearPlan: event.planId == null,
       ),
     );
   }
@@ -213,7 +323,7 @@ class AddMemberBloc extends Bloc<AddMemberEvent, AddMemberState> {
       await _inviteMember(
         identifier: event.identifier,
         displayName: event.displayName,
-        planId: state.invitePlanId,
+        planId: state.invitePlanId ?? state.selectedPlanId,
       );
       emit(
         state.copyWith(
