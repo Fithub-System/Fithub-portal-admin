@@ -1,6 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fithub_portal_admin/core/network/postgrest_row.dart';
+import 'package:fithub_portal_admin/features/access_scanner/data/data_sources/local/member_roster_local_data_source.dart';
+import 'package:fithub_portal_admin/features/access_scanner/data/data_sources/remote/member_roster_remote_data_source.dart';
 import 'package:fithub_portal_admin/features/access_scanner/data/data_sources/remote/member_roster_row_mapper.dart';
+import 'package:fithub_portal_admin/features/access_scanner/data/repositories/member_roster_repository_impl.dart';
+import 'package:fithub_portal_admin/features/access_scanner/domain/entities/member_roster_entry.dart';
 import 'package:fithub_portal_admin/features/dashboard/presentation/cubit/overview_metrics_cubit.dart';
 import 'package:fithub_portal_admin/features/dashboard/domain/entities/overview_home_metrics.dart';
 import 'package:fithub_portal_admin/features/dashboard/domain/repositories/overview_home_metrics_repository.dart';
@@ -42,7 +46,7 @@ void main() {
       expect(mapped!.id, 'athlete-1');
       expect(mapped.fullName, 'Ava Chen');
       expect(mapped.powerScore, 88);
-      expect(mapped.cryptoSalt, '');
+      expect(mapped.cryptoSalt, '00');
     });
 
     test('embeddedAthlete unwraps list payloads', () {
@@ -87,4 +91,52 @@ void main() {
       await cubit.close();
     });
   });
+
+  group('P0 roster Drift CHECK must not hide cloud 200', () {
+    test('listCachedMembers returns live rows when upsert throws', () async {
+      final repo = MemberRosterRepositoryImpl(
+        remote: _OkRosterRemote(),
+        local: _ThrowingRosterLocal(),
+      );
+      final count = await repo.syncRoster(tenantId: 't1');
+      expect(count, 1);
+      final listed = await repo.listCachedMembers(tenantId: 't1');
+      expect(listed.single.fullName, 'Ava Chen');
+      expect(listed.single.cryptoSalt, '00');
+    });
+  });
+}
+
+class _OkRosterRemote implements MemberRosterRemoteDataSource {
+  @override
+  Future<List<MemberRosterEntry>> fetchAthletes() async {
+    return [
+      mapAthleteRosterRow(<dynamic, dynamic>{
+            'id': 'athlete-1',
+            'full_name': 'Ava Chen',
+            'crypto_salt': null,
+            'power_score': 10,
+            'created_at': '2026-09-15T08:00:00Z',
+          }) ??
+          (throw StateError('mapper')),
+    ];
+  }
+}
+
+class _ThrowingRosterLocal implements MemberRosterLocalDataSource {
+  @override
+  Future<void> upsertMembers({
+    required String tenantId,
+    required List<MemberRosterEntry> members,
+  }) async {
+    throw Exception('Drift CHECK crypto_salt');
+  }
+
+  @override
+  Future<int> countCachedMembers({required String tenantId}) async => 0;
+
+  @override
+  Future<List<MemberRosterEntry>> listCachedMembers({
+    required String tenantId,
+  }) async => [];
 }
