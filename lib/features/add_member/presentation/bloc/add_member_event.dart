@@ -19,6 +19,31 @@ final class AddMemberFindRequested extends AddMemberEvent {
   List<Object?> get props => [email];
 }
 
+/// Debounced desk search (name / phone / public_code / email).
+final class AddMemberSearchRequested extends AddMemberEvent {
+  const AddMemberSearchRequested(this.query);
+  final String query;
+
+  @override
+  List<Object?> get props => [query];
+}
+
+final class AddMemberMatchSelected extends AddMemberEvent {
+  const AddMemberMatchSelected(this.match);
+  final AthleteEnrollMatch? match;
+
+  @override
+  List<Object?> get props => [match];
+}
+
+final class AddMemberWizardStepChanged extends AddMemberEvent {
+  const AddMemberWizardStepChanged(this.step);
+  final int step;
+
+  @override
+  List<Object?> get props => [step];
+}
+
 final class AddMemberPlanSelected extends AddMemberEvent {
   const AddMemberPlanSelected(this.planId);
   final String? planId;
@@ -39,7 +64,7 @@ final class AddMemberEnrollRequested extends AddMemberEvent {
   const AddMemberEnrollRequested();
 }
 
-/// FEAT-62 Invite tab — [identifier] is email or username.
+/// FEAT-62 Invite — [identifier] is email or username.
 final class AddMemberInviteRequested extends AddMemberEvent {
   const AddMemberInviteRequested({required this.identifier, this.displayName});
 

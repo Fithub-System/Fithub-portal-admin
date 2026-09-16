@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pulse Admin Portal | Add Member</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800;900&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#131313",
+                        "inverse-on-surface": "#313030",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary-container": "#c3f400",
+                        "primary-fixed": "#c3f400",
+                        "surface-container": "#201f1f",
+                        "on-error-container": "#ffdad6",
+                        "inverse-primary": "#506600",
+                        "surface-dim": "#131313",
+                        "on-tertiary": "#21323e",
+                        "on-secondary-fixed-variant": "#004493",
+                        "on-primary": "#283500",
+                        "on-tertiary-fixed-variant": "#374956",
+                        "secondary-fixed-dim": "#adc7ff",
+                        "tertiary-container": "#d2e5f5",
+                        "primary": "#ffffff",
+                        "on-primary-container": "#556d00",
+                        "secondary": "#adc7ff",
+                        "surface-variant": "#353534",
+                        "surface": "#131313",
+                        "on-surface": "#e5e2e1",
+                        "on-primary-fixed": "#161e00",
+                        "on-tertiary-fixed": "#0b1d29",
+                        "error": "#ffb4ab",
+                        "tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#3c4d00",
+                        "on-background": "#e5e2e1",
+                        "tertiary-fixed": "#d2e5f5",
+                        "surface-bright": "#393939",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-highest": "#353534",
+                        "on-surface-variant": "#c4c9ac",
+                        "on-error": "#690005",
+                        "inverse-surface": "#e5e2e1",
+                        "outline-variant": "#444933",
+                        "on-secondary": "#002e68",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-fixed": "#001a41",
+                        "surface-tint": "#abd600",
+                        "primary-fixed-dim": "#abd600",
+                        "on-tertiary-container": "#556774",
+                        "outline": "#8e9379",
+                        "secondary-container": "#4a8eff",
+                        "on-secondary-container": "#00285b",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#b6c9d8",
+                        "surface-container-low": "#1c1b1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Lexend"],
+                        "display": ["Lexend"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Lexend', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrim { background-color: rgba(0, 0, 0, 0.7); }
+        .glass-card {
+            background: rgba(42, 42, 42, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .step-active { color: #c3f400; border-bottom: 2px solid #c3f400; }
+        .kinetic-gradient {
+            background: linear-gradient(135deg, #c3f400 0%, #abd600 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface overflow-hidden">
+<!-- Sidebar Navigation (SideNavBar JSON) -->
+<aside class="h-full w-64 fixed left-0 top-0 flex flex-col py-8 px-4 border-r border-outline-variant/15 bg-surface dark:bg-surface z-30">
+<div class="mb-12 px-4">
+<h1 class="font-headline text-headline-lg font-bold text-on-surface tracking-tight">KINETIC</h1>
+<p class="text-[10px] tracking-[0.2em] text-on-surface-variant font-medium opacity-70">MONOLITH</p>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-sm font-label uppercase tracking-widest">Home</span>
+</a>
+<!-- Active State: Members -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container dark:bg-secondary-container text-on-secondary-container dark:text-on-secondary-container rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-label uppercase tracking-widest font-bold">Members</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="text-sm font-label uppercase tracking-widest">Staff</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="text-sm font-label uppercase tracking-widest">Classes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-sm font-label uppercase tracking-widest">Marketing</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-label uppercase tracking-widest">Reports</span>
+</a>
+</nav>
+<div class="mt-auto p-4 flex items-center gap-3 bg-surface-container-low rounded-xl">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a fitness facility manager in a dark studio setting. He is wearing a minimalist black performance polo with a subtle logo. The lighting is dramatic, high-contrast, emphasizing a professional and authoritative athletic aesthetic with deep shadows and cool highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHeMXY2A3XVrk6Dtfl3ClLNwjArqZYjStu5BkSC2KCVN0srfIksP7v0LoAlcHPUjOtCv0kIL7z1vrvCfeDhBZtRhNkb02lHbjqM6eMCOqSL1gaNAycO62Hv6Ugj3ehCCa-Z6qxNU6DL_4H_L6Lg4zvDZKLPb2mZL_FyMZDxeoHq2ORNqsQMsnmpZnPlK8khEE3Kbj2oFrmVkvrIIxpjCDqGSqjtvf7NpJ1cq-MsIih9LElA5Q59qDwLhG4DMPHvKOekI4pMViDlc9i"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold truncate">Alex Vance</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Ops Director</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">settings</span>
+</div>
+</aside>
+<!-- Main Content Area (Background Roster) -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar JSON Implementation -->
+<header class="flex justify-between items-center w-full h-20 px-8 sticky top-0 z-20 bg-surface/60 backdrop-blur-xl">
+<div class="flex items-center gap-4">
+<h2 class="font-headline text-headline-lg font-black text-on-surface tracking-tight">MEMBER ROSTER</h2>
+<div class="bg-surface-container-highest px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">Live View</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-sm w-64 focus:ring-1 focus:ring-primary-container" placeholder="Global Search..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary-container cursor-pointer transition-colors">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary-container cursor-pointer transition-colors">settings</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary-container cursor-pointer transition-colors">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Background Content (Simulated Member Roster) -->
+<div class="p-8">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-4xl font-display font-extrabold tracking-tight mb-2">ATHLETES <span class="text-primary-container">/ 1,248</span></h3>
+<div class="flex gap-4">
+<div class="text-xs uppercase tracking-widest text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span> 842 Active
+                        </div>
+<div class="text-xs uppercase tracking-widest text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-surface-container-highest"></span> 406 On-Hold
+                        </div>
+</div>
+</div>
+<button class="kinetic-gradient text-on-primary-container px-6 py-3 rounded-lg font-bold flex items-center gap-2 uppercase tracking-widest text-xs shadow-lg shadow-primary-container/10">
+<span class="material-symbols-outlined">person_add</span> Add New Member
+                </button>
+</div>
+<!-- Bento Grid Member List Simulation -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 opacity-40">
+<div class="col-span-2 bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<div class="flex justify-between mb-6">
+<span class="text-xs font-label font-bold uppercase tracking-widest text-on-surface-variant">Top Tier Performers</span>
+<span class="material-symbols-outlined">more_horiz</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-surface-container-high rounded-lg">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-surface-bright flex items-center justify-center text-xl font-bold">JD</div>
+<div>
+<h4 class="font-bold">Jordan Davies</h4>
+<p class="text-xs text-on-surface-variant">Elite Performance • 34 Sessions</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container">trending_up</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-high rounded-lg">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-surface-bright flex items-center justify-center text-xl font-bold">MS</div>
+<div>
+<h4 class="font-bold">Marcus Sterling</h4>
+<p class="text-xs text-on-surface-variant">Foundry Basic • 12 Sessions</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container">trending_up</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 flex flex-col justify-between">
+<div>
+<h4 class="text-xs font-label font-bold uppercase tracking-widest text-on-surface-variant mb-4">Churn Risk</h4>
+<div class="text-5xl font-display font-black text-error">12%</div>
+<p class="text-xs text-on-surface-variant mt-2">Active athletes with no check-ins in 7 days.</p>
+</div>
+<div class="h-16 w-full bg-surface-container-highest rounded-lg overflow-hidden flex items-end">
+<div class="w-1/6 h-2/3 bg-error/20 mx-1"></div>
+<div class="w-1/6 h-1/2 bg-error/20 mx-1"></div>
+<div class="w-1/6 h-4/5 bg-error/40 mx-1"></div>
+<div class="w-1/6 h-1/3 bg-error/20 mx-1"></div>
+<div class="w-1/6 h-full bg-error mx-1"></div>
+<div class="w-1/6 h-3/4 bg-error/60 mx-1"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Modal Overlay (Add New Member) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center scrim backdrop-blur-sm p-4">
+<div class="glass-card w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border border-outline-variant/20 flex flex-col">
+<!-- Modal Header -->
+<div class="p-8 pb-4 flex justify-between items-start">
+<div>
+<h2 class="text-3xl font-display font-bold text-white tracking-tight uppercase">Add New Member</h2>
+<p class="text-on-surface-variant text-xs font-medium tracking-wide mt-1">PROVISIONING ATHLETE PROFILE</p>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">close</span>
+</button>
+</div>
+<!-- Stepper -->
+<div class="px-8 flex gap-8 mb-8 border-b border-outline-variant/15">
+<div class="pb-4 step-active flex items-center gap-2 cursor-pointer">
+<span class="text-[10px] font-bold bg-primary-container text-on-primary-container w-5 h-5 rounded-full flex items-center justify-center">1</span>
+<span class="text-xs font-label font-bold uppercase tracking-widest">Find or Invite</span>
+</div>
+<div class="pb-4 text-on-surface-variant flex items-center gap-2 cursor-pointer hover:text-on-surface transition-colors">
+<span class="text-[10px] font-bold border border-on-surface-variant w-5 h-5 rounded-full flex items-center justify-center">2</span>
+<span class="text-xs font-label font-bold uppercase tracking-widest">Assign Plan</span>
+</div>
+</div>
+<!-- Step 1 Content -->
+<div class="px-8 pb-12 flex-1 space-y-8">
+<!-- Search Athlete -->
+<section>
+<label class="block text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant mb-3">Search Existing Athlete Database</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-none border-b-2 border-primary-fixed py-4 pl-4 pr-12 text-on-surface placeholder:text-surface-variant focus:ring-0 transition-all" type="text" value="917-555-0198"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
+<div class="flex items-center gap-2">
+<div class="w-1 h-1 rounded-full bg-primary-container animate-ping"></div>
+<span class="text-[10px] font-bold text-primary-container uppercase tracking-widest">Searching...</span>
+</div>
+<span class="material-symbols-outlined text-primary-container">search</span>
+</div>
+</div>
+</section>
+<div class="flex items-center gap-4">
+<div class="h-px flex-1 bg-outline-variant/20"></div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">or create new</span>
+<div class="h-px flex-1 bg-outline-variant/20"></div>
+</div>
+<!-- New Profile Fields -->
+<div class="grid grid-cols-2 gap-6">
+<div class="relative group">
+<label class="block text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant mb-1 group-focus-within:text-primary-container transition-colors">Full Legal Name</label>
+<input class="w-full bg-transparent border-none border-b border-outline-variant p-0 py-2 focus:ring-0 focus:border-primary-container text-lg font-headline transition-all" placeholder="e.g. Johnathan Miller" type="text"/>
+</div>
+<div class="relative group">
+<label class="block text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant mb-1 group-focus-within:text-primary-container transition-colors">Phone Number</label>
+<input class="w-full bg-transparent border-none border-b border-outline-variant p-0 py-2 focus:ring-0 focus:border-primary-container text-lg font-headline transition-all" placeholder="+1 (000) 000-0000" type="tel"/>
+</div>
+</div>
+<div class="bg-surface-container-highest/30 p-4 rounded-lg flex items-start gap-4 border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary-container mt-0.5">info</span>
+<div>
+<p class="text-xs font-bold uppercase tracking-wide">Data Verification</p>
+<p class="text-[11px] text-on-surface-variant mt-1 leading-relaxed">Profiles created here will automatically trigger a "Welcome &amp; Waiver" digital sequence via SMS and Email once the plan is assigned.</p>
+</div>
+</div>
+</div>
+<!-- Modal Footer (Actions) -->
+<div class="p-8 pt-0 flex justify-between items-center">
+<button class="px-6 py-3 rounded text-on-surface-variant font-bold text-[11px] uppercase tracking-widest hover:bg-surface-bright transition-colors">
+                    Cancel Request
+                </button>
+<div class="flex gap-4">
+<button class="px-6 py-3 rounded-lg bg-surface-container-highest text-on-surface font-bold text-[11px] uppercase tracking-widest hover:bg-surface-bright transition-all flex items-center gap-2">
+                        Next: Step 2
+                    </button>
+<button class="px-8 py-3 rounded-lg kinetic-gradient text-on-primary-container font-extrabold text-[11px] uppercase tracking-[0.1em] shadow-xl shadow-primary-container/20 flex items-center gap-2 active:scale-95 transition-transform">
+                        Enroll &amp; Assign Athlete <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Decorative Elements (Athletic Visuals) -->
+<div class="fixed bottom-0 right-0 p-12 pointer-events-none opacity-5">
+<h1 class="text-[15rem] font-display font-black leading-none tracking-tighter">PULSE</h1>
+</div>
+<script>
+        // Micro-interaction for stepper navigation
+        document.querySelectorAll('.cursor-pointer').forEach(step => {
+            step.addEventListener('click', function() {
+                // Simplified UI toggle logic would go here
+            });
+        });
+
+        // Search animation state mock toggle
+        const searchInput = document.querySelector('input[value="917-555-0198"]');
+        if(searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchLabel = document.querySelector('.animate-ping').parentElement;
+                if(e.target.value.length > 5) {
+                    searchLabel.classList.remove('hidden');
+                } else {
+                    searchLabel.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body></html>
