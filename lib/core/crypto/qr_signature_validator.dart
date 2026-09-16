@@ -10,6 +10,19 @@ class QrSignatureValidator {
 
   final Duration tokenLifetime;
 
+  static const Duration clockSkew = Duration(seconds: 5);
+
+  /// Pulls a `{...}` object out of camera noise / wrapping text.
+  static String extractJsonObject(String raw) {
+    final trimmed = raw.trim();
+    final start = trimmed.indexOf('{');
+    final end = trimmed.lastIndexOf('}');
+    if (start >= 0 && end > start) {
+      return trimmed.substring(start, end + 1);
+    }
+    return trimmed;
+  }
+
   /// Expected JSON keys: `athlete_id`, `timestamp`, `signature`.
   QrValidationResult validate({
     required String rawPayload,
@@ -18,7 +31,7 @@ class QrSignatureValidator {
   }) {
     final clock = now ?? DateTime.now().toUtc();
     try {
-      final decoded = jsonDecode(rawPayload);
+      final decoded = jsonDecode(extractJsonObject(rawPayload));
       final payload = _asStringKeyedMap(decoded);
       if (payload == null) {
         return const QrValidationResult.invalid('Malformed QR payload.');
@@ -42,9 +55,8 @@ class QrSignatureValidator {
       }
 
       final age = clock.difference(issuedAt);
-      // Flutter web / device clocks can be a few seconds apart. Reject only
-      // tokens issued more than 5s in the future, or older than lifetime.
-      if (age > tokenLifetime || age < const Duration(seconds: -5)) {
+      // Athlete tokens are windowed to 30s; portal/phone clocks can drift.
+      if (age > tokenLifetime + clockSkew || age < -clockSkew) {
         return const QrValidationResult.invalid('QR token expired.');
       }
 

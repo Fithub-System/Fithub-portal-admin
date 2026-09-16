@@ -141,6 +141,30 @@ void main() {
 
       expect(result.isValid, isTrue);
     });
+
+    test('accepts token up to 5 seconds past the 30s lifetime', () {
+      const validator = QrSignatureValidator();
+      final now = DateTime.utc(2026, 7, 16, 12, 0, 34);
+      final timestamp = DateTime.utc(2026, 7, 16, 12, 0, 0);
+      final signature = validator.sign(
+        athleteId: athleteId,
+        timestampSeconds: timestamp.millisecondsSinceEpoch ~/ 1000,
+        salt: salt,
+      );
+      final payload = jsonEncode({
+        'athlete_id': athleteId,
+        'timestamp': timestamp.millisecondsSinceEpoch ~/ 1000,
+        'signature': signature,
+      });
+
+      final result = validator.validate(
+        rawPayload: payload,
+        cryptoSalt: salt,
+        now: now,
+      );
+
+      expect(result.isValid, isTrue);
+    });
   });
 
   group('Offline scan flow (airplane mode simulation)', () {

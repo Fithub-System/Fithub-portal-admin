@@ -48,6 +48,7 @@ void registerAccessScannerDependencies(GetIt getIt) {
             ? getIt<SyncPendingAttendanceUseCase>()
             : null,
         toggleAttendance: getIt<ToggleGymAttendanceRemoteDataSource>(),
+        memberRoster: getIt<MemberRosterRepository>(),
       ),
     );
   }

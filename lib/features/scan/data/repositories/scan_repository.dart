@@ -29,17 +29,27 @@ class ScanRepository {
     required String rawPayload,
     DateTime? now,
   }) async {
-    final validated = await validateScan(
-      tenantId: tenantId,
-      rawPayload: rawPayload,
-      now: now,
-    );
-    if (validated.result != null) return validated.result!;
-    return applyLocalToggle(
-      tenantId: tenantId,
-      member: validated.member!,
-      at: now ?? DateTime.now().toUtc(),
-    );
+    try {
+      final validated = await validateScan(
+        tenantId: tenantId,
+        rawPayload: rawPayload,
+        now: now,
+      );
+      if (validated.result != null) return validated.result!;
+      final member = validated.member;
+      if (member == null) {
+        return const ScanProcessResult.rejected('Member not cached locally.');
+      }
+      return await applyLocalToggle(
+        tenantId: tenantId,
+        member: member,
+        at: now ?? DateTime.now().toUtc(),
+      );
+    } catch (_) {
+      return const ScanProcessResult.rejected(
+        'Local check-in cache is unavailable. Go online and try again.',
+      );
+    }
   }
 
   Future<({ScanProcessResult? result, LocalMember? member})> validateScan({
@@ -55,7 +65,15 @@ class ScanRepository {
       );
     }
 
-    final member = await _database.findMemberById(decoded);
+    LocalMember? member;
+    try {
+      member = await _database.findMemberById(decoded);
+    } catch (_) {
+      return (
+        result: const ScanProcessResult.rejected('Member not cached locally.'),
+        member: null,
+      );
+    }
     if (member == null) {
       return (
         result: const ScanProcessResult.rejected('Member not cached locally.'),
@@ -66,6 +84,13 @@ class ScanRepository {
     if (member.tenantId != tenantId) {
       return (
         result: const ScanProcessResult.rejected('Tenant mismatch.'),
+        member: null,
+      );
+    }
+
+    if (!_hasUsableSalt(member.cryptoSalt)) {
+      return (
+        result: const ScanProcessResult.rejected('Member not cached locally.'),
         member: null,
       );
     }
@@ -84,6 +109,18 @@ class ScanRepository {
     }
 
     return (result: null, member: member);
+  }
+
+  QrValidationResult validatePayload({
+    required String rawPayload,
+    required String cryptoSalt,
+    DateTime? now,
+  }) {
+    return _validator.validate(
+      rawPayload: rawPayload,
+      cryptoSalt: cryptoSalt,
+      now: now,
+    );
   }
 
   Future<ScanProcessResult> applyLocalToggle({
@@ -138,17 +175,30 @@ class ScanRepository {
     required GymAttendanceToggleResult rpc,
     required DateTime at,
   }) async {
-    if (rpc.isCheckOut) {
-      final open = await _database.openVisit(
-        tenantId: tenantId,
-        athleteId: member.id,
-      );
-      if (open != null) {
-        await _database.checkoutVisit(
-          visitId: open.id,
-          checkedOutAt: at,
-          isSynced: true,
+    try {
+      if (rpc.isCheckOut) {
+        final open = await _database.openVisit(
+          tenantId: tenantId,
+          athleteId: member.id,
         );
+        if (open != null) {
+          await _database.checkoutVisit(
+            visitId: open.id,
+            checkedOutAt: at,
+            isSynced: true,
+          );
+        } else {
+          await _database.enqueueAttendance(
+            LocalAttendanceQueueCompanion.insert(
+              id: rpc.visitId,
+              tenantId: tenantId,
+              athleteId: member.id,
+              checkedInAt: at,
+              checkedOutAt: Value(at),
+              isSynced: const Value(true),
+            ),
+          );
+        }
       } else {
         await _database.enqueueAttendance(
           LocalAttendanceQueueCompanion.insert(
@@ -156,28 +206,19 @@ class ScanRepository {
             tenantId: tenantId,
             athleteId: member.id,
             checkedInAt: at,
-            checkedOutAt: Value(at),
             isSynced: const Value(true),
           ),
         );
       }
-    } else {
-      await _database.enqueueAttendance(
-        LocalAttendanceQueueCompanion.insert(
-          id: rpc.visitId,
-          tenantId: tenantId,
-          athleteId: member.id,
-          checkedInAt: at,
-          isSynced: const Value(true),
-        ),
-      );
-    }
 
-    final occupancy = await _database.setOccupancy(tenantId, rpc.occupancy);
+      await _database.setOccupancy(tenantId, rpc.occupancy);
+    } catch (_) {
+      // Cloud toggle already succeeded; Drift wasm must not reject the scan.
+    }
     return ScanProcessResult.approved(
       memberName: rpc.memberName ?? member.fullName,
       avatarUrl: member.avatarUrl,
-      occupancy: occupancy,
+      occupancy: rpc.occupancy,
       membershipStatus: rpc.membershipStatus ?? member.membershipStatus,
       event: rpc.event,
     );
@@ -191,7 +232,9 @@ class ScanRepository {
 
   String? _decodeAthleteId(String rawPayload) {
     try {
-      final decoded = jsonDecode(rawPayload);
+      final decoded = jsonDecode(
+        QrSignatureValidator.extractJsonObject(rawPayload),
+      );
       if (decoded is! Map) {
         return null;
       }
@@ -202,6 +245,11 @@ class ScanRepository {
     } catch (_) {
       return null;
     }
+  }
+
+  static bool _hasUsableSalt(String salt) {
+    final trimmed = salt.trim();
+    return trimmed.isNotEmpty && trimmed != '00';
   }
 }
 
