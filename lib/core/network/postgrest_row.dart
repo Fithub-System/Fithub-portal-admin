@@ -14,11 +14,14 @@ Map<String, dynamic> asJsonMap(Object? raw) {
 /// Walks a PostgREST array; skips entries that are not JSON objects.
 List<Map<String, dynamic>> asJsonMapList(Object? raw) {
   if (raw == null) return const [];
-  if (raw is! List) {
+  final Iterable<dynamic> items;
+  if (raw is Iterable) {
+    items = raw;
+  } else {
     throw FormatException('PostgREST list is not a JSON array');
   }
   final rows = <Map<String, dynamic>>[];
-  for (final item in raw) {
+  for (final item in items) {
     try {
       rows.add(asJsonMap(item));
     } catch (_) {}
