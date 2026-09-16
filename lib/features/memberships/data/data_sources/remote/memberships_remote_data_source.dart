@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:fithub_portal_admin/core/network/postgrest_row.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/features/memberships/domain/entities/freeze_policy.dart';
 import 'package:fithub_portal_admin/features/memberships/domain/entities/membership_plan.dart';
@@ -79,8 +80,9 @@ class MembershipsSupabaseRemoteDataSource
                   'price_cents, currency, is_active, pass_kind',
                 )
                 .order('created_at', ascending: false);
-      return (rows as List<dynamic>)
-          .map((row) => _mapPlan(row as Map<String, dynamic>))
+      return asJsonMapList(rows)
+          .map(membershipPlanFromRow)
+          .whereType<MembershipPlan>()
           .toList(growable: false);
     } on PostgrestException catch (e) {
       throw _mapException(e);
@@ -123,7 +125,8 @@ class MembershipsSupabaseRemoteDataSource
             'currency, is_active, pass_kind',
           )
           .single();
-      return _mapPlan(row);
+      return membershipPlanFromRow(row) ??
+          (throw const MembershipsUnknownFailure());
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -179,14 +182,14 @@ class MembershipsSupabaseRemoteDataSource
           .from('athletes')
           .select('id, full_name')
           .order('full_name');
-      return (rows as List<dynamic>)
-          .map((row) {
-            final map = row as Map<String, dynamic>;
-            return MembershipAthleteOption(
-              id: map['id'] as String,
-              fullName: map['full_name'] as String,
-            );
+      return asJsonMapList(rows)
+          .map((map) {
+            final id = jsonStringOrNull(map['id']);
+            final fullName = jsonStringOrNull(map['full_name']);
+            if (id == null || fullName == null) return null;
+            return MembershipAthleteOption(id: id, fullName: fullName);
           })
+          .whereType<MembershipAthleteOption>()
           .toList(growable: false);
     } on PostgrestException catch (e) {
       throw _mapException(e);
@@ -256,9 +259,13 @@ class MembershipsSupabaseRemoteDataSource
     final client = _requireClient();
     try {
       final result = await client.rpc('list_freeze_policies');
-      final rows = result as List<dynamic>? ?? const [];
-      return rows
-          .map((row) => _mapFreezePolicy(row as Map<String, dynamic>))
+      if (result is Map) {
+        final policy = freezePolicyFromRow(result);
+        return policy == null ? const [] : [policy];
+      }
+      return asJsonMapList(result)
+          .map(freezePolicyFromRow)
+          .whereType<FreezePolicy>()
           .toList(growable: false);
     } on PostgrestException catch (e) {
       throw _mapException(e);
@@ -301,30 +308,6 @@ class MembershipsSupabaseRemoteDataSource
     return client;
   }
 
-  MembershipPlan _mapPlan(Map<String, dynamic> row) {
-    return MembershipPlan(
-      id: row['id'] as String,
-      tenantId: row['tenant_id'] as String,
-      name: row['name'] as String,
-      description: row['description'] as String?,
-      durationDays: (row['duration_days'] as num).toInt(),
-      priceCents: (row['price_cents'] as num).toInt(),
-      currency: row['currency'] as String? ?? 'EGP',
-      isActive: row['is_active'] as bool? ?? true,
-      passKind: membershipPassKindFromWire(row['pass_kind']),
-    );
-  }
-
-  FreezePolicy _mapFreezePolicy(Map<String, dynamic> row) {
-    return FreezePolicy(
-      id: row['id'] as String,
-      tenantId: row['tenant_id'] as String,
-      planId: row['plan_id'] as String?,
-      freezeDays: (row['freeze_days'] as num).toInt(),
-      maxFreezeDaysPerTime: (row['max_freeze_days_per_time'] as num).toInt(),
-    );
-  }
-
   MembershipsFailure _mapException(PostgrestException e) {
     final code = e.code ?? '';
     final message = e.message.toLowerCase();
@@ -340,5 +323,47 @@ class MembershipsSupabaseRemoteDataSource
       return const MembershipsValidationFailure();
     }
     return const MembershipsUnknownFailure();
+  }
+}
+
+/// Flutter-web safe plan mapper (PostgREST `Map<dynamic, dynamic>` rows).
+MembershipPlan? membershipPlanFromRow(Object? raw) {
+  try {
+    final row = asJsonMap(raw);
+    final id = jsonStringOrNull(row['id']);
+    final tenantId = jsonStringOrNull(row['tenant_id']);
+    final name = jsonStringOrNull(row['name']);
+    if (id == null || tenantId == null || name == null) return null;
+    return MembershipPlan(
+      id: id,
+      tenantId: tenantId,
+      name: name,
+      description: jsonStringOrNull(row['description']),
+      durationDays: asJsonInt(row['duration_days']),
+      priceCents: asJsonInt(row['price_cents']),
+      currency: jsonStringOrNull(row['currency']) ?? 'EGP',
+      isActive: jsonBool(row['is_active'], fallback: true),
+      passKind: membershipPassKindFromWire(row['pass_kind']),
+    );
+  } catch (_) {
+    return null;
+  }
+}
+
+FreezePolicy? freezePolicyFromRow(Object? raw) {
+  try {
+    final row = asJsonMap(raw);
+    final id = jsonStringOrNull(row['id']);
+    final tenantId = jsonStringOrNull(row['tenant_id']);
+    if (id == null || tenantId == null) return null;
+    return FreezePolicy(
+      id: id,
+      tenantId: tenantId,
+      planId: jsonStringOrNull(row['plan_id']),
+      freezeDays: asJsonInt(row['freeze_days']),
+      maxFreezeDaysPerTime: asJsonInt(row['max_freeze_days_per_time']),
+    );
+  } catch (_) {
+    return null;
   }
 }

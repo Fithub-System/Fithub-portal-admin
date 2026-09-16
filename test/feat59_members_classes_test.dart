@@ -129,6 +129,39 @@ void main() {
         await cubit.close();
       },
     );
+
+    test(
+      'refreshFromCloud still presents cached rows if sync throws',
+      () async {
+        when(
+          () => roster.syncRoster(tenantId: 't1'),
+        ).thenThrow(const MemberRosterUnknownFailure());
+        when(() => roster.listCachedMembers(tenantId: 't1')).thenAnswer(
+          (_) async => [
+            MemberRosterEntry(
+              id: 'live-1',
+              fullName: 'Cached Member',
+              powerScore: 50,
+              cryptoSalt: 'salt',
+              createdAt: DateTime.utc(2026, 1, 1),
+            ),
+          ],
+        );
+
+        final cubit = MemberRosterCubit(
+          listCachedRoster: ListCachedMemberRosterUseCase(roster),
+          syncRoster: SyncMemberRosterUseCase(roster),
+          tenantId: 't1',
+          isOnline: () => true,
+        );
+        await cubit.refreshFromCloud();
+
+        expect(cubit.state.status, MemberRosterStatus.ready);
+        expect(cubit.state.members.single.fullName, 'Cached Member');
+        expect(cubit.state.errorKey, isNull);
+        await cubit.close();
+      },
+    );
   });
 
   group('FEAT-59 US-A empty Members chrome', () {

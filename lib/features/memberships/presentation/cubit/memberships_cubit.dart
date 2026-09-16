@@ -47,7 +47,12 @@ class MembershipsCubit extends Cubit<MembershipsState> {
     emit(state.copyWith(status: MembershipsStatus.loading, clearMessage: true));
     try {
       final plans = await _listPlans();
-      final athletes = await _listAthletes();
+      var athletes = const <MembershipAthleteOption>[];
+      try {
+        athletes = await _listAthletes();
+      } catch (_) {
+        // Plans must still bind when athlete-option mapping fails on web JSON.
+      }
       List<FreezePolicy> policies = const [];
       try {
         policies = await _listFreezePolicies();

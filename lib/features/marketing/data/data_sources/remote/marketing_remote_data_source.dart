@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:fithub_portal_admin/core/network/postgrest_row.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/features/marketing/domain/entities/marketing_campaign.dart';
 import 'package:fithub_portal_admin/features/marketing/domain/entities/promo_code.dart';
@@ -54,9 +55,7 @@ class MarketingSupabaseRemoteDataSource implements MarketingRemoteDataSource {
             'status, created_at, updated_at',
           )
           .order('starts_at', ascending: false);
-      return (rows as List<dynamic>)
-          .map((row) => _mapCampaign(row as Map<String, dynamic>))
-          .toList(growable: false);
+      return asJsonMapList(rows).map(_mapCampaign).toList(growable: false);
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -76,9 +75,7 @@ class MarketingSupabaseRemoteDataSource implements MarketingRemoteDataSource {
             'expires_at, status, redeemed_count, created_at, updated_at',
           )
           .order('created_at', ascending: false);
-      return (rows as List<dynamic>)
-          .map((row) => _mapPromo(row as Map<String, dynamic>))
-          .toList(growable: false);
+      return asJsonMapList(rows).map(_mapPromo).toList(growable: false);
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -109,8 +106,7 @@ class MarketingSupabaseRemoteDataSource implements MarketingRemoteDataSource {
           'p_status': status,
         },
       );
-      final map = Map<String, dynamic>.from(result as Map);
-      return _mapCampaign(map);
+      return _mapCampaign(asJsonMap(result));
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -143,8 +139,7 @@ class MarketingSupabaseRemoteDataSource implements MarketingRemoteDataSource {
           'p_status': status,
         },
       );
-      final map = Map<String, dynamic>.from(result as Map);
-      return _mapPromo(map);
+      return _mapPromo(asJsonMap(result));
     } on PostgrestException catch (e) {
       throw _mapException(e);
     } catch (e) {
@@ -163,41 +158,35 @@ class MarketingSupabaseRemoteDataSource implements MarketingRemoteDataSource {
 
   MarketingCampaign _mapCampaign(Map<String, dynamic> row) {
     return MarketingCampaign(
-      id: row['id'] as String,
-      tenantId: row['tenant_id'] as String,
-      name: row['name'] as String,
-      startsAt: DateTime.parse(row['starts_at'] as String),
-      endsAt: DateTime.parse(row['ends_at'] as String),
-      pushEnabled: row['push_enabled'] as bool? ?? false,
-      status: row['status'] as String? ?? 'scheduled',
-      createdAt: row['created_at'] == null
-          ? null
-          : DateTime.parse(row['created_at'] as String),
-      updatedAt: row['updated_at'] == null
-          ? null
-          : DateTime.parse(row['updated_at'] as String),
+      id: jsonStringOrNull(row['id']) ?? '',
+      tenantId: jsonStringOrNull(row['tenant_id']) ?? '',
+      name: jsonStringOrNull(row['name']) ?? '',
+      startsAt: parseJsonUtc(row['starts_at']) ?? DateTime.now().toUtc(),
+      endsAt: parseJsonUtc(row['ends_at']) ?? DateTime.now().toUtc(),
+      pushEnabled: jsonBool(row['push_enabled']),
+      status: jsonStringOrNull(row['status']) ?? 'scheduled',
+      createdAt: parseJsonUtc(row['created_at']),
+      updatedAt: parseJsonUtc(row['updated_at']),
     );
   }
 
   PromoCode _mapPromo(Map<String, dynamic> row) {
     return PromoCode(
-      id: row['id'] as String,
-      tenantId: row['tenant_id'] as String,
-      code: row['code'] as String,
-      percentOff: (row['percent_off'] as num?)?.toInt(),
-      amountOffCents: (row['amount_off_cents'] as num?)?.toInt(),
-      currency: row['currency'] as String? ?? 'EGP',
-      expiresAt: row['expires_at'] == null
+      id: jsonStringOrNull(row['id']) ?? '',
+      tenantId: jsonStringOrNull(row['tenant_id']) ?? '',
+      code: jsonStringOrNull(row['code']) ?? '',
+      percentOff: row['percent_off'] == null
           ? null
-          : DateTime.parse(row['expires_at'] as String),
-      status: row['status'] as String? ?? 'active',
-      redeemedCount: (row['redeemed_count'] as num?)?.toInt() ?? 0,
-      createdAt: row['created_at'] == null
+          : asJsonInt(row['percent_off']),
+      amountOffCents: row['amount_off_cents'] == null
           ? null
-          : DateTime.parse(row['created_at'] as String),
-      updatedAt: row['updated_at'] == null
-          ? null
-          : DateTime.parse(row['updated_at'] as String),
+          : asJsonInt(row['amount_off_cents']),
+      currency: jsonStringOrNull(row['currency']) ?? 'EGP',
+      expiresAt: parseJsonUtc(row['expires_at']),
+      status: jsonStringOrNull(row['status']) ?? 'active',
+      redeemedCount: asJsonInt(row['redeemed_count']),
+      createdAt: parseJsonUtc(row['created_at']),
+      updatedAt: parseJsonUtc(row['updated_at']),
     );
   }
 

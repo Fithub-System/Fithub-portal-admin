@@ -78,7 +78,7 @@ class GymsOccupancySupabaseRemoteDataSource
           .select('id')
           .eq('tenant_id', tenantId)
           .isFilter('checked_out_at', null);
-      return (rows as List<dynamic>).length;
+      return asJsonMapList(rows).length;
     } catch (_) {
       return null;
     }

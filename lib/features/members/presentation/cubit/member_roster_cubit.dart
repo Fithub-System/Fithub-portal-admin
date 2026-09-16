@@ -66,13 +66,10 @@ class MemberRosterCubit extends Cubit<MemberRosterState> {
     }
     await load();
     if (errorKey == null || isClosed) return;
+    // A 200 roster in Drift must render; Retry only when the table is empty.
+    if (state.members.isNotEmpty) return;
     emit(
-      state.copyWith(
-        status: state.members.isEmpty
-            ? MemberRosterStatus.failure
-            : MemberRosterStatus.ready,
-        errorKey: errorKey,
-      ),
+      state.copyWith(status: MemberRosterStatus.failure, errorKey: errorKey),
     );
   }
 }

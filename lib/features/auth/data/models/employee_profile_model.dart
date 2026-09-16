@@ -11,11 +11,11 @@ class EmployeeProfileModel extends EmployeeProfile {
 
   factory EmployeeProfileModel.fromJson(Map<String, dynamic> json) {
     return EmployeeProfileModel(
-      id: json['id'] as String,
-      tenantId: json['tenant_id'] as String,
-      userId: json['user_id'] as String,
-      name: json['name'] as String,
-      role: json['role'] as String,
+      id: json['id']?.toString() ?? '',
+      tenantId: json['tenant_id']?.toString() ?? '',
+      userId: json['user_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      role: json['role']?.toString() ?? '',
     );
   }
 
