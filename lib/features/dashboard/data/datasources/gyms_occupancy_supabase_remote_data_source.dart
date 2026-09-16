@@ -1,10 +1,15 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/network/postgrest_row.dart';
 import '../../../../core/network/supabase_config.dart';
 import '../../domain/entities/gym_occupancy.dart';
 import 'gyms_occupancy_remote_data_source.dart';
 
 /// Supabase PostgREST + Realtime adapter (default OCCUPANCY_BACKEND).
+///
+/// FEAT-92: live occupancy is COUNT of open visits (`checked_out_at IS NULL`).
+/// Overlay that count on `gyms.current_occupancy` so a stale column cannot
+/// blank the Home ring after a successful toggle.
 class GymsOccupancySupabaseRemoteDataSource
     implements GymsOccupancyRemoteDataSource {
   GymsOccupancySupabaseRemoteDataSource({SupabaseClient? this._client});
@@ -29,7 +34,7 @@ class GymsOccupancySupabaseRemoteDataSource
         .maybeSingle();
 
     if (row == null) return null;
-    return _fromRow(Map<String, dynamic>.from(row));
+    return _withOpenVisits(client, tenantId, _fromRow(asJsonMap(row)));
   }
 
   @override
@@ -45,21 +50,46 @@ class GymsOccupancySupabaseRemoteDataSource
         .stream(primaryKey: ['id'])
         .eq('id', tenantId)
         .where((rows) => rows.isNotEmpty)
-        .map((rows) => _fromRow(Map<String, dynamic>.from(rows.first)));
+        .asyncMap((rows) async {
+          final gym = _fromRow(asJsonMap(rows.first));
+          return _withOpenVisits(client, tenantId, gym);
+        });
+  }
+
+  Future<GymOccupancy> _withOpenVisits(
+    SupabaseClient client,
+    String tenantId,
+    GymOccupancy gym,
+  ) async {
+    final live = await _countOpenVisits(client, tenantId);
+    if (live == null) return gym;
+    return GymOccupancy(
+      id: gym.id,
+      name: gym.name,
+      currentOccupancy: live,
+      capacityLimit: gym.capacityLimit,
+    );
+  }
+
+  Future<int?> _countOpenVisits(SupabaseClient client, String tenantId) async {
+    try {
+      final rows = await client
+          .from('attendance_logs')
+          .select('id')
+          .eq('tenant_id', tenantId)
+          .isFilter('checked_out_at', null);
+      return (rows as List<dynamic>).length;
+    } catch (_) {
+      return null;
+    }
   }
 
   GymOccupancy _fromRow(Map<String, dynamic> row) {
     return GymOccupancy(
-      id: row['id'] as String,
-      name: row['name'] as String? ?? '',
-      currentOccupancy: _asInt(row['current_occupancy']),
-      capacityLimit: _asInt(row['capacity_limit']),
+      id: row['id']?.toString() ?? '',
+      name: row['name']?.toString() ?? '',
+      currentOccupancy: asJsonInt(row['current_occupancy']),
+      capacityLimit: asJsonInt(row['capacity_limit']),
     );
-  }
-
-  int _asInt(Object? value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse('$value') ?? 0;
   }
 }

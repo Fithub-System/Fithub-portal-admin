@@ -11,9 +11,10 @@ class OverviewHomeMetrics {
     required this.revenueTodayCents,
     required this.revenueCurrency,
     required this.expiringSoon,
+    this.cloudDegraded = false,
   });
 
-  /// Active gym roster count after cloud honesty (cached post-sync).
+  /// Active gym roster count after cloud honesty (`gym_members` when live).
   final int membersCount;
 
   /// `attendance_logs` rows for the tenant with `checked_in_at` on UTC today.
@@ -28,6 +29,9 @@ class OverviewHomeMetrics {
 
   /// Active memberships with `ends_at` within [expiringSoonWindow].
   final List<OverviewExpiringRow> expiringSoon;
+
+  /// True when at least one cloud KPI read failed (zeros may be fallback).
+  final bool cloudDegraded;
 
   /// Configurable 48h window (FSD soft lock).
   static const Duration expiringSoonWindow = Duration(hours: 48);

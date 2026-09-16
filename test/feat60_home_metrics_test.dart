@@ -27,33 +27,49 @@ class _FakeRoster implements MemberRosterRepository {
   @override
   Future<List<MemberRosterEntry>> listCachedMembers({
     required String tenantId,
-  }) async =>
-      members;
+  }) async => members;
 
   @override
   Future<int> syncRoster({required String tenantId}) async => members.length;
 }
 
 class _FakeRemote implements OverviewMetricsRemoteDataSource {
-  _FakeRemote({this.checkIns = 0, this.paidCents = 0, this.currency = 'EGP'});
+  _FakeRemote({
+    this.checkIns = 0,
+    this.paidCents = 0,
+    this.currency = 'EGP',
+    this.gymMembersCount,
+    this.throwCheckIns = false,
+  });
 
   final int checkIns;
   final int paidCents;
   final String currency;
+  final int? gymMembersCount;
+  final bool throwCheckIns;
 
   @override
   Future<int> countCheckInsSince({
     required String tenantId,
     required DateTime dayStartUtc,
-  }) async =>
-      checkIns;
+  }) async {
+    if (throwCheckIns) throw Exception('PGRST attendance');
+    return checkIns;
+  }
 
   @override
   Future<({int totalCents, String currency})> sumPaidChargesSince({
     required String tenantId,
     required DateTime dayStartUtc,
-  }) async =>
-      (totalCents: paidCents, currency: currency);
+  }) async => (totalCents: paidCents, currency: currency);
+
+  @override
+  Future<int> countGymMembers({required String tenantId}) async {
+    if (gymMembersCount == null) {
+      throw StateError('live gym_members count not stubbed');
+    }
+    return gymMembersCount!;
+  }
 }
 
 void main() {
@@ -71,18 +87,21 @@ void main() {
       expect(metrics.checkInsTodayLabel, '0');
     });
 
-    test('repository maps empty live + guest-unrelated counts honestly', () async {
-      final repo = OverviewHomeMetricsRepositoryImpl(
-        memberRosterRepository: _FakeRoster(const []),
-        remote: _FakeRemote(),
-        clock: () => DateTime.utc(2026, 9, 8, 12),
-      );
-      final metrics = await repo.load(tenantId: 't1');
-      expect(metrics.membersCount, 0);
-      expect(metrics.checkInsToday, 0);
-      expect(metrics.revenueTodayCents, 0);
-      expect(metrics.expiringSoon, isEmpty);
-    });
+    test(
+      'repository maps empty live + guest-unrelated counts honestly',
+      () async {
+        final repo = OverviewHomeMetricsRepositoryImpl(
+          memberRosterRepository: _FakeRoster(const []),
+          remote: _FakeRemote(gymMembersCount: 0),
+          clock: () => DateTime.utc(2026, 9, 8, 12),
+        );
+        final metrics = await repo.load(tenantId: 't1');
+        expect(metrics.membersCount, 0);
+        expect(metrics.checkInsToday, 0);
+        expect(metrics.revenueTodayCents, 0);
+        expect(metrics.expiringSoon, isEmpty);
+      },
+    );
 
     test('repository filters expiring within 48h window', () async {
       final now = DateTime.utc(2026, 9, 8, 12);
@@ -110,7 +129,12 @@ void main() {
       ];
       final repo = OverviewHomeMetricsRepositoryImpl(
         memberRosterRepository: _FakeRoster(members),
-        remote: _FakeRemote(checkIns: 3, paidCents: 125000, currency: 'EGP'),
+        remote: _FakeRemote(
+          checkIns: 3,
+          paidCents: 125000,
+          currency: 'EGP',
+          gymMembersCount: 2,
+        ),
         clock: () => now,
       );
       final metrics = await repo.load(tenantId: 't1');
@@ -122,48 +146,91 @@ void main() {
       expect(metrics.expiringSoon.first.fullName, 'Ava Chen');
       expect(metrics.expiringSoon.first.urgent, isTrue);
     });
+
+    test('live gym_members count wins over Drift cache length', () async {
+      final repo = OverviewHomeMetricsRepositoryImpl(
+        memberRosterRepository: _FakeRoster(const []),
+        remote: _FakeRemote(gymMembersCount: 4, checkIns: 2),
+        clock: () => DateTime.utc(2026, 9, 8, 12),
+      );
+      final metrics = await repo.load(tenantId: 't1');
+      expect(metrics.membersCount, 4);
+      expect(metrics.checkInsToday, 2);
+      expect(metrics.cloudDegraded, isFalse);
+    });
+
+    test(
+      'cloud KPI failure sets cloudDegraded without wiping cache count',
+      () async {
+        final now = DateTime.utc(2026, 9, 8, 12);
+        final repo = OverviewHomeMetricsRepositoryImpl(
+          memberRosterRepository: _FakeRoster([
+            MemberRosterEntry(
+              id: 'a1',
+              fullName: 'Cached',
+              powerScore: 100,
+              cryptoSalt: 'salt',
+              createdAt: now,
+            ),
+          ]),
+          remote: _FakeRemote(throwCheckIns: true),
+          clock: () => now,
+        );
+        final metrics = await repo.load(tenantId: 't1');
+        expect(metrics.membersCount, 1);
+        expect(metrics.checkInsToday, 0);
+        expect(metrics.cloudDegraded, isTrue);
+      },
+    );
   });
 
   group('FEAT-60 live Overview honesty', () {
-    testWidgets('empty live binds — no Marcus/Elena / no \$12,482 / guest fixture', (
-      tester,
-    ) async {
-      await tester.binding.setSurfaceSize(const Size(1400, 1600));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+    testWidgets(
+      'empty live binds — no Marcus/Elena / no \$12,482 / guest fixture',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1400, 1600));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await pumpLocalizedApp(
-        tester,
-        Scaffold(
-          backgroundColor: KineticTokens.stitchBackground,
-          body: AdminOverviewDashboard(
-            currentOccupancy: 0,
-            capacityLimit: 40,
-            onOpenScanner: () {},
-            liveMetricsBound: true,
-            metricsLoading: false,
-            revenueAmountLabel: 'EGP 0',
-            expiringRows: const [],
-            membersCountLabel: '0',
-            checkInsTodayLabel: '0',
+        await pumpLocalizedApp(
+          tester,
+          Scaffold(
+            backgroundColor: KineticTokens.stitchBackground,
+            body: AdminOverviewDashboard(
+              currentOccupancy: 0,
+              capacityLimit: 40,
+              onOpenScanner: () {},
+              liveMetricsBound: true,
+              metricsLoading: false,
+              revenueAmountLabel: 'EGP 0',
+              expiringRows: const [],
+              membersCountLabel: '0',
+              checkInsTodayLabel: '0',
+            ),
           ),
-        ),
-        waitFor: find.byKey(AdminOverviewDashboard.insightsRowKey),
-      );
+          waitFor: find.byKey(AdminOverviewDashboard.insightsRowKey),
+        );
 
-      expect(find.text(r'$12,482'), findsNothing);
-      expect(find.text('+14.2% vs yesterday'), findsNothing);
-      expect(find.text('Marcus Thorne'), findsNothing);
-      expect(find.text('Elena Rodriguez'), findsNothing);
-      expect(find.text('2,841'), findsNothing);
-      expect(find.text('42'), findsNothing);
-      expect(find.text('EGP 0'), findsOneWidget);
-      expect(find.byKey(const Key('overview-expiring-empty')), findsOneWidget);
-      expect(find.byKey(const Key('overview-yield-delta-omitted')), findsOneWidget);
-      // Guest fixture retained
-      expect(find.text(OverviewStitchFixtures.guestPasses), findsOneWidget);
-      expect(find.text('CHECK-INS TODAY'), findsOneWidget);
-      expect(find.text('0'), findsWidgets);
-    });
+        expect(find.text(r'$12,482'), findsNothing);
+        expect(find.text('+14.2% vs yesterday'), findsNothing);
+        expect(find.text('Marcus Thorne'), findsNothing);
+        expect(find.text('Elena Rodriguez'), findsNothing);
+        expect(find.text('2,841'), findsNothing);
+        expect(find.text('42'), findsNothing);
+        expect(find.text('EGP 0'), findsOneWidget);
+        expect(
+          find.byKey(const Key('overview-expiring-empty')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('overview-yield-delta-omitted')),
+          findsOneWidget,
+        );
+        // Guest fixture retained
+        expect(find.text(OverviewStitchFixtures.guestPasses), findsOneWidget);
+        expect(find.text('CHECK-INS TODAY'), findsOneWidget);
+        expect(find.text('0'), findsWidgets);
+      },
+    );
 
     testWidgets('layout order: Hero → Insights → Mid (Expiring|Gate)', (
       tester,
@@ -194,7 +261,9 @@ void main() {
       final insights = tester.getTopLeft(
         find.byKey(AdminOverviewDashboard.insightsRowKey),
       );
-      final mid = tester.getTopLeft(find.byKey(AdminOverviewDashboard.midRowKey));
+      final mid = tester.getTopLeft(
+        find.byKey(AdminOverviewDashboard.midRowKey),
+      );
 
       expect(hero.dy < insights.dy, isTrue);
       expect(insights.dy < mid.dy, isTrue);

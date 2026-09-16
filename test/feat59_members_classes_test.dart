@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/entities/member_roster_entry.dart';
+import 'package:fithub_portal_admin/features/access_scanner/domain/member_roster_failure.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/repositories/member_roster_repository.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/use_cases/sync_member_roster_use_case.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/entities/member_invite.dart';
@@ -100,6 +101,31 @@ void main() {
 
         expect(cubit.state.status, MemberRosterStatus.ready);
         expect(cubit.state.members, isEmpty);
+        await cubit.close();
+      },
+    );
+
+    test(
+      'refreshFromCloud surfaces sync failure instead of empty ready',
+      () async {
+        when(
+          () => roster.syncRoster(tenantId: 't1'),
+        ).thenThrow(const MemberRosterUnknownFailure());
+        when(
+          () => roster.listCachedMembers(tenantId: 't1'),
+        ).thenAnswer((_) async => []);
+
+        final cubit = MemberRosterCubit(
+          listCachedRoster: ListCachedMemberRosterUseCase(roster),
+          syncRoster: SyncMemberRosterUseCase(roster),
+          tenantId: 't1',
+          isOnline: () => true,
+        );
+        await cubit.refreshFromCloud();
+
+        expect(cubit.state.status, MemberRosterStatus.failure);
+        expect(cubit.state.members, isEmpty);
+        expect(cubit.state.errorKey, 'access_scanner.roster.error.unknown');
         await cubit.close();
       },
     );

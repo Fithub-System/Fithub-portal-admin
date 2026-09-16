@@ -11,4 +11,7 @@ abstract class OverviewMetricsRemoteDataSource {
     required String tenantId,
     required DateTime dayStartUtc,
   });
+
+  /// Live `gym_members` headcount for the caller tenant (RLS-scoped).
+  Future<int> countGymMembers({required String tenantId});
 }
