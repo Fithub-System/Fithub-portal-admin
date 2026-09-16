@@ -25,6 +25,7 @@ class MembershipsRepositoryImpl implements MembershipsRepository {
     required int durationDays,
     required int priceCents,
     String currency = 'EGP',
+    MembershipPassKind passKind = MembershipPassKind.singleBranch,
   }) async {
     final tenantId = await _resolveTenantId();
     return _remote.createPlan(
@@ -34,6 +35,7 @@ class MembershipsRepositoryImpl implements MembershipsRepository {
       durationDays: durationDays,
       priceCents: priceCents,
       currency: currency,
+      passKind: passKind,
     );
   }
 
@@ -47,10 +49,7 @@ class MembershipsRepositoryImpl implements MembershipsRepository {
     required String planId,
     required String athleteId,
   }) {
-    return _remote.assignMembership(
-      planId: planId,
-      athleteId: athleteId,
-    );
+    return _remote.assignMembership(planId: planId, athleteId: athleteId);
   }
 
   @override
@@ -64,14 +63,8 @@ class MembershipsRepositoryImpl implements MembershipsRepository {
   }
 
   @override
-  Future<String> freezeMembership({
-    required String membershipId,
-    int? days,
-  }) {
-    return _remote.freezeMembership(
-      membershipId: membershipId,
-      days: days,
-    );
+  Future<String> freezeMembership({required String membershipId, int? days}) {
+    return _remote.freezeMembership(membershipId: membershipId, days: days);
   }
 
   @override

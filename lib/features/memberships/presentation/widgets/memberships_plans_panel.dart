@@ -61,14 +61,11 @@ class _MembershipsPlansPanelState extends State<MembershipsPlansPanel> {
         if (state.status == MembershipsStatus.loading ||
             state.status == MembershipsStatus.initial) {
           return const Center(
-            child: CircularProgressIndicator(
-              color: KineticTokens.electricLime,
-            ),
+            child: CircularProgressIndicator(color: KineticTokens.electricLime),
           );
         }
 
-        if (state.status == MembershipsStatus.failure &&
-            state.plans.isEmpty) {
+        if (state.status == MembershipsStatus.failure && state.plans.isEmpty) {
           return Center(
             child: Padding(
               padding: const EdgeInsetsDirectional.all(24),
@@ -193,6 +190,7 @@ class _MembershipsPlansPanelState extends State<MembershipsPlansPanel> {
     final durationController = TextEditingController(text: '30');
     final priceController = TextEditingController(text: '0');
     final formKey = GlobalKey<FormState>();
+    var passKind = MembershipPassKind.singleBranch;
 
     final submitted = await showModalBottomSheet<bool>(
       context: context,
@@ -208,81 +206,110 @@ class _MembershipsPlansPanelState extends State<MembershipsPlansPanel> {
           ),
           child: Form(
             key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'memberships.create_title'.tr(),
-                  style: const TextStyle(
-                    color: KineticTokens.pureWhite,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    labelText: 'memberships.field.name'.tr(),
-                  ),
-                  validator: (v) =>
-                      (v == null || v.trim().isEmpty)
-                      ? 'validation.field_empty'.tr()
-                      : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'memberships.field.description'.tr(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: durationController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    labelText: 'memberships.field.duration_days'.tr(),
-                  ),
-                  validator: (v) {
-                    final n = int.tryParse(v ?? '');
-                    if (n == null || n < 1) {
-                      return 'memberships.validation.duration'.tr();
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: priceController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    labelText: 'memberships.field.price_cents'.tr(),
-                  ),
-                  validator: (v) {
-                    final n = int.tryParse(v ?? '');
-                    if (n == null || n < 0) {
-                      return 'memberships.validation.price'.tr();
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: () {
-                    if (formKey.currentState?.validate() != true) return;
-                    Navigator.of(sheetContext).pop(true);
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: KineticTokens.electricLime,
-                    foregroundColor: KineticTokens.deepCharcoal,
-                  ),
-                  child: Text('memberships.cta.save_plan'.tr()),
-                ),
-              ],
+            child: StatefulBuilder(
+              builder: (context, setModalState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'memberships.create_title'.tr(),
+                      style: const TextStyle(
+                        color: KineticTokens.pureWhite,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: 'memberships.field.name'.tr(),
+                      ),
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? 'validation.field_empty'.tr()
+                          : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: descriptionController,
+                      decoration: InputDecoration(
+                        labelText: 'memberships.field.description'.tr(),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<MembershipPassKind>(
+                      key: const Key('memberships_pass_kind'),
+                      initialValue: passKind,
+                      decoration: InputDecoration(
+                        labelText: 'memberships.field.pass_kind'.tr(),
+                      ),
+                      items: [
+                        DropdownMenuItem(
+                          value: MembershipPassKind.singleBranch,
+                          child: Text(
+                            'memberships.pass_kind.single_branch'.tr(),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: MembershipPassKind.roaming,
+                          child: Text('memberships.pass_kind.roaming'.tr()),
+                        ),
+                      ],
+                      onChanged: (v) {
+                        if (v == null) return;
+                        setModalState(() => passKind = v);
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: durationController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        labelText: 'memberships.field.duration_days'.tr(),
+                      ),
+                      validator: (v) {
+                        final n = int.tryParse(v ?? '');
+                        if (n == null || n < 1) {
+                          return 'memberships.validation.duration'.tr();
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        labelText: 'memberships.field.price_cents'.tr(),
+                      ),
+                      validator: (v) {
+                        final n = int.tryParse(v ?? '');
+                        if (n == null || n < 0) {
+                          return 'memberships.validation.price'.tr();
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton(
+                      onPressed: () {
+                        if (formKey.currentState?.validate() != true) {
+                          return;
+                        }
+                        Navigator.of(sheetContext).pop(true);
+                      },
+                      style: FilledButton.styleFrom(
+                        backgroundColor: KineticTokens.electricLime,
+                        foregroundColor: KineticTokens.deepCharcoal,
+                      ),
+                      child: Text('memberships.cta.save_plan'.tr()),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         );
@@ -297,6 +324,7 @@ class _MembershipsPlansPanelState extends State<MembershipsPlansPanel> {
             : descriptionController.text,
         durationDays: int.parse(durationController.text),
         priceCents: int.parse(priceController.text),
+        passKind: passKind,
       );
     }
 
@@ -312,13 +340,11 @@ class _MembershipsPlansPanelState extends State<MembershipsPlansPanel> {
     String? initialAthleteId,
   }) async {
     final cubit = context.read<MembershipsCubit>();
-    final activePlans =
-        state.plans.where((p) => p.isActive).toList(growable: false);
+    final activePlans = state.plans
+        .where((p) => p.isActive)
+        .toList(growable: false);
     if (activePlans.isEmpty || state.athletes.isEmpty) {
-      StitchAuthSnackbar.show(
-        context,
-        'memberships.error.assign_prereq'.tr(),
-      );
+      StitchAuthSnackbar.show(context, 'memberships.error.assign_prereq'.tr());
       return;
     }
 
@@ -410,10 +436,7 @@ class _MembershipsPlansPanelState extends State<MembershipsPlansPanel> {
     );
 
     if (submitted == true && context.mounted) {
-      await cubit.assign(
-        planId: selectedPlanId,
-        athleteId: selectedAthleteId,
-      );
+      await cubit.assign(planId: selectedPlanId, athleteId: selectedAthleteId);
     }
   }
 }
@@ -440,7 +463,9 @@ class _PlanTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: KineticTokens.gunmetalCard,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: KineticTokens.zincGray.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: KineticTokens.zincGray.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         children: [
@@ -468,6 +493,17 @@ class _PlanTile extends StatelessWidget {
                   style: const TextStyle(
                     color: KineticTokens.zincGray,
                     fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  plan.passKind == MembershipPassKind.roaming
+                      ? 'memberships.pass_kind.roaming'.tr()
+                      : 'memberships.pass_kind.single_branch'.tr(),
+                  style: const TextStyle(
+                    color: KineticTokens.electricLime,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 6),

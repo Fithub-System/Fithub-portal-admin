@@ -41,8 +41,9 @@ class AccessScannerScreen extends StatefulWidget {
 
 class _AccessScannerScreenState extends State<AccessScannerScreen> {
   final MobileScannerController _controller = MobileScannerController(
-    detectionSpeed: DetectionSpeed.noDuplicates,
+    detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
+    formats: const [BarcodeFormat.qrCode],
   );
 
   final TextEditingController _manualPayloadController =
@@ -125,10 +126,20 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
       final cubit = context.read<AccessScannerCubit>();
       // Idempotent backup if stream-start listener was missed.
       cubit.markCameraReady();
-      final value = capture.barcodes.firstOrNull?.rawValue;
+      final value = _payloadFromCapture(capture);
       if (value == null) return;
       cubit.onQrDetected(value);
     });
+  }
+
+  String? _payloadFromCapture(BarcodeCapture capture) {
+    for (final barcode in capture.barcodes) {
+      final value = barcode.rawValue ?? barcode.displayValue;
+      if (value == null) continue;
+      final trimmed = value.trim();
+      if (trimmed.isNotEmpty) return trimmed;
+    }
+    return null;
   }
 
   void _openManualEntry() {
@@ -303,7 +314,7 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ),
-            if (!widget.embedded && state.success != null)
+            if (state.success != null)
               Positioned(
                 top: 0,
                 left: 0,
@@ -312,15 +323,16 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                   memberName: state.success!.memberName,
                   avatarUrl: state.success!.avatarUrl,
                   membershipStatus: state.success!.membershipStatus,
+                  event: state.success!.event,
                   onDismiss: () =>
                       context.read<AccessScannerCubit>().dismissSuccess(),
                 ),
               ),
             if (state.errorKey != null)
               Positioned(
-                bottom: 24,
-                left: 24,
-                right: 24,
+                top: 8,
+                left: 16,
+                right: 16,
                 child: Material(
                   color: const Color(0xFFB71C1C),
                   borderRadius: BorderRadius.circular(12),

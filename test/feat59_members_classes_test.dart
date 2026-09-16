@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fithub_portal_admin/core/network/cloud_mutation_guard.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/entities/member_roster_entry.dart';
+import 'package:fithub_portal_admin/features/access_scanner/domain/member_roster_failure.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/repositories/member_roster_repository.dart';
 import 'package:fithub_portal_admin/features/access_scanner/domain/use_cases/sync_member_roster_use_case.dart';
 import 'package:fithub_portal_admin/features/add_member/domain/entities/member_invite.dart';
@@ -103,6 +104,64 @@ void main() {
         await cubit.close();
       },
     );
+
+    test(
+      'refreshFromCloud surfaces sync failure instead of empty ready',
+      () async {
+        when(
+          () => roster.syncRoster(tenantId: 't1'),
+        ).thenThrow(const MemberRosterUnknownFailure());
+        when(
+          () => roster.listCachedMembers(tenantId: 't1'),
+        ).thenAnswer((_) async => []);
+
+        final cubit = MemberRosterCubit(
+          listCachedRoster: ListCachedMemberRosterUseCase(roster),
+          syncRoster: SyncMemberRosterUseCase(roster),
+          tenantId: 't1',
+          isOnline: () => true,
+        );
+        await cubit.refreshFromCloud();
+
+        expect(cubit.state.status, MemberRosterStatus.failure);
+        expect(cubit.state.members, isEmpty);
+        expect(cubit.state.errorKey, 'access_scanner.roster.error.unknown');
+        await cubit.close();
+      },
+    );
+
+    test(
+      'refreshFromCloud still presents cached rows if sync throws',
+      () async {
+        when(
+          () => roster.syncRoster(tenantId: 't1'),
+        ).thenThrow(const MemberRosterUnknownFailure());
+        when(() => roster.listCachedMembers(tenantId: 't1')).thenAnswer(
+          (_) async => [
+            MemberRosterEntry(
+              id: 'live-1',
+              fullName: 'Cached Member',
+              powerScore: 50,
+              cryptoSalt: 'salt',
+              createdAt: DateTime.utc(2026, 1, 1),
+            ),
+          ],
+        );
+
+        final cubit = MemberRosterCubit(
+          listCachedRoster: ListCachedMemberRosterUseCase(roster),
+          syncRoster: SyncMemberRosterUseCase(roster),
+          tenantId: 't1',
+          isOnline: () => true,
+        );
+        await cubit.refreshFromCloud();
+
+        expect(cubit.state.status, MemberRosterStatus.ready);
+        expect(cubit.state.members.single.fullName, 'Cached Member');
+        expect(cubit.state.errorKey, isNull);
+        await cubit.close();
+      },
+    );
   });
 
   group('FEAT-59 US-A empty Members chrome', () {
@@ -151,12 +210,12 @@ void main() {
           ],
           child: const MemberManagementScreen(canWrite: true, canEnroll: true),
         ),
-        waitFor: find.textContaining('No members in this gym'),
+        waitFor: find.textContaining('No members enrolled'),
       );
 
       expect(find.text('Dominic Russo'), findsNothing);
       expect(find.text('Sarah Miller'), findsNothing);
-      expect(find.textContaining('No members in this gym'), findsOneWidget);
+      expect(find.textContaining('No members enrolled'), findsOneWidget);
       expect(find.text('Retry'), findsOneWidget);
     });
 

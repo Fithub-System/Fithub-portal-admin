@@ -47,13 +47,12 @@ class MembersStatsBento extends StatelessWidget {
             value: eliteCount,
             accentBorder: true,
           ),
-          _StatTile(
-            labelKey: 'members.stats.avg_xp',
-            value: avgXp,
-          ),
+          _StatTile(labelKey: 'members.stats.avg_xp', value: avgXp),
           _StatTile(
             labelKey: 'members.stats.active_sessions',
-            value: MembersStitchFixtures.activeSessionsValue,
+            value: usingFixtures
+                ? MembersStitchFixtures.activeSessionsValue
+                : '0',
           ),
           _StatTile(
             labelKey: 'members.stats.system_health',

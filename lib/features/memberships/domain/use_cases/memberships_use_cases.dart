@@ -21,6 +21,7 @@ class CreateMembershipPlanUseCase {
     required int durationDays,
     required int priceCents,
     String currency = 'EGP',
+    MembershipPassKind passKind = MembershipPassKind.singleBranch,
   }) {
     return _repository.createPlan(
       name: name,
@@ -28,6 +29,7 @@ class CreateMembershipPlanUseCase {
       durationDays: durationDays,
       priceCents: priceCents,
       currency: currency,
+      passKind: passKind,
     );
   }
 }
@@ -43,14 +45,8 @@ class AssignMembershipUseCase {
   const AssignMembershipUseCase(this._repository);
   final MembershipsRepository _repository;
 
-  Future<String> call({
-    required String planId,
-    required String athleteId,
-  }) {
-    return _repository.assignMembership(
-      planId: planId,
-      athleteId: athleteId,
-    );
+  Future<String> call({required String planId, required String athleteId}) {
+    return _repository.assignMembership(planId: planId, athleteId: athleteId);
   }
 }
 
@@ -77,10 +73,7 @@ class FreezeMembershipUseCase {
   final MembershipsRepository _repository;
 
   Future<String> call({required String membershipId, int? days}) {
-    return _repository.freezeMembership(
-      membershipId: membershipId,
-      days: days,
-    );
+    return _repository.freezeMembership(membershipId: membershipId, days: days);
   }
 }
 

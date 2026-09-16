@@ -8,12 +8,14 @@ class ScanSuccessNotification extends Equatable {
     this.avatarUrl,
     required this.occupancy,
     this.membershipStatus,
+    this.event = 'CHECK_IN',
   });
 
   final String memberName;
   final String? avatarUrl;
   final int occupancy;
   final String? membershipStatus;
+  final String event;
 
   @override
   List<Object?> get props => [
@@ -21,6 +23,7 @@ class ScanSuccessNotification extends Equatable {
     avatarUrl,
     occupancy,
     membershipStatus,
+    event,
   ];
 }
 

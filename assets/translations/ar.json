@@ -266,6 +266,7 @@
       "ready_waiting": "Ready - Waiting for Scan",
       "confirm": "تأكيد تسجيل الدخول",
       "access_granted": "تم منح الدخول",
+      "access_denied": "تم رفض المسح",
       "system_id": "معرّف النظام: {id}",
       "encryption": "التشفير: {algo}",
       "peak_intensity": "ذروة الشدة",
@@ -279,6 +280,8 @@
       "system_log": "سجل النظام"
     },
     "success": {
+      "check_in": "تم تسجيل الدخول",
+      "check_out": "تم تسجيل الخروج",
       "active_badge": "نشط",
       "expired_badge": "منتهية",
       "paused_badge": "موقوفة",
@@ -394,14 +397,19 @@
       "confirm_assign": "تأكيد التعيين",
       "deactivate": "إلغاء التفعيل"
     },
-    "field": {
-      "name": "اسم الخطة",
-      "description": "الوصف (اختياري)",
-      "duration_days": "المدة (أيام)",
-      "price_cents": "السعر (سنتات)",
-      "plan": "الخطة",
-      "athlete": "الرياضي"
-    },
+      "field": {
+        "name": "اسم الخطة",
+        "description": "الوصف (اختياري)",
+        "duration_days": "المدة (أيام)",
+        "price_cents": "السعر (سنتات)",
+        "pass_kind": "نوع الباقة",
+        "plan": "الخطة",
+        "athlete": "الرياضي"
+      },
+      "pass_kind": {
+        "single_branch": "فرع واحد",
+        "roaming": "تجوال"
+      },
     "validation": {
       "duration": "يجب أن تكون المدة يومًا واحدًا على الأقل",
       "price": "يجب أن يكون السعر 0 أو أكثر"
@@ -449,7 +457,7 @@
       "system_health_value": "ممتاز"
     },
     "cta": {
-      "filter_type": "تصفية النوع"
+      "filter_type": "الخطط"
     },
     "pagination": {
       "showing": "عرض",
@@ -494,7 +502,7 @@
       "frozen": "تم تجميد العضوية.",
       "unfrozen": "تم إلغاء تجميد العضوية."
     },
-    "empty_roster": "لا أعضاء في هذا النادي بعد — أضِف عضوًا أو زامِن عند الاتصال.",
+    "empty_roster": "لا أعضاء مسجّلين في هذا النادي بعد. للمدير: اضغط «إضافة عضو جديد» لدعوة رياضي، ثم افتح «الخطط» لإنشاء عضوية وربطها.",
     "error": {
       "roster": "تعذّر تحديث الأعضاء — اضغط إعادة المحاولة.",
       "freeze_no_policy": "التجميد معطّل — اضبط سياسة التجميد في إعدادات الصالة.",

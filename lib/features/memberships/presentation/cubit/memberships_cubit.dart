@@ -47,7 +47,12 @@ class MembershipsCubit extends Cubit<MembershipsState> {
     emit(state.copyWith(status: MembershipsStatus.loading, clearMessage: true));
     try {
       final plans = await _listPlans();
-      final athletes = await _listAthletes();
+      var athletes = const <MembershipAthleteOption>[];
+      try {
+        athletes = await _listAthletes();
+      } catch (_) {
+        // Plans must still bind when athlete-option mapping fails on web JSON.
+      }
       List<FreezePolicy> policies = const [];
       try {
         policies = await _listFreezePolicies();
@@ -99,6 +104,7 @@ class MembershipsCubit extends Cubit<MembershipsState> {
     String? description,
     required int durationDays,
     required int priceCents,
+    MembershipPassKind passKind = MembershipPassKind.singleBranch,
   }) async {
     emit(state.copyWith(busy: true, clearMessage: true));
     try {
@@ -107,6 +113,7 @@ class MembershipsCubit extends Cubit<MembershipsState> {
         description: description,
         durationDays: durationDays,
         priceCents: priceCents,
+        passKind: passKind,
       );
       final plans = await _listPlans();
       emit(
@@ -160,10 +167,7 @@ class MembershipsCubit extends Cubit<MembershipsState> {
     try {
       await _assignMembership(planId: planId, athleteId: athleteId);
       emit(
-        state.copyWith(
-          busy: false,
-          messageKey: 'memberships.success.assigned',
-        ),
+        state.copyWith(busy: false, messageKey: 'memberships.success.assigned'),
       );
     } on MembershipsFailure catch (e) {
       emit(state.copyWith(busy: false, messageKey: e.messageKey));

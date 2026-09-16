@@ -34,7 +34,8 @@ class OfflineSyncSupabaseRemoteDataSource
             'tenant_id': row.tenantId,
             'athlete_id': row.athleteId,
             'checked_in_at': row.checkedInAt.toUtc().toIso8601String(),
-            'is_synced': true,
+            if (row.checkedOutAt != null)
+              'checked_out_at': row.checkedOutAt!.toUtc().toIso8601String(),
           },
         )
         .toList(growable: false);
@@ -113,6 +114,7 @@ class OfflineSyncSupabaseRemoteDataSource
     return code == '23505' ||
         message.contains('duplicate key') ||
         message.contains('unique constraint') ||
+        details.contains('attendance_logs_one_open_visit_per_athlete') ||
         details.contains('attendance_logs_one_per_athlete_tenant_utc_day');
   }
 }

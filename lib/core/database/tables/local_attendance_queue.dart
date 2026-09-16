@@ -7,6 +7,7 @@ class LocalAttendanceQueue extends Table {
   TextColumn get tenantId => text()();
   TextColumn get athleteId => text()();
   DateTimeColumn get checkedInAt => dateTime()();
+  DateTimeColumn get checkedOutAt => dateTime().nullable()();
   BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
 
   @override

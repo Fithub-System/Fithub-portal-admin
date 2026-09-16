@@ -266,6 +266,7 @@
       "ready_waiting": "Ready - Waiting for Scan",
       "confirm": "CONFIRM CHECK-IN",
       "access_granted": "ACCESS GRANTED",
+      "access_denied": "SCAN REJECTED",
       "system_id": "System ID: {id}",
       "encryption": "Encryption: {algo}",
       "peak_intensity": "Peak Intensity",
@@ -279,6 +280,8 @@
       "system_log": "System Log"
     },
     "success": {
+      "check_in": "Checked in",
+      "check_out": "Checked out",
       "active_badge": "Active",
       "expired_badge": "Expired",
       "paused_badge": "Paused",
@@ -394,14 +397,19 @@
       "confirm_assign": "Confirm assign",
       "deactivate": "Deactivate"
     },
-    "field": {
-      "name": "Plan name",
-      "description": "Description (optional)",
-      "duration_days": "Duration (days)",
-      "price_cents": "Price (cents)",
-      "plan": "Plan",
-      "athlete": "Athlete"
-    },
+      "field": {
+        "name": "Plan name",
+        "description": "Description (optional)",
+        "duration_days": "Duration (days)",
+        "price_cents": "Price (cents)",
+        "pass_kind": "Pass type",
+        "plan": "Plan",
+        "athlete": "Athlete"
+      },
+      "pass_kind": {
+        "single_branch": "Single Branch",
+        "roaming": "Roaming"
+      },
     "validation": {
       "duration": "Duration must be at least 1 day",
       "price": "Price must be 0 or greater"
@@ -449,7 +457,7 @@
       "system_health_value": "Optimal"
     },
     "cta": {
-      "filter_type": "Filter Type"
+      "filter_type": "Plans"
     },
     "pagination": {
       "showing": "SHOWING",
@@ -494,7 +502,7 @@
       "frozen": "Membership frozen.",
       "unfrozen": "Membership unfrozen."
     },
-    "empty_roster": "No members in this gym yet — add a member or sync when online.",
+    "empty_roster": "No members enrolled at this gym yet. Admin: tap Add New Member to invite an athlete, then open Plans to create and assign a membership.",
     "error": {
       "roster": "Could not refresh members — tap Retry.",
       "freeze_no_policy": "Freeze disabled — configure Freeze policy in Gym Settings.",

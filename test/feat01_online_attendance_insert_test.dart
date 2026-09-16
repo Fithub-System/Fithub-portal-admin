@@ -50,7 +50,9 @@ void main() {
         capacityLimit: 120,
       ),
     );
-    await database.into(database.localMembers).insert(
+    await database
+        .into(database.localMembers)
+        .insert(
           LocalMembersCompanion.insert(
             id: athleteId,
             tenantId: tenantId,
@@ -67,110 +69,120 @@ void main() {
     await database.close();
   });
 
-  group('ProcessQrScanUseCase online attendance flush (FEAT-01 / FEAT-09 P0)', () {
-    test('online approved scan flushes attendance_logs via sync use case',
+  group(
+    'ProcessQrScanUseCase online attendance flush (FEAT-01 / FEAT-09 P0)',
+    () {
+      test(
+        'online approved scan flushes attendance_logs via sync use case',
         () async {
-      when(
-        () => syncPending(tenantId: any(named: 'tenantId')),
-      ).thenAnswer((_) async => const OfflineSyncResult(upsertedCount: 1));
+          when(
+            () => syncPending(tenantId: any(named: 'tenantId')),
+          ).thenAnswer((_) async => const OfflineSyncResult(upsertedCount: 1));
 
-      final useCase = ProcessQrScanUseCase(
-        scanRepository,
-        syncPendingAttendance: syncPending,
+          final useCase = ProcessQrScanUseCase(
+            scanRepository,
+            syncPendingAttendance: syncPending,
+          );
+
+          final result = await useCase(
+            tenantId: tenantId,
+            rawPayload: validPayloadForNow(),
+            online: true,
+          );
+
+          expect(result.isApproved, isTrue);
+          expect(result.occupancy, 11);
+          verify(() => syncPending(tenantId: tenantId)).called(1);
+          expect(await database.pendingAttendance(), hasLength(1));
+        },
       );
 
-      final result = await useCase(
-        tenantId: tenantId,
-        rawPayload: validPayloadForNow(),
-        online: true,
-      );
+      test('offline approved scan does not flush to cloud', () async {
+        final useCase = ProcessQrScanUseCase(
+          scanRepository,
+          syncPendingAttendance: syncPending,
+        );
 
-      expect(result.isApproved, isTrue);
-      expect(result.occupancy, 11);
-      verify(() => syncPending(tenantId: tenantId)).called(1);
-      expect(await database.pendingAttendance(), hasLength(1));
-    });
+        final result = await useCase(
+          tenantId: tenantId,
+          rawPayload: validPayloadForNow(),
+          online: false,
+        );
 
-    test('offline approved scan does not flush to cloud', () async {
-      final useCase = ProcessQrScanUseCase(
-        scanRepository,
-        syncPendingAttendance: syncPending,
-      );
+        expect(result.isApproved, isTrue);
+        verifyNever(() => syncPending(tenantId: any(named: 'tenantId')));
+        expect(await database.pendingAttendance(), hasLength(1));
+      });
 
-      final result = await useCase(
-        tenantId: tenantId,
-        rawPayload: validPayloadForNow(),
-        online: false,
-      );
+      test('rejected scan never flushes', () async {
+        final useCase = ProcessQrScanUseCase(
+          scanRepository,
+          syncPendingAttendance: syncPending,
+        );
 
-      expect(result.isApproved, isTrue);
-      verifyNever(() => syncPending(tenantId: any(named: 'tenantId')));
-      expect(await database.pendingAttendance(), hasLength(1));
-    });
+        final result = await useCase(
+          tenantId: tenantId,
+          rawPayload: '{"athlete_id":"missing"}',
+          online: true,
+        );
 
-    test('rejected scan never flushes', () async {
-      final useCase = ProcessQrScanUseCase(
-        scanRepository,
-        syncPendingAttendance: syncPending,
-      );
+        expect(result.isApproved, isFalse);
+        verifyNever(() => syncPending(tenantId: any(named: 'tenantId')));
+      });
 
-      final result = await useCase(
-        tenantId: tenantId,
-        rawPayload: '{"athlete_id":"missing"}',
-        online: true,
-      );
-
-      expect(result.isApproved, isFalse);
-      verifyNever(() => syncPending(tenantId: any(named: 'tenantId')));
-    });
-
-    test('online flush failure still returns local approval (SafeMode)',
+      test(
+        'online flush failure still returns local approval (SafeMode)',
         () async {
-      when(
-        () => syncPending(tenantId: any(named: 'tenantId')),
-      ).thenThrow(const OfflineSyncAttendanceUpsertFailure());
+          when(
+            () => syncPending(tenantId: any(named: 'tenantId')),
+          ).thenThrow(const OfflineSyncAttendanceUpsertFailure());
 
-      final useCase = ProcessQrScanUseCase(
-        scanRepository,
-        syncPendingAttendance: syncPending,
+          final useCase = ProcessQrScanUseCase(
+            scanRepository,
+            syncPendingAttendance: syncPending,
+          );
+
+          final result = await useCase(
+            tenantId: tenantId,
+            rawPayload: validPayloadForNow(),
+            online: true,
+          );
+
+          expect(result.isApproved, isTrue);
+          expect(await database.pendingAttendance(), hasLength(1));
+        },
       );
 
-      final result = await useCase(
-        tenantId: tenantId,
-        rawPayload: validPayloadForNow(),
-        online: true,
-      );
+      test('second scan same UTC day checks out open visit', () async {
+        when(
+          () => syncPending(tenantId: any(named: 'tenantId')),
+        ).thenAnswer((_) async => const OfflineSyncResult(upsertedCount: 1));
 
-      expect(result.isApproved, isTrue);
-      expect(await database.pendingAttendance(), hasLength(1));
-    });
+        final useCase = ProcessQrScanUseCase(
+          scanRepository,
+          syncPendingAttendance: syncPending,
+        );
 
-    test('same-day soft reject skips second flush', () async {
-      when(
-        () => syncPending(tenantId: any(named: 'tenantId')),
-      ).thenAnswer((_) async => const OfflineSyncResult(upsertedCount: 1));
+        final first = await useCase(
+          tenantId: tenantId,
+          rawPayload: validPayloadForNow(),
+          online: true,
+        );
+        expect(first.isApproved, isTrue);
+        expect(first.event, 'CHECK_IN');
+        expect(first.occupancy, 11);
 
-      final useCase = ProcessQrScanUseCase(
-        scanRepository,
-        syncPendingAttendance: syncPending,
-      );
+        final second = await useCase(
+          tenantId: tenantId,
+          rawPayload: validPayloadForNow(),
+          online: true,
+        );
+        expect(second.isApproved, isTrue);
+        expect(second.event, 'CHECK_OUT');
+        expect(second.occupancy, 10);
 
-      final first = await useCase(
-        tenantId: tenantId,
-        rawPayload: validPayloadForNow(),
-        online: true,
-      );
-      expect(first.isApproved, isTrue);
-
-      final second = await useCase(
-        tenantId: tenantId,
-        rawPayload: validPayloadForNow(),
-        online: true,
-      );
-      expect(second.isApproved, isFalse);
-      expect(second.reason, 'Already checked in today.');
-
-      verify(() => syncPending(tenantId: tenantId)).called(1);
-    });
-  });
+        verify(() => syncPending(tenantId: tenantId)).called(2);
+      });
+    },
+  );
 }

@@ -164,11 +164,24 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
       state.copyWith(isProcessing: true, clearSuccess: true, clearError: true),
     );
 
-    final result = await _processQrScan(
-      tenantId: _tenantId,
-      rawPayload: trimmed,
-      online: _isOnline(),
-    );
+    late final ScanProcessResult result;
+    try {
+      result = await _processQrScan(
+        tenantId: _tenantId,
+        rawPayload: trimmed,
+        online: _isOnline(),
+      );
+    } catch (error) {
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          isProcessing: false,
+          errorKey: 'access_scanner.scan.rejected',
+          rejectReason: _rejectReasonFromError(error),
+        ),
+      );
+      return;
+    }
 
     if (isClosed) return;
 
@@ -183,6 +196,7 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
             avatarUrl: result.avatarUrl,
             occupancy: result.occupancy ?? 0,
             membershipStatus: result.membershipStatus,
+            event: result.event,
           ),
         ),
       );
@@ -200,6 +214,16 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
 
   Future<void> processManualPayload(String rawPayload) {
     return onQrDetected(rawPayload);
+  }
+
+  static String _rejectReasonFromError(Object error) {
+    final text = error.toString().toLowerCase();
+    if (text.contains('drift') ||
+        text.contains('sqlite') ||
+        text.contains('database')) {
+      return 'Local member cache failed. Retry roster sync.';
+    }
+    return 'Scan failed. Try again.';
   }
 
   void dismissSuccess() {

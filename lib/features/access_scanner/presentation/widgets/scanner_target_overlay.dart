@@ -15,9 +15,7 @@ class ScannerTargetOverlay extends StatelessWidget {
         child: SizedBox(
           width: frameSize,
           height: frameSize,
-          child: CustomPaint(
-            painter: _TargetGridPainter(),
-          ),
+          child: CustomPaint(painter: _TargetGridPainter()),
         ),
       ),
     );
