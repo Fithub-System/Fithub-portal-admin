@@ -9,7 +9,10 @@ import '../../../auth/presentation/widgets/stitch_auth_snackbar.dart';
 
 /// FEAT-96 founder register — Stitch `4ca7b76eff8742ffb57fd394709c4a63`.
 class GymRegisterPage extends StatefulWidget {
-  const GymRegisterPage({super.key});
+  const GymRegisterPage({super.key, this.onBackToLogin});
+
+  /// When opened from login, returns to that screen instead of a root route.
+  final VoidCallback? onBackToLogin;
 
   static const String stitchScreenIdEn = '4ca7b76eff8742ffb57fd394709c4a63';
   static const String stitchScreenIdAr = '69cda5c26fb44c6680f6eafb41b5743a';
@@ -153,9 +156,16 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                       TextButton(
                         onPressed: busy
                             ? null
-                            : () => context.read<AuthBloc>().add(
-                                const AuthLoginRequested(),
-                              ),
+                            : () {
+                                final back = widget.onBackToLogin;
+                                if (back != null) {
+                                  back();
+                                  return;
+                                }
+                                context.read<AuthBloc>().add(
+                                  const AuthLoginRequested(),
+                                );
+                              },
                         child: Text('onboarding.register.have_account'.tr()),
                       ),
                     ],

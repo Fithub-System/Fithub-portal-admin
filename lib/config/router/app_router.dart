@@ -26,6 +26,9 @@ class AppRouter {
   static Widget authGate() {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (previous, current) {
+        if (_isLoginSurface(previous) && _isLoginSurface(current)) {
+          return false;
+        }
         if (previous.runtimeType != current.runtimeType) return true;
         if (previous is AuthAuthenticated && current is AuthAuthenticated) {
           return previous.showOnboardingWizard !=
@@ -47,13 +50,17 @@ class AppRouter {
           AuthAwaitingEmailConfirmation(:final email) => GymCheckEmailPage(
             email: email,
           ),
-          AuthRegisterForm() => const GymRegisterPage(),
           AuthInitial() || AuthLoading() => const _SplashScaffold(),
           _ => const LoginPage(),
         };
       },
     );
   }
+
+  /// Login stays mounted while the founder form is open so register is not
+  /// a cold-start route — it only appears after the Register CTA.
+  static bool _isLoginSurface(AuthState state) =>
+      state is AuthUnauthenticated || state is AuthRegisterForm;
 }
 
 class _AuthenticatedShell extends StatelessWidget {
