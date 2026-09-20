@@ -39,6 +39,8 @@ class MemberRosterDriftLocalDataSource implements MemberRosterLocalDataSource {
             membershipStatus: Value(member.membershipStatus),
             membershipPlanName: Value(member.membershipPlanName),
             membershipEndsAt: Value(member.membershipEndsAt),
+            publicCode: Value(member.publicCode),
+            assignedCoachId: Value(member.assignedCoachId),
           ),
         )
         .toList(growable: false);
@@ -70,6 +72,8 @@ class MemberRosterDriftLocalDataSource implements MemberRosterLocalDataSource {
             membershipStatus: row.membershipStatus,
             membershipPlanName: row.membershipPlanName,
             membershipEndsAt: row.membershipEndsAt,
+            publicCode: row.publicCode,
+            assignedCoachId: row.assignedCoachId,
           ),
         )
         .toList(growable: false);

@@ -5,9 +5,18 @@ import 'package:flutter/material.dart';
 /// Primary occupancy screen: **Admin Overview Dashboard**
 /// `screens/216e0407184f4c39bd501ed436c1e88b` (exported HTML + theme JSON).
 abstract final class KineticTokens {
-  /// Stitch `namedColors.background` ≈ `#131313`; FEAT-01 deep charcoal.
+  /// Brand Lock canvas — `#121212` (Stitch `namedColors.background` `#131313` retired).
   static const Color deepCharcoal = Color(0xFF121212);
-  static const Color stitchBackground = Color(0xFF131313);
+  static const Color stitchBackground = deepCharcoal;
+
+  /// Zinc border — Design QA `#27272A` (Tailwind zinc-800).
+  static const Color zincBorder = Color(0xFF27272A);
+
+  /// Stitch `surface-container-highest`.
+  static const Color surfaceContainerHighest = Color(0xFF353534);
+
+  /// Dual-tone icon secondary (Brand Lock zinc).
+  static const Color zincMuted = Color(0xFFA1A1AA);
 
   /// Neon lime — Stitch customColor / FEAT-01.
   static const Color electricLime = Color(0xFFCCFF00);
@@ -43,7 +52,7 @@ abstract final class KineticTokens {
   static const Color secondaryFixedDim = Color(0xFFADC7FF);
 
   static const Color onSurface = Color(0xFFE5E2E1);
-  static const Color neutralTrack = Color(0xFF262626);
+  static const Color neutralTrack = zincBorder;
   static const Color pureWhite = Color(0xFFFFFFFF);
 
   /// Stitch `error` — urgent expiration tint.

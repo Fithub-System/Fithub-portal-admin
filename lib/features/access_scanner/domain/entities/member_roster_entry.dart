@@ -14,6 +14,8 @@ class MemberRosterEntry extends Equatable {
     this.membershipStatus,
     this.membershipPlanName,
     this.membershipEndsAt,
+    this.publicCode,
+    this.assignedCoachId,
   });
 
   final String id;
@@ -30,6 +32,12 @@ class MemberRosterEntry extends Equatable {
   final String? membershipPlanName;
   final DateTime? membershipEndsAt;
 
+  /// FEAT-95 desk identity `athletes.public_code`.
+  final String? publicCode;
+
+  /// FEAT-95 `gym_members.assigned_coach_id`.
+  final String? assignedCoachId;
+
   bool get hasActiveMembership => membershipStatus == 'active';
 
   bool get hasPausedMembership => membershipStatus == 'paused';
@@ -44,6 +52,8 @@ class MemberRosterEntry extends Equatable {
     String? membershipStatus,
     String? membershipPlanName,
     DateTime? membershipEndsAt,
+    String? publicCode,
+    String? assignedCoachId,
   }) {
     return MemberRosterEntry(
       id: id,
@@ -57,6 +67,8 @@ class MemberRosterEntry extends Equatable {
       membershipStatus: membershipStatus ?? this.membershipStatus,
       membershipPlanName: membershipPlanName ?? this.membershipPlanName,
       membershipEndsAt: membershipEndsAt ?? this.membershipEndsAt,
+      publicCode: publicCode ?? this.publicCode,
+      assignedCoachId: assignedCoachId ?? this.assignedCoachId,
     );
   }
 
@@ -73,5 +85,7 @@ class MemberRosterEntry extends Equatable {
     membershipStatus,
     membershipPlanName,
     membershipEndsAt,
+    publicCode,
+    assignedCoachId,
   ];
 }

@@ -37,9 +37,12 @@ class GymAttendanceToggleFailure implements Exception {
   String toString() => message ?? code;
 }
 
-/// Employee JWT → `toggle_gym_attendance(p_athlete_id)`.
+/// Employee JWT → `toggle_gym_attendance(p_athlete_id, p_scanned_via)`.
 abstract class ToggleGymAttendanceRemoteDataSource {
-  Future<GymAttendanceToggleResult> toggle(String athleteId);
+  Future<GymAttendanceToggleResult> toggle(
+    String athleteId, {
+    String scannedVia = 'webcam',
+  });
 }
 
 class ToggleGymAttendanceSupabaseRemoteDataSource
@@ -56,7 +59,10 @@ class ToggleGymAttendanceSupabaseRemoteDataSource
   }
 
   @override
-  Future<GymAttendanceToggleResult> toggle(String athleteId) async {
+  Future<GymAttendanceToggleResult> toggle(
+    String athleteId, {
+    String scannedVia = 'webcam',
+  }) async {
     final client = _supabase;
     if (client == null) {
       throw const GymAttendanceToggleFailure('not_configured');
@@ -64,7 +70,7 @@ class ToggleGymAttendanceSupabaseRemoteDataSource
     try {
       final raw = await client.rpc(
         'toggle_gym_attendance',
-        params: {'p_athlete_id': athleteId},
+        params: {'p_athlete_id': athleteId, 'p_scanned_via': scannedVia},
       );
       final data = _asMap(raw);
       final visitId = data['visit_id']?.toString() ?? '';

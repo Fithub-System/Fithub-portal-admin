@@ -296,9 +296,9 @@ class _GymSkuSettingsScreenState extends State<GymSkuSettingsScreen> {
           ],
         ),
         if (state.busy)
-          const ColoredBox(
-            color: Color(0x66000000),
-            child: Center(
+          ColoredBox(
+            color: KineticTokens.deepCharcoal.withValues(alpha: 0.72),
+            child: const Center(
               child: CircularProgressIndicator(
                 color: KineticTokens.electricLime,
               ),

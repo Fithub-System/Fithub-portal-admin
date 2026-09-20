@@ -52,7 +52,12 @@ You are an expert Flutter Developer specializing in multi-platform responsive la
 ## GIT BRANCHING (MANDATORY)
 - Obey `Fithub-documentation/standards/git-branching.md`.
 - Work only on `feature/portal-...` branched from latest `dev`. Never commit features to `main` or directly to `dev`.
-- Open PR into `dev`. Do NOT merge. Wait for Main BizDev `BizDev Audit: PASS` + merge authorization.
+- Open PR into `dev`. Do NOT merge. Wait for **`DESIGN-QA: PASS`** (Design QA Agent) **and** Main BizDev `BizDev Audit: PASS` + merge authorization. You cannot self-issue Design QA.
+
+## DESIGN QA GATE (MANDATORY — UI)
+- Obey `Fithub-documentation/design-qa-agent.role.md` and `.cursor/rules/design-qa-agent.mdc`.
+- UI PRs cannot merge to `dev` or `main` without `DESIGN-QA: PASS`. BizDev **cannot** write `BizDev Audit: PASS` until Design QA has audited affected screens vs Stitch. Merge without that sign-off is an **architectural governance violation**.
+- Do not self-issue Design QA. A dedicated Design QA session must produce the per-screen 4-pillar report.
 
 ## I18N / RTL-LTR (MANDATORY — FEAT-03)
 - Obey `Fithub-documentation/specs/FEAT-03-I18N-RTL-LTR.md`.

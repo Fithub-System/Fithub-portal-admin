@@ -65,10 +65,7 @@ abstract final class MembersStitchFixtures {
 
   /// True when [id] matches Stitch sample chrome member ids.
   static bool isFixtureId(String id) =>
-      id == 'KM-8821' ||
-      id == 'KM-4521' ||
-      id == 'KM-1092' ||
-      id == 'KM-7732';
+      id == 'KM-8821' || id == 'KM-4521' || id == 'KM-1092' || id == 'KM-7732';
 }
 
 /// Plan chip visual kind — FEAT-61: label is always the live plan name;
@@ -106,6 +103,10 @@ String membersInitials(String fullName) {
 }
 
 String membersDisplayId(MemberRosterEntry member) {
+  final code = member.publicCode?.trim();
+  if (code != null && code.isNotEmpty) {
+    return code;
+  }
   if (MembersStitchFixtures.isFixtureId(member.id)) {
     return 'ID: ${member.id}';
   }

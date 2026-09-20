@@ -124,7 +124,9 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
             children: [
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: const ColoredBox(color: Color(0xE6131313)),
+                child: ColoredBox(
+                  color: KineticTokens.deepCharcoal.withValues(alpha: 0.9),
+                ),
               ),
               Align(
                 alignment: Alignment.center,
@@ -793,11 +795,15 @@ class _UnderlineField extends StatelessWidget {
             hintStyle: TextStyle(
               color: AppColors.onSurfaceVariant.withValues(alpha: 0.4),
             ),
-            border: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0x1AFFFFFF)),
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: KineticTokens.pureWhite.withValues(alpha: 0.1),
+              ),
             ),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0x1AFFFFFF)),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: KineticTokens.pureWhite.withValues(alpha: 0.1),
+              ),
             ),
             focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: KineticTokens.primaryContainer),
@@ -856,11 +862,15 @@ class _PhoneField extends StatelessWidget {
               hintStyle: TextStyle(
                 color: AppColors.onSurfaceVariant.withValues(alpha: 0.4),
               ),
-              border: const UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0x1AFFFFFF)),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: KineticTokens.pureWhite.withValues(alpha: 0.1),
+                ),
               ),
-              enabledBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0x1AFFFFFF)),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: KineticTokens.pureWhite.withValues(alpha: 0.1),
+                ),
               ),
               focusedBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: KineticTokens.primaryContainer),

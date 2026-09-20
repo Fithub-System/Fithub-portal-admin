@@ -19,6 +19,24 @@ abstract final class StitchKineticChrome {
   static const double ctaHeight = 52;
   static const double topBarHeight = 56;
   static const EdgeInsets cardPadding = EdgeInsets.fromLTRB(32, 28, 32, 28);
+
+  /// Product copy inherits Cairo (`ar`) / Lexend (`en`) from [ThemeData].
+  static TextStyle text(
+    BuildContext context, {
+    Color? color,
+    double? fontSize,
+    FontWeight? fontWeight,
+    double? height,
+    double? letterSpacing,
+  }) {
+    return Theme.of(context).textTheme.bodyMedium!.copyWith(
+      color: color,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: height,
+      letterSpacing: letterSpacing,
+    );
+  }
 }
 
 class StitchPulseTopBar extends StatelessWidget {
@@ -95,7 +113,8 @@ class _LocaleToggle extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           child: Text(
             label,
-            style: TextStyle(
+            style: StitchKineticChrome.text(
+              context,
               fontSize: 11,
               fontWeight: FontWeight.w700,
               color: selected
@@ -165,7 +184,7 @@ class StitchStageBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label.toUpperCase(),
-      style: const TextStyle(
+      style: TextStyle(
         color: KineticTokens.electricLime,
         fontSize: 11,
         fontWeight: FontWeight.w800,
@@ -186,7 +205,7 @@ class StitchSectionLabel extends StatelessWidget {
       padding: const EdgeInsets.only(top: 20, bottom: 10),
       child: Text(
         label.toUpperCase(),
-        style: const TextStyle(
+        style: TextStyle(
           color: KineticTokens.zincGray,
           fontSize: 11,
           fontWeight: FontWeight.w800,
@@ -228,7 +247,7 @@ class StitchFilledField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: KineticTokens.onSurface,
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -242,7 +261,7 @@ class StitchFilledField extends StatelessWidget {
             keyboardType: keyboardType,
             validator: validator,
             onChanged: onChanged,
-            style: const TextStyle(
+            style: TextStyle(
               color: KineticTokens.pureWhite,
               fontSize: 14,
             ),
@@ -330,7 +349,7 @@ class StitchLimeCta extends StatelessWidget {
                         children: [
                           Text(
                             label.toUpperCase(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: KineticTokens.deepCharcoal,
                               fontSize: 13,
                               fontWeight: FontWeight.w800,
@@ -379,7 +398,7 @@ class StitchGhostButton extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
       ),
     );
   }
@@ -415,7 +434,7 @@ class StitchDashedUpload extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 color: KineticTokens.zincGray,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,

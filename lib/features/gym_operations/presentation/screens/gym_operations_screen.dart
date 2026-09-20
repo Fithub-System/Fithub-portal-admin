@@ -43,7 +43,7 @@ class GymOperationsScreen extends StatelessWidget {
                       ),
                       child: Text(
                         'settings.operations.admin_only'.tr().toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: KineticTokens.electricLime,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
@@ -56,7 +56,7 @@ class GymOperationsScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   'settings.operations.title'.tr(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: KineticTokens.pureWhite,
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
@@ -66,10 +66,7 @@ class GymOperationsScreen extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   'settings.operations.subtitle'.tr(),
-                  style: const TextStyle(
-                    color: KineticTokens.zincGray,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: KineticTokens.zincGray, fontSize: 13),
                 ),
                 StitchSectionLabel(
                   label: 'settings.operations.mode_section'.tr(),
@@ -93,13 +90,25 @@ class GymOperationsScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   'settings.operations.helper'.tr(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: KineticTokens.zincGray,
                     fontSize: 12,
                     height: 1.4,
                   ),
                 ),
                 const SizedBox(height: 20),
+                if (state.saveError != null) ...[
+                  Text(
+                    state.saveError!.tr(),
+                    style: StitchKineticChrome.text(
+                      context,
+                      color: KineticTokens.peakCoral,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 Align(
                   alignment: AlignmentDirectional.centerEnd,
                   child: SizedBox(
@@ -180,7 +189,7 @@ class _ModeCard extends StatelessWidget {
                       children: [
                         Text(
                           'settings.operations.modes.${mode.wire}.title'.tr(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: KineticTokens.pureWhite,
                             fontWeight: FontWeight.w800,
                             fontSize: 14,
@@ -206,7 +215,7 @@ class _ModeCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       'settings.operations.modes.${mode.wire}.body'.tr(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: KineticTokens.zincGray,
                         fontSize: 12,
                         height: 1.4,

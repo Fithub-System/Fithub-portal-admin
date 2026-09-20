@@ -17,6 +17,8 @@ class LocalMembers extends Table {
   TextColumn get membershipStatus => text().nullable()();
   TextColumn get membershipPlanName => text().nullable()();
   DateTimeColumn get membershipEndsAt => dateTime().nullable()();
+  TextColumn get publicCode => text().nullable()();
+  TextColumn get assignedCoachId => text().nullable()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

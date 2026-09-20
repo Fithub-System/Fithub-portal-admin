@@ -59,7 +59,7 @@ class AccessGatePanel extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                   KineticTokens.dashboardCardRadius,
                 ),
-                border: Border.all(color: const Color(0xFF262626)),
+                border: Border.all(color: KineticTokens.zincBorder),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -82,9 +82,9 @@ class AccessGatePanel extends StatelessWidget {
                         children: [
                           _StatusDot(color: KineticTokens.primaryContainer),
                           const SizedBox(width: 4),
-                          const _StatusDot(color: Color(0xFF404040)),
+                          const _StatusDot(color: KineticTokens.surfaceContainerHigh),
                           const SizedBox(width: 4),
-                          const _StatusDot(color: Color(0xFF404040)),
+                          const _StatusDot(color: KineticTokens.surfaceContainerHigh),
                         ],
                       ),
                     ],
@@ -94,10 +94,10 @@ class AccessGatePanel extends StatelessWidget {
                     aspectRatio: 1,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFF171717),
+                        color: KineticTokens.deepCharcoal,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: const Color(0xFF262626),
+                          color: KineticTokens.zincBorder,
                           width: 2,
                         ),
                       ),

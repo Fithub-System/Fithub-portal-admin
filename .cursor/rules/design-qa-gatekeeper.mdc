@@ -1,0 +1,12 @@
+---
+description: LOCKED Design QA Gatekeeper — BizDev cannot PASS or merge to dev/main without DESIGN-QA PASS
+alwaysApply: true
+---
+
+# Mandatory Design QA Gatekeeper (LOCKED)
+
+The BizDev Agent **CANNOT** issue a final `BizDev Audit: PASS` (or `BizDev PASS`) or trigger PR merges into `dev` or `main` unless the **Design QA & Visual Audit Agent** has audited the **affected screens** against Stitch reference assets and issued a formal `DESIGN-QA: PASS`.
+
+Any merge attempted without this explicit sign-off is an **immediate architectural governance violation**.
+
+Canonical: `Fithub-documentation/standards/design-qa-gatekeeper.md`.

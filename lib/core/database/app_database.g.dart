@@ -149,6 +149,28 @@ class $LocalMembersTable extends LocalMembers
         type: DriftSqlType.dateTime,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _publicCodeMeta = const VerificationMeta(
+    'publicCode',
+  );
+  @override
+  late final GeneratedColumn<String> publicCode = GeneratedColumn<String>(
+    'public_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _assignedCoachIdMeta = const VerificationMeta(
+    'assignedCoachId',
+  );
+  @override
+  late final GeneratedColumn<String> assignedCoachId = GeneratedColumn<String>(
+    'assigned_coach_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -163,6 +185,8 @@ class $LocalMembersTable extends LocalMembers
     membershipStatus,
     membershipPlanName,
     membershipEndsAt,
+    publicCode,
+    assignedCoachId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -270,6 +294,21 @@ class $LocalMembersTable extends LocalMembers
         ),
       );
     }
+    if (data.containsKey('public_code')) {
+      context.handle(
+        _publicCodeMeta,
+        publicCode.isAcceptableOrUnknown(data['public_code']!, _publicCodeMeta),
+      );
+    }
+    if (data.containsKey('assigned_coach_id')) {
+      context.handle(
+        _assignedCoachIdMeta,
+        assignedCoachId.isAcceptableOrUnknown(
+          data['assigned_coach_id']!,
+          _assignedCoachIdMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -327,6 +366,14 @@ class $LocalMembersTable extends LocalMembers
         DriftSqlType.dateTime,
         data['${effectivePrefix}membership_ends_at'],
       ),
+      publicCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}public_code'],
+      ),
+      assignedCoachId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}assigned_coach_id'],
+      ),
     );
   }
 
@@ -351,6 +398,8 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
   final String? membershipStatus;
   final String? membershipPlanName;
   final DateTime? membershipEndsAt;
+  final String? publicCode;
+  final String? assignedCoachId;
   const LocalMember({
     required this.id,
     required this.tenantId,
@@ -364,6 +413,8 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     this.membershipStatus,
     this.membershipPlanName,
     this.membershipEndsAt,
+    this.publicCode,
+    this.assignedCoachId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -391,6 +442,12 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     }
     if (!nullToAbsent || membershipEndsAt != null) {
       map['membership_ends_at'] = Variable<DateTime>(membershipEndsAt);
+    }
+    if (!nullToAbsent || publicCode != null) {
+      map['public_code'] = Variable<String>(publicCode);
+    }
+    if (!nullToAbsent || assignedCoachId != null) {
+      map['assigned_coach_id'] = Variable<String>(assignedCoachId);
     }
     return map;
   }
@@ -421,6 +478,12 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
       membershipEndsAt: membershipEndsAt == null && nullToAbsent
           ? const Value.absent()
           : Value(membershipEndsAt),
+      publicCode: publicCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(publicCode),
+      assignedCoachId: assignedCoachId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(assignedCoachId),
     );
   }
 
@@ -446,6 +509,8 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
       membershipEndsAt: serializer.fromJson<DateTime?>(
         json['membershipEndsAt'],
       ),
+      publicCode: serializer.fromJson<String?>(json['publicCode']),
+      assignedCoachId: serializer.fromJson<String?>(json['assignedCoachId']),
     );
   }
   @override
@@ -464,6 +529,8 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
       'membershipStatus': serializer.toJson<String?>(membershipStatus),
       'membershipPlanName': serializer.toJson<String?>(membershipPlanName),
       'membershipEndsAt': serializer.toJson<DateTime?>(membershipEndsAt),
+      'publicCode': serializer.toJson<String?>(publicCode),
+      'assignedCoachId': serializer.toJson<String?>(assignedCoachId),
     };
   }
 
@@ -480,6 +547,8 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     Value<String?> membershipStatus = const Value.absent(),
     Value<String?> membershipPlanName = const Value.absent(),
     Value<DateTime?> membershipEndsAt = const Value.absent(),
+    Value<String?> publicCode = const Value.absent(),
+    Value<String?> assignedCoachId = const Value.absent(),
   }) => LocalMember(
     id: id ?? this.id,
     tenantId: tenantId ?? this.tenantId,
@@ -501,6 +570,10 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     membershipEndsAt: membershipEndsAt.present
         ? membershipEndsAt.value
         : this.membershipEndsAt,
+    publicCode: publicCode.present ? publicCode.value : this.publicCode,
+    assignedCoachId: assignedCoachId.present
+        ? assignedCoachId.value
+        : this.assignedCoachId,
   );
   LocalMember copyWithCompanion(LocalMembersCompanion data) {
     return LocalMember(
@@ -530,6 +603,12 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
       membershipEndsAt: data.membershipEndsAt.present
           ? data.membershipEndsAt.value
           : this.membershipEndsAt,
+      publicCode: data.publicCode.present
+          ? data.publicCode.value
+          : this.publicCode,
+      assignedCoachId: data.assignedCoachId.present
+          ? data.assignedCoachId.value
+          : this.assignedCoachId,
     );
   }
 
@@ -547,7 +626,9 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
           ..write('membershipPlanId: $membershipPlanId, ')
           ..write('membershipStatus: $membershipStatus, ')
           ..write('membershipPlanName: $membershipPlanName, ')
-          ..write('membershipEndsAt: $membershipEndsAt')
+          ..write('membershipEndsAt: $membershipEndsAt, ')
+          ..write('publicCode: $publicCode, ')
+          ..write('assignedCoachId: $assignedCoachId')
           ..write(')'))
         .toString();
   }
@@ -566,6 +647,8 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
     membershipStatus,
     membershipPlanName,
     membershipEndsAt,
+    publicCode,
+    assignedCoachId,
   );
   @override
   bool operator ==(Object other) =>
@@ -582,7 +665,9 @@ class LocalMember extends DataClass implements Insertable<LocalMember> {
           other.membershipPlanId == this.membershipPlanId &&
           other.membershipStatus == this.membershipStatus &&
           other.membershipPlanName == this.membershipPlanName &&
-          other.membershipEndsAt == this.membershipEndsAt);
+          other.membershipEndsAt == this.membershipEndsAt &&
+          other.publicCode == this.publicCode &&
+          other.assignedCoachId == this.assignedCoachId);
 }
 
 class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
@@ -598,6 +683,8 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
   final Value<String?> membershipStatus;
   final Value<String?> membershipPlanName;
   final Value<DateTime?> membershipEndsAt;
+  final Value<String?> publicCode;
+  final Value<String?> assignedCoachId;
   final Value<int> rowid;
   const LocalMembersCompanion({
     this.id = const Value.absent(),
@@ -612,6 +699,8 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     this.membershipStatus = const Value.absent(),
     this.membershipPlanName = const Value.absent(),
     this.membershipEndsAt = const Value.absent(),
+    this.publicCode = const Value.absent(),
+    this.assignedCoachId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalMembersCompanion.insert({
@@ -627,6 +716,8 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     this.membershipStatus = const Value.absent(),
     this.membershipPlanName = const Value.absent(),
     this.membershipEndsAt = const Value.absent(),
+    this.publicCode = const Value.absent(),
+    this.assignedCoachId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        tenantId = Value(tenantId),
@@ -646,6 +737,8 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     Expression<String>? membershipStatus,
     Expression<String>? membershipPlanName,
     Expression<DateTime>? membershipEndsAt,
+    Expression<String>? publicCode,
+    Expression<String>? assignedCoachId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -662,6 +755,8 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
       if (membershipPlanName != null)
         'membership_plan_name': membershipPlanName,
       if (membershipEndsAt != null) 'membership_ends_at': membershipEndsAt,
+      if (publicCode != null) 'public_code': publicCode,
+      if (assignedCoachId != null) 'assigned_coach_id': assignedCoachId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -679,6 +774,8 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     Value<String?>? membershipStatus,
     Value<String?>? membershipPlanName,
     Value<DateTime?>? membershipEndsAt,
+    Value<String?>? publicCode,
+    Value<String?>? assignedCoachId,
     Value<int>? rowid,
   }) {
     return LocalMembersCompanion(
@@ -694,6 +791,8 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
       membershipStatus: membershipStatus ?? this.membershipStatus,
       membershipPlanName: membershipPlanName ?? this.membershipPlanName,
       membershipEndsAt: membershipEndsAt ?? this.membershipEndsAt,
+      publicCode: publicCode ?? this.publicCode,
+      assignedCoachId: assignedCoachId ?? this.assignedCoachId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -737,6 +836,12 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
     if (membershipEndsAt.present) {
       map['membership_ends_at'] = Variable<DateTime>(membershipEndsAt.value);
     }
+    if (publicCode.present) {
+      map['public_code'] = Variable<String>(publicCode.value);
+    }
+    if (assignedCoachId.present) {
+      map['assigned_coach_id'] = Variable<String>(assignedCoachId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -758,6 +863,8 @@ class LocalMembersCompanion extends UpdateCompanion<LocalMember> {
           ..write('membershipStatus: $membershipStatus, ')
           ..write('membershipPlanName: $membershipPlanName, ')
           ..write('membershipEndsAt: $membershipEndsAt, ')
+          ..write('publicCode: $publicCode, ')
+          ..write('assignedCoachId: $assignedCoachId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -838,6 +945,18 @@ class $LocalAttendanceQueueTable extends LocalAttendanceQueue
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _scannedViaMeta = const VerificationMeta(
+    'scannedVia',
+  );
+  @override
+  late final GeneratedColumn<String> scannedVia = GeneratedColumn<String>(
+    'scanned_via',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('webcam'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -846,6 +965,7 @@ class $LocalAttendanceQueueTable extends LocalAttendanceQueue
     checkedInAt,
     checkedOutAt,
     isSynced,
+    scannedVia,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -906,6 +1026,12 @@ class $LocalAttendanceQueueTable extends LocalAttendanceQueue
         isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
       );
     }
+    if (data.containsKey('scanned_via')) {
+      context.handle(
+        _scannedViaMeta,
+        scannedVia.isAcceptableOrUnknown(data['scanned_via']!, _scannedViaMeta),
+      );
+    }
     return context;
   }
 
@@ -942,6 +1068,10 @@ class $LocalAttendanceQueueTable extends LocalAttendanceQueue
         DriftSqlType.bool,
         data['${effectivePrefix}is_synced'],
       )!,
+      scannedVia: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scanned_via'],
+      )!,
     );
   }
 
@@ -959,6 +1089,7 @@ class LocalAttendanceQueueItem extends DataClass
   final DateTime checkedInAt;
   final DateTime? checkedOutAt;
   final bool isSynced;
+  final String scannedVia;
   const LocalAttendanceQueueItem({
     required this.id,
     required this.tenantId,
@@ -966,6 +1097,7 @@ class LocalAttendanceQueueItem extends DataClass
     required this.checkedInAt,
     this.checkedOutAt,
     required this.isSynced,
+    required this.scannedVia,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -978,6 +1110,7 @@ class LocalAttendanceQueueItem extends DataClass
       map['checked_out_at'] = Variable<DateTime>(checkedOutAt);
     }
     map['is_synced'] = Variable<bool>(isSynced);
+    map['scanned_via'] = Variable<String>(scannedVia);
     return map;
   }
 
@@ -991,6 +1124,7 @@ class LocalAttendanceQueueItem extends DataClass
           ? const Value.absent()
           : Value(checkedOutAt),
       isSynced: Value(isSynced),
+      scannedVia: Value(scannedVia),
     );
   }
 
@@ -1006,6 +1140,7 @@ class LocalAttendanceQueueItem extends DataClass
       checkedInAt: serializer.fromJson<DateTime>(json['checkedInAt']),
       checkedOutAt: serializer.fromJson<DateTime?>(json['checkedOutAt']),
       isSynced: serializer.fromJson<bool>(json['isSynced']),
+      scannedVia: serializer.fromJson<String>(json['scannedVia']),
     );
   }
   @override
@@ -1018,6 +1153,7 @@ class LocalAttendanceQueueItem extends DataClass
       'checkedInAt': serializer.toJson<DateTime>(checkedInAt),
       'checkedOutAt': serializer.toJson<DateTime?>(checkedOutAt),
       'isSynced': serializer.toJson<bool>(isSynced),
+      'scannedVia': serializer.toJson<String>(scannedVia),
     };
   }
 
@@ -1028,6 +1164,7 @@ class LocalAttendanceQueueItem extends DataClass
     DateTime? checkedInAt,
     Value<DateTime?> checkedOutAt = const Value.absent(),
     bool? isSynced,
+    String? scannedVia,
   }) => LocalAttendanceQueueItem(
     id: id ?? this.id,
     tenantId: tenantId ?? this.tenantId,
@@ -1035,6 +1172,7 @@ class LocalAttendanceQueueItem extends DataClass
     checkedInAt: checkedInAt ?? this.checkedInAt,
     checkedOutAt: checkedOutAt.present ? checkedOutAt.value : this.checkedOutAt,
     isSynced: isSynced ?? this.isSynced,
+    scannedVia: scannedVia ?? this.scannedVia,
   );
   LocalAttendanceQueueItem copyWithCompanion(
     LocalAttendanceQueueCompanion data,
@@ -1050,6 +1188,9 @@ class LocalAttendanceQueueItem extends DataClass
           ? data.checkedOutAt.value
           : this.checkedOutAt,
       isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
+      scannedVia: data.scannedVia.present
+          ? data.scannedVia.value
+          : this.scannedVia,
     );
   }
 
@@ -1061,14 +1202,22 @@ class LocalAttendanceQueueItem extends DataClass
           ..write('athleteId: $athleteId, ')
           ..write('checkedInAt: $checkedInAt, ')
           ..write('checkedOutAt: $checkedOutAt, ')
-          ..write('isSynced: $isSynced')
+          ..write('isSynced: $isSynced, ')
+          ..write('scannedVia: $scannedVia')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, tenantId, athleteId, checkedInAt, checkedOutAt, isSynced);
+  int get hashCode => Object.hash(
+    id,
+    tenantId,
+    athleteId,
+    checkedInAt,
+    checkedOutAt,
+    isSynced,
+    scannedVia,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1078,7 +1227,8 @@ class LocalAttendanceQueueItem extends DataClass
           other.athleteId == this.athleteId &&
           other.checkedInAt == this.checkedInAt &&
           other.checkedOutAt == this.checkedOutAt &&
-          other.isSynced == this.isSynced);
+          other.isSynced == this.isSynced &&
+          other.scannedVia == this.scannedVia);
 }
 
 class LocalAttendanceQueueCompanion
@@ -1089,6 +1239,7 @@ class LocalAttendanceQueueCompanion
   final Value<DateTime> checkedInAt;
   final Value<DateTime?> checkedOutAt;
   final Value<bool> isSynced;
+  final Value<String> scannedVia;
   final Value<int> rowid;
   const LocalAttendanceQueueCompanion({
     this.id = const Value.absent(),
@@ -1097,6 +1248,7 @@ class LocalAttendanceQueueCompanion
     this.checkedInAt = const Value.absent(),
     this.checkedOutAt = const Value.absent(),
     this.isSynced = const Value.absent(),
+    this.scannedVia = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalAttendanceQueueCompanion.insert({
@@ -1106,6 +1258,7 @@ class LocalAttendanceQueueCompanion
     required DateTime checkedInAt,
     this.checkedOutAt = const Value.absent(),
     this.isSynced = const Value.absent(),
+    this.scannedVia = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        tenantId = Value(tenantId),
@@ -1118,6 +1271,7 @@ class LocalAttendanceQueueCompanion
     Expression<DateTime>? checkedInAt,
     Expression<DateTime>? checkedOutAt,
     Expression<bool>? isSynced,
+    Expression<String>? scannedVia,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1127,6 +1281,7 @@ class LocalAttendanceQueueCompanion
       if (checkedInAt != null) 'checked_in_at': checkedInAt,
       if (checkedOutAt != null) 'checked_out_at': checkedOutAt,
       if (isSynced != null) 'is_synced': isSynced,
+      if (scannedVia != null) 'scanned_via': scannedVia,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1138,6 +1293,7 @@ class LocalAttendanceQueueCompanion
     Value<DateTime>? checkedInAt,
     Value<DateTime?>? checkedOutAt,
     Value<bool>? isSynced,
+    Value<String>? scannedVia,
     Value<int>? rowid,
   }) {
     return LocalAttendanceQueueCompanion(
@@ -1147,6 +1303,7 @@ class LocalAttendanceQueueCompanion
       checkedInAt: checkedInAt ?? this.checkedInAt,
       checkedOutAt: checkedOutAt ?? this.checkedOutAt,
       isSynced: isSynced ?? this.isSynced,
+      scannedVia: scannedVia ?? this.scannedVia,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1172,6 +1329,9 @@ class LocalAttendanceQueueCompanion
     if (isSynced.present) {
       map['is_synced'] = Variable<bool>(isSynced.value);
     }
+    if (scannedVia.present) {
+      map['scanned_via'] = Variable<String>(scannedVia.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1187,6 +1347,7 @@ class LocalAttendanceQueueCompanion
           ..write('checkedInAt: $checkedInAt, ')
           ..write('checkedOutAt: $checkedOutAt, ')
           ..write('isSynced: $isSynced, ')
+          ..write('scannedVia: $scannedVia, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1246,12 +1407,25 @@ class $LocalGymCacheTable extends LocalGymCache
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _scannerInputModeMeta = const VerificationMeta(
+    'scannerInputMode',
+  );
+  @override
+  late final GeneratedColumn<String> scannerInputMode = GeneratedColumn<String>(
+    'scanner_input_mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('hybrid'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     tenantId,
     name,
     currentOccupancy,
     capacityLimit,
+    scannerInputMode,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1301,6 +1475,15 @@ class $LocalGymCacheTable extends LocalGymCache
     } else if (isInserting) {
       context.missing(_capacityLimitMeta);
     }
+    if (data.containsKey('scanner_input_mode')) {
+      context.handle(
+        _scannerInputModeMeta,
+        scannerInputMode.isAcceptableOrUnknown(
+          data['scanner_input_mode']!,
+          _scannerInputModeMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -1326,6 +1509,10 @@ class $LocalGymCacheTable extends LocalGymCache
         DriftSqlType.int,
         data['${effectivePrefix}capacity_limit'],
       )!,
+      scannerInputMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scanner_input_mode'],
+      )!,
     );
   }
 
@@ -1341,11 +1528,13 @@ class LocalGymCacheEntry extends DataClass
   final String name;
   final int currentOccupancy;
   final int capacityLimit;
+  final String scannerInputMode;
   const LocalGymCacheEntry({
     required this.tenantId,
     required this.name,
     required this.currentOccupancy,
     required this.capacityLimit,
+    required this.scannerInputMode,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1354,6 +1543,7 @@ class LocalGymCacheEntry extends DataClass
     map['name'] = Variable<String>(name);
     map['current_occupancy'] = Variable<int>(currentOccupancy);
     map['capacity_limit'] = Variable<int>(capacityLimit);
+    map['scanner_input_mode'] = Variable<String>(scannerInputMode);
     return map;
   }
 
@@ -1363,6 +1553,7 @@ class LocalGymCacheEntry extends DataClass
       name: Value(name),
       currentOccupancy: Value(currentOccupancy),
       capacityLimit: Value(capacityLimit),
+      scannerInputMode: Value(scannerInputMode),
     );
   }
 
@@ -1376,6 +1567,7 @@ class LocalGymCacheEntry extends DataClass
       name: serializer.fromJson<String>(json['name']),
       currentOccupancy: serializer.fromJson<int>(json['currentOccupancy']),
       capacityLimit: serializer.fromJson<int>(json['capacityLimit']),
+      scannerInputMode: serializer.fromJson<String>(json['scannerInputMode']),
     );
   }
   @override
@@ -1386,6 +1578,7 @@ class LocalGymCacheEntry extends DataClass
       'name': serializer.toJson<String>(name),
       'currentOccupancy': serializer.toJson<int>(currentOccupancy),
       'capacityLimit': serializer.toJson<int>(capacityLimit),
+      'scannerInputMode': serializer.toJson<String>(scannerInputMode),
     };
   }
 
@@ -1394,11 +1587,13 @@ class LocalGymCacheEntry extends DataClass
     String? name,
     int? currentOccupancy,
     int? capacityLimit,
+    String? scannerInputMode,
   }) => LocalGymCacheEntry(
     tenantId: tenantId ?? this.tenantId,
     name: name ?? this.name,
     currentOccupancy: currentOccupancy ?? this.currentOccupancy,
     capacityLimit: capacityLimit ?? this.capacityLimit,
+    scannerInputMode: scannerInputMode ?? this.scannerInputMode,
   );
   LocalGymCacheEntry copyWithCompanion(LocalGymCacheCompanion data) {
     return LocalGymCacheEntry(
@@ -1410,6 +1605,9 @@ class LocalGymCacheEntry extends DataClass
       capacityLimit: data.capacityLimit.present
           ? data.capacityLimit.value
           : this.capacityLimit,
+      scannerInputMode: data.scannerInputMode.present
+          ? data.scannerInputMode.value
+          : this.scannerInputMode,
     );
   }
 
@@ -1419,14 +1617,20 @@ class LocalGymCacheEntry extends DataClass
           ..write('tenantId: $tenantId, ')
           ..write('name: $name, ')
           ..write('currentOccupancy: $currentOccupancy, ')
-          ..write('capacityLimit: $capacityLimit')
+          ..write('capacityLimit: $capacityLimit, ')
+          ..write('scannerInputMode: $scannerInputMode')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(tenantId, name, currentOccupancy, capacityLimit);
+  int get hashCode => Object.hash(
+    tenantId,
+    name,
+    currentOccupancy,
+    capacityLimit,
+    scannerInputMode,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1434,7 +1638,8 @@ class LocalGymCacheEntry extends DataClass
           other.tenantId == this.tenantId &&
           other.name == this.name &&
           other.currentOccupancy == this.currentOccupancy &&
-          other.capacityLimit == this.capacityLimit);
+          other.capacityLimit == this.capacityLimit &&
+          other.scannerInputMode == this.scannerInputMode);
 }
 
 class LocalGymCacheCompanion extends UpdateCompanion<LocalGymCacheEntry> {
@@ -1442,12 +1647,14 @@ class LocalGymCacheCompanion extends UpdateCompanion<LocalGymCacheEntry> {
   final Value<String> name;
   final Value<int> currentOccupancy;
   final Value<int> capacityLimit;
+  final Value<String> scannerInputMode;
   final Value<int> rowid;
   const LocalGymCacheCompanion({
     this.tenantId = const Value.absent(),
     this.name = const Value.absent(),
     this.currentOccupancy = const Value.absent(),
     this.capacityLimit = const Value.absent(),
+    this.scannerInputMode = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalGymCacheCompanion.insert({
@@ -1455,6 +1662,7 @@ class LocalGymCacheCompanion extends UpdateCompanion<LocalGymCacheEntry> {
     required String name,
     this.currentOccupancy = const Value.absent(),
     required int capacityLimit,
+    this.scannerInputMode = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : tenantId = Value(tenantId),
        name = Value(name),
@@ -1464,6 +1672,7 @@ class LocalGymCacheCompanion extends UpdateCompanion<LocalGymCacheEntry> {
     Expression<String>? name,
     Expression<int>? currentOccupancy,
     Expression<int>? capacityLimit,
+    Expression<String>? scannerInputMode,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1471,6 +1680,7 @@ class LocalGymCacheCompanion extends UpdateCompanion<LocalGymCacheEntry> {
       if (name != null) 'name': name,
       if (currentOccupancy != null) 'current_occupancy': currentOccupancy,
       if (capacityLimit != null) 'capacity_limit': capacityLimit,
+      if (scannerInputMode != null) 'scanner_input_mode': scannerInputMode,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1480,6 +1690,7 @@ class LocalGymCacheCompanion extends UpdateCompanion<LocalGymCacheEntry> {
     Value<String>? name,
     Value<int>? currentOccupancy,
     Value<int>? capacityLimit,
+    Value<String>? scannerInputMode,
     Value<int>? rowid,
   }) {
     return LocalGymCacheCompanion(
@@ -1487,6 +1698,7 @@ class LocalGymCacheCompanion extends UpdateCompanion<LocalGymCacheEntry> {
       name: name ?? this.name,
       currentOccupancy: currentOccupancy ?? this.currentOccupancy,
       capacityLimit: capacityLimit ?? this.capacityLimit,
+      scannerInputMode: scannerInputMode ?? this.scannerInputMode,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1506,6 +1718,9 @@ class LocalGymCacheCompanion extends UpdateCompanion<LocalGymCacheEntry> {
     if (capacityLimit.present) {
       map['capacity_limit'] = Variable<int>(capacityLimit.value);
     }
+    if (scannerInputMode.present) {
+      map['scanner_input_mode'] = Variable<String>(scannerInputMode.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1519,6 +1734,7 @@ class LocalGymCacheCompanion extends UpdateCompanion<LocalGymCacheEntry> {
           ..write('name: $name, ')
           ..write('currentOccupancy: $currentOccupancy, ')
           ..write('capacityLimit: $capacityLimit, ')
+          ..write('scannerInputMode: $scannerInputMode, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1557,6 +1773,8 @@ typedef $$LocalMembersTableCreateCompanionBuilder =
       Value<String?> membershipStatus,
       Value<String?> membershipPlanName,
       Value<DateTime?> membershipEndsAt,
+      Value<String?> publicCode,
+      Value<String?> assignedCoachId,
       Value<int> rowid,
     });
 typedef $$LocalMembersTableUpdateCompanionBuilder =
@@ -1573,6 +1791,8 @@ typedef $$LocalMembersTableUpdateCompanionBuilder =
       Value<String?> membershipStatus,
       Value<String?> membershipPlanName,
       Value<DateTime?> membershipEndsAt,
+      Value<String?> publicCode,
+      Value<String?> assignedCoachId,
       Value<int> rowid,
     });
 
@@ -1642,6 +1862,16 @@ class $$LocalMembersTableFilterComposer
 
   ColumnFilters<DateTime> get membershipEndsAt => $composableBuilder(
     column: $table.membershipEndsAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get publicCode => $composableBuilder(
+    column: $table.publicCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get assignedCoachId => $composableBuilder(
+    column: $table.assignedCoachId,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1714,6 +1944,16 @@ class $$LocalMembersTableOrderingComposer
     column: $table.membershipEndsAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get publicCode => $composableBuilder(
+    column: $table.publicCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get assignedCoachId => $composableBuilder(
+    column: $table.assignedCoachId,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LocalMembersTableAnnotationComposer
@@ -1774,6 +2014,16 @@ class $$LocalMembersTableAnnotationComposer
     column: $table.membershipEndsAt,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get publicCode => $composableBuilder(
+    column: $table.publicCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get assignedCoachId => $composableBuilder(
+    column: $table.assignedCoachId,
+    builder: (column) => column,
+  );
 }
 
 class $$LocalMembersTableTableManager
@@ -1819,6 +2069,8 @@ class $$LocalMembersTableTableManager
                 Value<String?> membershipStatus = const Value.absent(),
                 Value<String?> membershipPlanName = const Value.absent(),
                 Value<DateTime?> membershipEndsAt = const Value.absent(),
+                Value<String?> publicCode = const Value.absent(),
+                Value<String?> assignedCoachId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalMembersCompanion(
                 id: id,
@@ -1833,6 +2085,8 @@ class $$LocalMembersTableTableManager
                 membershipStatus: membershipStatus,
                 membershipPlanName: membershipPlanName,
                 membershipEndsAt: membershipEndsAt,
+                publicCode: publicCode,
+                assignedCoachId: assignedCoachId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -1849,6 +2103,8 @@ class $$LocalMembersTableTableManager
                 Value<String?> membershipStatus = const Value.absent(),
                 Value<String?> membershipPlanName = const Value.absent(),
                 Value<DateTime?> membershipEndsAt = const Value.absent(),
+                Value<String?> publicCode = const Value.absent(),
+                Value<String?> assignedCoachId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalMembersCompanion.insert(
                 id: id,
@@ -1863,6 +2119,8 @@ class $$LocalMembersTableTableManager
                 membershipStatus: membershipStatus,
                 membershipPlanName: membershipPlanName,
                 membershipEndsAt: membershipEndsAt,
+                publicCode: publicCode,
+                assignedCoachId: assignedCoachId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -1898,6 +2156,7 @@ typedef $$LocalAttendanceQueueTableCreateCompanionBuilder =
       required DateTime checkedInAt,
       Value<DateTime?> checkedOutAt,
       Value<bool> isSynced,
+      Value<String> scannedVia,
       Value<int> rowid,
     });
 typedef $$LocalAttendanceQueueTableUpdateCompanionBuilder =
@@ -1908,6 +2167,7 @@ typedef $$LocalAttendanceQueueTableUpdateCompanionBuilder =
       Value<DateTime> checkedInAt,
       Value<DateTime?> checkedOutAt,
       Value<bool> isSynced,
+      Value<String> scannedVia,
       Value<int> rowid,
     });
 
@@ -1947,6 +2207,11 @@ class $$LocalAttendanceQueueTableFilterComposer
 
   ColumnFilters<bool> get isSynced => $composableBuilder(
     column: $table.isSynced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get scannedVia => $composableBuilder(
+    column: $table.scannedVia,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1989,6 +2254,11 @@ class $$LocalAttendanceQueueTableOrderingComposer
     column: $table.isSynced,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get scannedVia => $composableBuilder(
+    column: $table.scannedVia,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LocalAttendanceQueueTableAnnotationComposer
@@ -2021,6 +2291,11 @@ class $$LocalAttendanceQueueTableAnnotationComposer
 
   GeneratedColumn<bool> get isSynced =>
       $composableBuilder(column: $table.isSynced, builder: (column) => column);
+
+  GeneratedColumn<String> get scannedVia => $composableBuilder(
+    column: $table.scannedVia,
+    builder: (column) => column,
+  );
 }
 
 class $$LocalAttendanceQueueTableTableManager
@@ -2072,6 +2347,7 @@ class $$LocalAttendanceQueueTableTableManager
                 Value<DateTime> checkedInAt = const Value.absent(),
                 Value<DateTime?> checkedOutAt = const Value.absent(),
                 Value<bool> isSynced = const Value.absent(),
+                Value<String> scannedVia = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalAttendanceQueueCompanion(
                 id: id,
@@ -2080,6 +2356,7 @@ class $$LocalAttendanceQueueTableTableManager
                 checkedInAt: checkedInAt,
                 checkedOutAt: checkedOutAt,
                 isSynced: isSynced,
+                scannedVia: scannedVia,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2090,6 +2367,7 @@ class $$LocalAttendanceQueueTableTableManager
                 required DateTime checkedInAt,
                 Value<DateTime?> checkedOutAt = const Value.absent(),
                 Value<bool> isSynced = const Value.absent(),
+                Value<String> scannedVia = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalAttendanceQueueCompanion.insert(
                 id: id,
@@ -2098,6 +2376,7 @@ class $$LocalAttendanceQueueTableTableManager
                 checkedInAt: checkedInAt,
                 checkedOutAt: checkedOutAt,
                 isSynced: isSynced,
+                scannedVia: scannedVia,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -2135,6 +2414,7 @@ typedef $$LocalGymCacheTableCreateCompanionBuilder =
       required String name,
       Value<int> currentOccupancy,
       required int capacityLimit,
+      Value<String> scannerInputMode,
       Value<int> rowid,
     });
 typedef $$LocalGymCacheTableUpdateCompanionBuilder =
@@ -2143,6 +2423,7 @@ typedef $$LocalGymCacheTableUpdateCompanionBuilder =
       Value<String> name,
       Value<int> currentOccupancy,
       Value<int> capacityLimit,
+      Value<String> scannerInputMode,
       Value<int> rowid,
     });
 
@@ -2172,6 +2453,11 @@ class $$LocalGymCacheTableFilterComposer
 
   ColumnFilters<int> get capacityLimit => $composableBuilder(
     column: $table.capacityLimit,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get scannerInputMode => $composableBuilder(
+    column: $table.scannerInputMode,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2204,6 +2490,11 @@ class $$LocalGymCacheTableOrderingComposer
     column: $table.capacityLimit,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get scannerInputMode => $composableBuilder(
+    column: $table.scannerInputMode,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LocalGymCacheTableAnnotationComposer
@@ -2228,6 +2519,11 @@ class $$LocalGymCacheTableAnnotationComposer
 
   GeneratedColumn<int> get capacityLimit => $composableBuilder(
     column: $table.capacityLimit,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get scannerInputMode => $composableBuilder(
+    column: $table.scannerInputMode,
     builder: (column) => column,
   );
 }
@@ -2271,12 +2567,14 @@ class $$LocalGymCacheTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<int> currentOccupancy = const Value.absent(),
                 Value<int> capacityLimit = const Value.absent(),
+                Value<String> scannerInputMode = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalGymCacheCompanion(
                 tenantId: tenantId,
                 name: name,
                 currentOccupancy: currentOccupancy,
                 capacityLimit: capacityLimit,
+                scannerInputMode: scannerInputMode,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2285,12 +2583,14 @@ class $$LocalGymCacheTableTableManager
                 required String name,
                 Value<int> currentOccupancy = const Value.absent(),
                 required int capacityLimit,
+                Value<String> scannerInputMode = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalGymCacheCompanion.insert(
                 tenantId: tenantId,
                 name: name,
                 currentOccupancy: currentOccupancy,
                 capacityLimit: capacityLimit,
+                scannerInputMode: scannerInputMode,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

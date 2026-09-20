@@ -40,7 +40,7 @@ class _PortalSettingsHubScreenState extends State<PortalSettingsHubScreen> {
               children: [
                 Text(
                   'settings.hub.title'.tr(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
