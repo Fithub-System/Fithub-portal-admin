@@ -5,12 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../../injection_container.dart';
 import '../../../gym_onboarding/presentation/screens/gym_onboarding_wizard_page.dart';
+import '../../../gym_onboarding/presentation/widgets/stitch_kinetic_chrome.dart';
+import '../../../gym_operations/presentation/screens/gym_operations_screen.dart';
 import '../../../gym_sku_settings/presentation/screens/gym_sku_settings_screen.dart';
 import '../../../memberships/presentation/widgets/freeze_policy_settings_section.dart';
 
-/// Settings rail hub — module ListTiles (owner soft lock 2026-09-08).
+/// Settings hub — Stitch nest SKU · Freeze · Gym Profile · Operations.
 ///
-/// Modules: SKU & Marketplace · Freeze policy.
+/// Not a 7th rail. Pills match FEAT-97 Operations artboard.
 class PortalSettingsHubScreen extends StatefulWidget {
   const PortalSettingsHubScreen({super.key, required this.canWriteSku});
 
@@ -21,24 +23,47 @@ class PortalSettingsHubScreen extends StatefulWidget {
       _PortalSettingsHubScreenState();
 }
 
-enum _SettingsModule { hub, sku, freeze, profile }
-
 class _PortalSettingsHubScreenState extends State<PortalSettingsHubScreen> {
-  _SettingsModule _module = _SettingsModule.hub;
-
-  void _open(_SettingsModule module) => setState(() => _module = module);
-
-  void _backToHub() => setState(() => _module = _SettingsModule.hub);
+  String _module = 'profile';
 
   @override
   Widget build(BuildContext context) {
-    return switch (_module) {
-      _SettingsModule.hub => _SettingsModuleList(
-        onOpenSku: () => _open(_SettingsModule.sku),
-        onOpenFreeze: () => _open(_SettingsModule.freeze),
-        onOpenProfile: () => _open(_SettingsModule.profile),
+    return ColoredBox(
+      color: KineticTokens.deepCharcoal,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'settings.hub.title'.tr(),
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                    color: KineticTokens.electricLime,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                StitchSettingsPills(
+                  selected: _module,
+                  onSelect: (id) => setState(() => _module = id),
+                ),
+              ],
+            ),
+          ),
+          Expanded(child: _body()),
+        ],
       ),
-      _SettingsModule.sku => MultiBlocProvider(
+    );
+  }
+
+  Widget _body() {
+    return switch (_module) {
+      'sku' => MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (_) => InjectionContainer.createGymSkuSettingsBloc(),
@@ -47,10 +72,10 @@ class _PortalSettingsHubScreenState extends State<PortalSettingsHubScreen> {
         child: GymSkuSettingsScreen(
           canWrite: widget.canWriteSku,
           includeFreezePolicy: false,
-          onClose: _backToHub,
+          onClose: () => setState(() => _module = 'profile'),
         ),
       ),
-      _SettingsModule.freeze => MultiBlocProvider(
+      'freeze' => MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (_) => InjectionContainer.createMembershipsCubit(),
@@ -58,129 +83,15 @@ class _PortalSettingsHubScreenState extends State<PortalSettingsHubScreen> {
         ],
         child: _FreezePolicyModuleScreen(
           canWrite: widget.canWriteSku,
-          onClose: _backToHub,
+          onClose: () => setState(() => _module = 'profile'),
         ),
       ),
-      _SettingsModule.profile => BlocProvider(
+      'operations' => const GymOperationsScreen(),
+      _ => BlocProvider(
         create: (_) => InjectionContainer.createGymOnboardingCubit()..load(),
-        child: GymOnboardingWizardPage(onClose: _backToHub),
+        child: GymOnboardingWizardPage(onClose: () {}),
       ),
     };
-  }
-}
-
-class _SettingsModuleList extends StatelessWidget {
-  const _SettingsModuleList({
-    required this.onOpenSku,
-    required this.onOpenFreeze,
-    required this.onOpenProfile,
-  });
-
-  final VoidCallback onOpenSku;
-  final VoidCallback onOpenFreeze;
-  final VoidCallback onOpenProfile;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return ColoredBox(
-      color: KineticTokens.deepCharcoal,
-      child: ListView(
-        padding: const EdgeInsetsDirectional.all(24),
-        children: [
-          Text(
-            'settings.hub.title'.tr(),
-            style: textTheme.headlineMedium?.copyWith(
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -0.5,
-              color: KineticTokens.electricLime,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'settings.hub.subtitle'.tr(),
-            style: textTheme.bodyMedium?.copyWith(
-              color: KineticTokens.zincGray,
-            ),
-          ),
-          const SizedBox(height: 24),
-          _SettingsModuleTile(
-            icon: Icons.storefront_outlined,
-            titleKey: 'settings.hub.modules.profile.title',
-            bodyKey: 'settings.hub.modules.profile.body',
-            onTap: onOpenProfile,
-          ),
-          const SizedBox(height: 12),
-          _SettingsModuleTile(
-            icon: Icons.cloud_outlined,
-            titleKey: 'settings.hub.modules.sku.title',
-            bodyKey: 'settings.hub.modules.sku.body',
-            onTap: onOpenSku,
-          ),
-          const SizedBox(height: 12),
-          _SettingsModuleTile(
-            icon: Icons.ac_unit_outlined,
-            titleKey: 'settings.hub.modules.freeze.title',
-            bodyKey: 'settings.hub.modules.freeze.body',
-            onTap: onOpenFreeze,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsModuleTile extends StatelessWidget {
-  const _SettingsModuleTile({
-    required this.icon,
-    required this.titleKey,
-    required this.bodyKey,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String titleKey;
-  final String bodyKey;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Material(
-      color: KineticTokens.surfaceContainerLow,
-      borderRadius: BorderRadius.circular(KineticTokens.dashboardCardRadius),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            KineticTokens.dashboardCardRadius,
-          ),
-        ),
-        leading: Icon(icon, color: KineticTokens.electricLime),
-        title: Text(
-          titleKey.tr(),
-          style: textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: KineticTokens.pureWhite,
-          ),
-        ),
-        subtitle: Text(
-          bodyKey.tr(),
-          style: textTheme.bodySmall?.copyWith(color: KineticTokens.zincGray),
-        ),
-        trailing: const Icon(
-          Icons.chevron_right,
-          color: KineticTokens.zincGray,
-        ),
-      ),
-    );
   }
 }
 
@@ -195,57 +106,19 @@ class _FreezePolicyModuleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return ColoredBox(
       color: KineticTokens.deepCharcoal,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: ListView(
+        padding: const EdgeInsets.all(24),
         children: [
-          Material(
-            color: KineticTokens.gunmetalCard,
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsetsDirectional.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      tooltip: 'settings.hub.back'.tr(),
-                      onPressed: onClose,
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: KineticTokens.electricLime,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'settings.hub.modules.freeze.title'.tr(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: KineticTokens.pureWhite,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton(
+              onPressed: onClose,
+              child: Text('settings.hub.back'.tr()),
             ),
           ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsetsDirectional.all(24),
-              children: [
-                FreezePolicySettingsSection(canWrite: canWrite),
-                const SizedBox(height: 24),
-              ],
-            ),
-          ),
+          FreezePolicySettingsSection(canWrite: canWrite),
         ],
       ),
     );

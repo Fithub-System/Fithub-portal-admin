@@ -85,17 +85,51 @@
       "subtitle": "Configure gym modules. Open a tile to edit.",
       "back": "Back to Settings",
       "modules": {
+        "profile": {
+          "title": "Gym Profile",
+          "body": "Brand, branches, amenities, and marketplace readiness.",
+          "pill": "Gym Profile"
+        },
+        "operations": {
+          "title": "Operations",
+          "body": "Front-desk check-in input.",
+          "pill": "Operations"
+        },
         "sku": {
           "title": "SKU & Marketplace",
-          "body": "Network / Private Cloud and Marketplace opt-in."
+          "body": "Network / Private Cloud and Marketplace opt-in.",
+          "pill": "SKU & commercials"
         },
         "freeze": {
           "title": "Freeze policy",
-          "body": "Default and max freeze days — general and per plan."
+          "body": "Default and max freeze days — general and per plan.",
+          "pill": "Freeze rules"
+        }
+      }
+    },
+    "operations": {
+      "eyebrow": "Operations",
+      "title": "Operations",
+      "subtitle": "Front-desk check-in input",
+      "mode_section": "Scanner ingestion mode",
+      "admin_only": "Admin only",
+      "recommended": "Recommended for speed",
+      "default_badge": "Default",
+      "latency": "<50ms burst",
+      "helper": "Receptionist uses this mode; only Admin can change it.",
+      "save": "Save",
+      "modes": {
+        "hardware_gun": {
+          "title": "Hardware scanner gun (HID)",
+          "body": "Laser/CCD. No camera permission. Fast burst check-in."
         },
-        "profile": {
-          "title": "Gym Profile",
-          "body": "Brand, branches, amenities, and marketplace readiness."
+        "webcam": {
+          "title": "Built-in webcam stream",
+          "body": "Existing Check-in Gate camera."
+        },
+        "hybrid": {
+          "title": "Hybrid / Auto-detect",
+          "body": "Camera on until the first gun burst this session."
         }
       }
     }
@@ -317,6 +351,15 @@
         "empty": "No members enrolled — seed gym_members (tenant_id, athlete_id) or complete one online check-in, then Retry.",
         "unknown": "Member roster sync failed. Check network and Retry."
       }
+    },
+    "gun": {
+      "ready": "Ready for Gun Scan",
+      "hid": "Hardware HID connected",
+      "headline": "Point scanner at athlete QR",
+      "body": "Point the gun at the athlete QR. No click required.",
+      "last_empty": "Awaiting first check-in — last verified athlete appears here.",
+      "invalid": "Invalid scan",
+      "use_camera": "Use camera"
     }
   },
   "staff_invite": {
@@ -850,16 +893,21 @@
       "publish": "Publish"
     },
     "register": {
-      "title": "Register your gym",
-      "subtitle": "Gym Founder / Admin only. Staff join by invite.",
+      "title": "Create your gym account",
+      "subtitle": "Corporate email — you will verify before onboarding.",
+      "eyebrow": "Gym Admin Portal",
       "from_login": "Register your gym",
-      "trading": "Trading name",
+      "trading": "Gym trading name",
       "trading_hint": "Pulse Maadi",
-      "email": "Email",
+      "email": "Corporate email",
       "email_hint": "founder@yourgym.com",
-      "password": "Password",
+      "password": "Master password",
       "confirm": "Confirm password",
-      "cta": "Create gym account",
+      "cta": "Create account",
+      "attest": "I confirm I am the authorized facility founder or general manager",
+      "attest_required": "Confirm you are the authorized founder to continue",
+      "staff_note": "Staff are invited after you finish onboarding. Front-desk operators and in-house trainers cannot register publicly.",
+      "verification": "Email activation is sent on create. Confirm before Business & Legal setup.",
       "have_account": "Already have an account? Sign in",
       "required": "Required",
       "password_short": "Password must be at least 8 characters",
@@ -870,6 +918,10 @@
     },
     "step1": {
       "title": "Brand & legal",
+      "stage": "Stage 01 · Administration verification",
+      "media": "Media & brand assets",
+      "banner": "Upload facility hero banner",
+      "entity": "Entity & registration",
       "brand": "Gym name",
       "trading": "Trading name",
       "tax": "Tax / CR (optional)",
@@ -878,6 +930,7 @@
     },
     "step2": {
       "title": "Branch & facilities",
+      "stage": "Stage 02 · Facility architecture",
       "name": "Branch name",
       "address": "Address",
       "lat": "Latitude",
@@ -901,6 +954,7 @@
     },
     "step3": {
       "title": "Staff roster",
+      "stage": "Stage 03 · Operational provisioning",
       "honesty": "Optional. Receptionist and Coach stay invite-only. No Studio in this step.",
       "email": "Staff email",
       "name": "Staff name",
@@ -909,6 +963,7 @@
     },
     "step4": {
       "title": "Membership plan",
+      "stage": "Stage 04 · Commercial tiers",
       "name": "Plan name",
       "days": "Duration (days)",
       "price": "Price (EGP)",
@@ -919,7 +974,8 @@
       "added": "Plan added. You can add another or continue."
     },
     "step5": {
-      "title": "Readiness & publish"
+      "title": "Readiness & publish",
+      "stage": "Stage 05 · Final readiness gate"
     },
     "check": {
       "branch": "Complete branch (name, address, hours, capacity, amenity, photo)",

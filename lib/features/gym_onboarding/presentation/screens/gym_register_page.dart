@@ -6,6 +6,7 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/stitch_auth_snackbar.dart';
+import '../widgets/stitch_kinetic_chrome.dart';
 
 /// FEAT-96 founder register — Stitch `4ca7b76eff8742ffb57fd394709c4a63`.
 class GymRegisterPage extends StatefulWidget {
@@ -27,20 +28,7 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
   final _password = TextEditingController();
   final _confirm = TextEditingController();
   final _trading = TextEditingController();
-  var _sampleFilled = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_sampleFilled) return;
-    _sampleFilled = true;
-    if (_trading.text.isEmpty) {
-      _trading.text = 'onboarding.register.trading_hint'.tr();
-    }
-    if (_email.text.isEmpty) {
-      _email.text = 'onboarding.register.email_hint'.tr();
-    }
-  }
+  var _attested = false;
 
   @override
   void dispose() {
@@ -53,6 +41,13 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!_attested) {
+      StitchAuthSnackbar.show(
+        context,
+        'onboarding.register.attest_required'.tr(),
+      );
+      return;
+    }
     context.read<AuthBloc>().add(
       AuthRegisterSubmitted(
         email: _email.text,
@@ -83,112 +78,189 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
         final busy = state is AuthRegisterForm && state.submitting;
         return Scaffold(
           backgroundColor: KineticTokens.deepCharcoal,
-          body: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 560),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Form(
-                  key: _formKey,
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      Text(
-                        'onboarding.register.title'.tr(),
-                        style: const TextStyle(
-                          color: KineticTokens.pureWhite,
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'onboarding.register.subtitle'.tr(),
-                        style: const TextStyle(color: KineticTokens.zincGray),
-                      ),
-                      TextFormField(
-                        controller: _trading,
-                        style: const TextStyle(color: KineticTokens.pureWhite),
-                        decoration: InputDecoration(
-                          labelText: 'onboarding.register.trading'.tr(),
-                          hintText: 'onboarding.register.trading_hint'.tr(),
-                        ),
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'onboarding.register.required'.tr()
-                            : null,
-                      ),
-                      TextFormField(
-                        controller: _email,
-                        keyboardType: TextInputType.emailAddress,
-                        style: const TextStyle(color: KineticTokens.pureWhite),
-                        decoration: InputDecoration(
-                          labelText: 'onboarding.register.email'.tr(),
-                          hintText: 'onboarding.register.email_hint'.tr(),
-                        ),
-                        validator: (v) => (v == null || !v.contains('@'))
-                            ? 'onboarding.register.required'.tr()
-                            : null,
-                      ),
-                      TextFormField(
-                        controller: _password,
-                        obscureText: true,
-                        style: const TextStyle(color: KineticTokens.pureWhite),
-                        decoration: InputDecoration(
-                          labelText: 'onboarding.register.password'.tr(),
-                        ),
-                        validator: (v) => (v == null || v.length < 8)
-                            ? 'onboarding.register.password_short'.tr()
-                            : null,
-                      ),
-                      TextFormField(
-                        controller: _confirm,
-                        obscureText: true,
-                        style: const TextStyle(color: KineticTokens.pureWhite),
-                        decoration: InputDecoration(
-                          labelText: 'onboarding.register.confirm'.tr(),
-                        ),
-                        validator: (v) => v != _password.text
-                            ? 'onboarding.register.mismatch'.tr()
-                            : null,
-                      ),
-                      const SizedBox(height: 24),
-                      FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: KineticTokens.electricLime,
-                          foregroundColor: KineticTokens.deepCharcoal,
-                          minimumSize: const Size.fromHeight(52),
-                        ),
-                        onPressed: busy ? null : _submit,
-                        child: busy
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+          body: Column(
+            children: [
+              const StitchPulseTopBar(),
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+                    child: StitchKineticCard(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            StitchStageBadge(
+                              label: 'onboarding.register.eyebrow'.tr(),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'onboarding.register.title'.tr(),
+                              style: const TextStyle(
+                                color: KineticTokens.pureWhite,
+                                fontSize: 32,
+                                fontWeight: FontWeight.w900,
+                                height: 1.05,
+                                letterSpacing: -0.6,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'onboarding.register.subtitle'.tr(),
+                              style: const TextStyle(
+                                color: KineticTokens.zincGray,
+                                fontSize: 13,
+                                height: 1.4,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            StitchFilledField(
+                              key: const Key('gym-register-trading'),
+                              controller: _trading,
+                              label: 'onboarding.register.trading'.tr(),
+                              hint: 'onboarding.register.trading_hint'.tr(),
+                              validator: (v) => (v == null || v.trim().isEmpty)
+                                  ? 'onboarding.register.required'.tr()
+                                  : null,
+                            ),
+                            StitchFilledField(
+                              key: const Key('gym-register-email'),
+                              controller: _email,
+                              label: 'onboarding.register.email'.tr(),
+                              hint: 'onboarding.register.email_hint'.tr(),
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (v) => (v == null || !v.contains('@'))
+                                  ? 'onboarding.register.required'.tr()
+                                  : null,
+                            ),
+                            StitchFilledField(
+                              controller: _password,
+                              label: 'onboarding.register.password'.tr(),
+                              obscure: true,
+                              validator: (v) => (v == null || v.length < 8)
+                                  ? 'onboarding.register.password_short'.tr()
+                                  : null,
+                            ),
+                            StitchFilledField(
+                              controller: _confirm,
+                              label: 'onboarding.register.confirm'.tr(),
+                              obscure: true,
+                              validator: (v) => v != _password.text
+                                  ? 'onboarding.register.mismatch'.tr()
+                                  : null,
+                            ),
+                            const SizedBox(height: 4),
+                            InkWell(
+                              onTap: () =>
+                                  setState(() => _attested = !_attested),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _attested
+                                        ? Icons.check_box
+                                        : Icons.check_box_outline_blank,
+                                    color: KineticTokens.electricLime,
+                                    size: 22,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'onboarding.register.attest'.tr(),
+                                      style: const TextStyle(
+                                        color: KineticTokens.onSurface,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            StitchLimeCta(
+                              label: 'onboarding.register.cta'.tr(),
+                              busy: busy,
+                              onTap: _submit,
+                            ),
+                            const SizedBox(height: 16),
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: KineticTokens.deepCharcoal,
+                                borderRadius: BorderRadius.circular(10),
+                                border: const Border(
+                                  left: BorderSide(
+                                    color: KineticTokens.electricLime,
+                                    width: 3,
+                                  ),
                                 ),
-                              )
-                            : Text('onboarding.register.cta'.tr()),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(
+                                      Icons.campaign_outlined,
+                                      color: KineticTokens.electricLime,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        'onboarding.register.staff_note'.tr(),
+                                        style: const TextStyle(
+                                          color: KineticTokens.zincGray,
+                                          fontSize: 12,
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'onboarding.register.verification'.tr(),
+                              style: const TextStyle(
+                                color: KineticTokens.zincGray,
+                                fontSize: 11,
+                                height: 1.4,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: AlignmentDirectional.center,
+                              child: TextButton(
+                                onPressed: busy
+                                    ? null
+                                    : () {
+                                        final back = widget.onBackToLogin;
+                                        if (back != null) {
+                                          back();
+                                          return;
+                                        }
+                                        context.read<AuthBloc>().add(
+                                          const AuthLoginRequested(),
+                                        );
+                                      },
+                                child: Text(
+                                  'onboarding.register.have_account'.tr(),
+                                  style: const TextStyle(
+                                    color: KineticTokens.electricLime,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      TextButton(
-                        onPressed: busy
-                            ? null
-                            : () {
-                                final back = widget.onBackToLogin;
-                                if (back != null) {
-                                  back();
-                                  return;
-                                }
-                                context.read<AuthBloc>().add(
-                                  const AuthLoginRequested(),
-                                );
-                              },
-                        child: Text('onboarding.register.have_account'.tr()),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
         );
       },
@@ -205,35 +277,42 @@ class GymCheckEmailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'onboarding.register.check_email'.tr(),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: KineticTokens.pureWhite,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
+      body: Column(
+        children: [
+          const StitchPulseTopBar(),
+          Expanded(
+            child: Center(
+              child: StitchKineticCard(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'onboarding.register.check_email'.tr(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: KineticTokens.pureWhite,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      email,
+                      style: const TextStyle(color: KineticTokens.electricLime),
+                    ),
+                    const SizedBox(height: 24),
+                    StitchGhostButton(
+                      label: 'onboarding.register.back_login'.tr(),
+                      onTap: () => context.read<AuthBloc>().add(
+                        const AuthSignOutRequested(),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                email,
-                style: const TextStyle(color: KineticTokens.electricLime),
-              ),
-              const SizedBox(height: 24),
-              TextButton(
-                onPressed: () =>
-                    context.read<AuthBloc>().add(const AuthSignOutRequested()),
-                child: Text('onboarding.register.back_login'.tr()),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

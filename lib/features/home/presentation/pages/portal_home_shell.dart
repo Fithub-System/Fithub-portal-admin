@@ -20,6 +20,7 @@ import '../../../class_sessions/presentation/screens/class_manager_screen.dart';
 import '../../../admin_payout_queue/presentation/screens/admin_payout_queue_screen.dart';
 import '../widgets/access_scanner_focus_host.dart';
 import '../widgets/kinetic_coming_soon_empty.dart';
+import '../../../gym_operations/presentation/scanner_input_cubit.dart';
 import '../screens/portal_settings_hub_screen.dart';
 import 'portal_shell_destinations.dart';
 
@@ -106,207 +107,210 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     final needsOnboarding =
         authState is AuthAuthenticated && authState.profile.needsOnboarding;
 
-    return BlocBuilder<ConnectivityCubit, ConnectivityState>(
-      builder: (context, connectivity) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final useRail =
-                constraints.maxWidth >= PortalHomeShell.railBreakpoint;
+    return BlocProvider(
+      create: (_) => ScannerInputCubit(canWrite: canManageSkuSettings)..load(),
+      child: BlocBuilder<ConnectivityCubit, ConnectivityState>(
+        builder: (context, connectivity) {
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final useRail =
+                  constraints.maxWidth >= PortalHomeShell.railBreakpoint;
 
-            // FEAT-16 VF4: Check-in Gate keeps Install rail + SafeMode;
-            // content replaces Home body (not a Scan rail tab).
-            final body = _scannerFocus
-                ? AccessScannerFocusHost(onClose: _closeScannerFocus)
-                : IndexedStack(
-                    index: _selectedIndex,
+              // FEAT-16 VF4: Check-in Gate keeps Install rail + SafeMode;
+              // content replaces Home body (not a Scan rail tab).
+              final body = _scannerFocus
+                  ? AccessScannerFocusHost(onClose: _closeScannerFocus)
+                  : IndexedStack(
+                      index: _selectedIndex,
+                      children: [
+                        _DashboardDestination(onOpenScanner: _openScannerFocus),
+                        MultiBlocProvider(
+                          providers: [
+                            BlocProvider(
+                              create: (_) =>
+                                  InjectionContainer.createMembershipsCubit(),
+                            ),
+                            BlocProvider(
+                              create: (_) => members_di.createMemberRosterCubit(
+                                getIt: InjectionContainer.locator,
+                                tenantId: tenantId,
+                              )..refreshFromCloud(),
+                            ),
+                          ],
+                          child: MemberManagementScreen(
+                            canWrite: canManageMemberships,
+                            canRenew: canRenewMembership,
+                            canFreeze: canFreezeMembership,
+                            canEnroll: canEnrollMembers,
+                          ),
+                        ),
+                        const _StaffDestination(),
+                        BlocProvider(
+                          create: (_) =>
+                              InjectionContainer.createClassSessionsCubit(),
+                          child: ClassManagerScreen(
+                            canWrite: canManageClassSessions,
+                          ),
+                        ),
+                        MultiBlocProvider(
+                          providers: [
+                            BlocProvider(
+                              create: (_) =>
+                                  InjectionContainer.createMarketingBloc(),
+                            ),
+                            BlocProvider(
+                              create: (_) =>
+                                  InjectionContainer.createBillingCubit(),
+                            ),
+                          ],
+                          child: MarketingPromotionsScreen(
+                            canWrite: canManageMarketing || canManageBilling,
+                          ),
+                        ),
+                        BlocProvider(
+                          create: (_) =>
+                              InjectionContainer.createAdminPayoutQueueBloc(),
+                          child: AdminPayoutQueueScreen(
+                            canWrite: canFulfillPayouts,
+                          ),
+                        ),
+                        PortalSettingsHubScreen(
+                          canWriteSku: canManageSkuSettings,
+                        ),
+                        ReportsShellPage(
+                          onOpenGymSettings: _openSettingsTab,
+                          canAdmin: canFulfillPayouts,
+                        ),
+                      ],
+                    );
+
+              final content = Column(
+                children: [
+                  if (!_scannerFocus)
+                    _PortalShellHeader(
+                      onOpenGymSettings: _openSettingsTab,
+                      onOpenScanner: _openScannerFocus,
+                    ),
+                  Expanded(child: body),
+                ],
+              );
+
+              if (useRail) {
+                return Scaffold(
+                  backgroundColor: KineticTokens.stitchBackground,
+                  body: Column(
                     children: [
-                      _DashboardDestination(onOpenScanner: _openScannerFocus),
-                      MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (_) =>
-                                InjectionContainer.createMembershipsCubit(),
-                          ),
-                          BlocProvider(
-                            create: (_) => members_di.createMemberRosterCubit(
-                              getIt: InjectionContainer.locator,
-                              tenantId: tenantId,
-                            )..refreshFromCloud(),
-                          ),
-                        ],
-                        child: MemberManagementScreen(
-                          canWrite: canManageMemberships,
-                          canRenew: canRenewMembership,
-                          canFreeze: canFreezeMembership,
-                          canEnroll: canEnrollMembers,
+                      SafeModeBanner(visible: connectivity.isOffline),
+                      if (needsOnboarding) const _OnboardingResumeBanner(),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            _PortalNavigationRail(
+                              selectedIndex: _selectedIndex,
+                              onDestinationSelected: _selectDestination,
+                            ),
+                            const VerticalDivider(
+                              width: 1,
+                              thickness: 1,
+                              color: Color(0xFF262626),
+                            ),
+                            Expanded(child: content),
+                          ],
                         ),
-                      ),
-                      const _StaffDestination(),
-                      BlocProvider(
-                        create: (_) =>
-                            InjectionContainer.createClassSessionsCubit(),
-                        child: ClassManagerScreen(
-                          canWrite: canManageClassSessions,
-                        ),
-                      ),
-                      MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (_) =>
-                                InjectionContainer.createMarketingBloc(),
-                          ),
-                          BlocProvider(
-                            create: (_) =>
-                                InjectionContainer.createBillingCubit(),
-                          ),
-                        ],
-                        child: MarketingPromotionsScreen(
-                          canWrite: canManageMarketing || canManageBilling,
-                        ),
-                      ),
-                      BlocProvider(
-                        create: (_) =>
-                            InjectionContainer.createAdminPayoutQueueBloc(),
-                        child: AdminPayoutQueueScreen(
-                          canWrite: canFulfillPayouts,
-                        ),
-                      ),
-                      PortalSettingsHubScreen(
-                        canWriteSku: canManageSkuSettings,
-                      ),
-                      ReportsShellPage(
-                        onOpenGymSettings: _openSettingsTab,
-                        canAdmin: canFulfillPayouts,
                       ),
                     ],
-                  );
-
-            final content = Column(
-              children: [
-                if (!_scannerFocus)
-                  _PortalShellHeader(
-                    onOpenGymSettings: _openSettingsTab,
-                    onOpenScanner: _openScannerFocus,
                   ),
-                Expanded(child: body),
-              ],
-            );
+                );
+              }
 
-            if (useRail) {
               return Scaffold(
-                backgroundColor: KineticTokens.stitchBackground,
+                backgroundColor: KineticTokens.deepCharcoal,
                 body: Column(
                   children: [
                     SafeModeBanner(visible: connectivity.isOffline),
                     if (needsOnboarding) const _OnboardingResumeBanner(),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          _PortalNavigationRail(
-                            selectedIndex: _selectedIndex,
-                            onDestinationSelected: _selectDestination,
-                          ),
-                          const VerticalDivider(
-                            width: 1,
-                            thickness: 1,
-                            color: Color(0xFF262626),
-                          ),
-                          Expanded(child: content),
-                        ],
+                    Expanded(child: content),
+                  ],
+                ),
+                bottomNavigationBar: NavigationBar(
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: _selectDestination,
+                  backgroundColor: KineticTokens.gunmetalCard,
+                  indicatorColor: KineticTokens.electricLime.withValues(
+                    alpha: 0.2,
+                  ),
+                  destinations: [
+                    NavigationDestination(
+                      icon: const Icon(Icons.home_outlined),
+                      selectedIcon: const Icon(
+                        Icons.home,
+                        color: KineticTokens.electricLime,
                       ),
+                      label: 'nav.home'.tr(),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.group_outlined),
+                      selectedIcon: const Icon(
+                        Icons.group,
+                        color: KineticTokens.electricLime,
+                      ),
+                      label: 'nav.members'.tr(),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.badge_outlined),
+                      selectedIcon: const Icon(
+                        Icons.badge,
+                        color: KineticTokens.electricLime,
+                      ),
+                      label: 'nav.staff'.tr(),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.fitness_center_outlined),
+                      selectedIcon: const Icon(
+                        Icons.fitness_center,
+                        color: KineticTokens.electricLime,
+                      ),
+                      label: 'nav.classes'.tr(),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.campaign_outlined),
+                      selectedIcon: const Icon(
+                        Icons.campaign,
+                        color: KineticTokens.electricLime,
+                      ),
+                      label: 'nav.marketing'.tr(),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.payments_outlined),
+                      selectedIcon: const Icon(
+                        Icons.payments,
+                        color: KineticTokens.electricLime,
+                      ),
+                      label: 'nav.payouts'.tr(),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.settings_outlined),
+                      selectedIcon: const Icon(
+                        Icons.settings,
+                        color: KineticTokens.electricLime,
+                      ),
+                      label: 'nav.settings'.tr(),
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.insights_outlined),
+                      selectedIcon: const Icon(
+                        Icons.insights,
+                        color: KineticTokens.electricLime,
+                      ),
+                      label: 'nav.reports'.tr(),
                     ),
                   ],
                 ),
               );
-            }
-
-            return Scaffold(
-              backgroundColor: KineticTokens.deepCharcoal,
-              body: Column(
-                children: [
-                  SafeModeBanner(visible: connectivity.isOffline),
-                  if (needsOnboarding) const _OnboardingResumeBanner(),
-                  Expanded(child: content),
-                ],
-              ),
-              bottomNavigationBar: NavigationBar(
-                selectedIndex: _selectedIndex,
-                onDestinationSelected: _selectDestination,
-                backgroundColor: KineticTokens.gunmetalCard,
-                indicatorColor: KineticTokens.electricLime.withValues(
-                  alpha: 0.2,
-                ),
-                destinations: [
-                  NavigationDestination(
-                    icon: const Icon(Icons.home_outlined),
-                    selectedIcon: const Icon(
-                      Icons.home,
-                      color: KineticTokens.electricLime,
-                    ),
-                    label: 'nav.home'.tr(),
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.group_outlined),
-                    selectedIcon: const Icon(
-                      Icons.group,
-                      color: KineticTokens.electricLime,
-                    ),
-                    label: 'nav.members'.tr(),
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.badge_outlined),
-                    selectedIcon: const Icon(
-                      Icons.badge,
-                      color: KineticTokens.electricLime,
-                    ),
-                    label: 'nav.staff'.tr(),
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.fitness_center_outlined),
-                    selectedIcon: const Icon(
-                      Icons.fitness_center,
-                      color: KineticTokens.electricLime,
-                    ),
-                    label: 'nav.classes'.tr(),
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.campaign_outlined),
-                    selectedIcon: const Icon(
-                      Icons.campaign,
-                      color: KineticTokens.electricLime,
-                    ),
-                    label: 'nav.marketing'.tr(),
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.payments_outlined),
-                    selectedIcon: const Icon(
-                      Icons.payments,
-                      color: KineticTokens.electricLime,
-                    ),
-                    label: 'nav.payouts'.tr(),
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.settings_outlined),
-                    selectedIcon: const Icon(
-                      Icons.settings,
-                      color: KineticTokens.electricLime,
-                    ),
-                    label: 'nav.settings'.tr(),
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.insights_outlined),
-                    selectedIcon: const Icon(
-                      Icons.insights,
-                      color: KineticTokens.electricLime,
-                    ),
-                    label: 'nav.reports'.tr(),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+            },
+          );
+        },
+      ),
     );
   }
 }
