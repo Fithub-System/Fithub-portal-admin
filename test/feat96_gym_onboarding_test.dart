@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/features/auth/domain/auth_failure.dart';
 import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
 import 'package:fithub_portal_admin/features/auth/domain/repositories/auth_repository.dart';
@@ -59,6 +60,20 @@ void main() {
     );
     expect(GymOnboardingWizardPage.formMaxWidth, 720);
   });
+
+  test(
+    'founder confirm lands on the Vercel Portal host, not fitness-hub.app',
+    () {
+      expect(
+        SupabaseConfig.emailRedirectTo,
+        'https://fithub-portal-admin.vercel.app',
+      );
+      expect(
+        SupabaseConfig.emailRedirectTo.contains('fitness-hub.app'),
+        isFalse,
+      );
+    },
+  );
 
   test('only draft Admin needs the wizard; live gyms stay on the shell', () {
     expect(draftAdmin.needsOnboarding, isTrue);
