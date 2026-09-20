@@ -7,6 +7,7 @@ class EmployeeProfileModel extends EmployeeProfile {
     required super.userId,
     required super.name,
     required super.role,
+    super.onboardingStatus,
   });
 
   factory EmployeeProfileModel.fromJson(Map<String, dynamic> json) {
@@ -16,6 +17,8 @@ class EmployeeProfileModel extends EmployeeProfile {
       userId: json['user_id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       role: json['role']?.toString() ?? '',
+      onboardingStatus:
+          json['onboarding_status']?.toString() ?? 'active',
     );
   }
 
@@ -26,6 +29,7 @@ class EmployeeProfileModel extends EmployeeProfile {
       userId: cache['user_id']!,
       name: cache['name']!,
       role: cache['role']!,
+      onboardingStatus: cache['onboarding_status'] ?? 'active',
     );
   }
 
@@ -35,5 +39,6 @@ class EmployeeProfileModel extends EmployeeProfile {
     'user_id': userId,
     'name': name,
     'role': role,
+    'onboarding_status': onboardingStatus,
   };
 }

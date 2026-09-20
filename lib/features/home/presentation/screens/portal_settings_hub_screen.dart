@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
 import '../../../../injection_container.dart';
+import '../../../gym_onboarding/presentation/screens/gym_onboarding_wizard_page.dart';
 import '../../../gym_sku_settings/presentation/screens/gym_sku_settings_screen.dart';
 import '../../../memberships/presentation/widgets/freeze_policy_settings_section.dart';
 
@@ -11,10 +12,7 @@ import '../../../memberships/presentation/widgets/freeze_policy_settings_section
 ///
 /// Modules: SKU & Marketplace · Freeze policy.
 class PortalSettingsHubScreen extends StatefulWidget {
-  const PortalSettingsHubScreen({
-    super.key,
-    required this.canWriteSku,
-  });
+  const PortalSettingsHubScreen({super.key, required this.canWriteSku});
 
   final bool canWriteSku;
 
@@ -23,7 +21,7 @@ class PortalSettingsHubScreen extends StatefulWidget {
       _PortalSettingsHubScreenState();
 }
 
-enum _SettingsModule { hub, sku, freeze }
+enum _SettingsModule { hub, sku, freeze, profile }
 
 class _PortalSettingsHubScreenState extends State<PortalSettingsHubScreen> {
   _SettingsModule _module = _SettingsModule.hub;
@@ -36,32 +34,37 @@ class _PortalSettingsHubScreenState extends State<PortalSettingsHubScreen> {
   Widget build(BuildContext context) {
     return switch (_module) {
       _SettingsModule.hub => _SettingsModuleList(
-          onOpenSku: () => _open(_SettingsModule.sku),
-          onOpenFreeze: () => _open(_SettingsModule.freeze),
-        ),
+        onOpenSku: () => _open(_SettingsModule.sku),
+        onOpenFreeze: () => _open(_SettingsModule.freeze),
+        onOpenProfile: () => _open(_SettingsModule.profile),
+      ),
       _SettingsModule.sku => MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (_) => InjectionContainer.createGymSkuSettingsBloc(),
-            ),
-          ],
-          child: GymSkuSettingsScreen(
-            canWrite: widget.canWriteSku,
-            includeFreezePolicy: false,
-            onClose: _backToHub,
+        providers: [
+          BlocProvider(
+            create: (_) => InjectionContainer.createGymSkuSettingsBloc(),
           ),
+        ],
+        child: GymSkuSettingsScreen(
+          canWrite: widget.canWriteSku,
+          includeFreezePolicy: false,
+          onClose: _backToHub,
         ),
+      ),
       _SettingsModule.freeze => MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (_) => InjectionContainer.createMembershipsCubit(),
-            ),
-          ],
-          child: _FreezePolicyModuleScreen(
-            canWrite: widget.canWriteSku,
-            onClose: _backToHub,
+        providers: [
+          BlocProvider(
+            create: (_) => InjectionContainer.createMembershipsCubit(),
           ),
+        ],
+        child: _FreezePolicyModuleScreen(
+          canWrite: widget.canWriteSku,
+          onClose: _backToHub,
         ),
+      ),
+      _SettingsModule.profile => BlocProvider(
+        create: (_) => InjectionContainer.createGymOnboardingCubit()..load(),
+        child: GymOnboardingWizardPage(onClose: _backToHub),
+      ),
     };
   }
 }
@@ -70,10 +73,12 @@ class _SettingsModuleList extends StatelessWidget {
   const _SettingsModuleList({
     required this.onOpenSku,
     required this.onOpenFreeze,
+    required this.onOpenProfile,
   });
 
   final VoidCallback onOpenSku;
   final VoidCallback onOpenFreeze;
+  final VoidCallback onOpenProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +106,13 @@ class _SettingsModuleList extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
+          _SettingsModuleTile(
+            icon: Icons.storefront_outlined,
+            titleKey: 'settings.hub.modules.profile.title',
+            bodyKey: 'settings.hub.modules.profile.body',
+            onTap: onOpenProfile,
+          ),
+          const SizedBox(height: 12),
           _SettingsModuleTile(
             icon: Icons.cloud_outlined,
             titleKey: 'settings.hub.modules.sku.title',
@@ -161,9 +173,7 @@ class _SettingsModuleTile extends StatelessWidget {
         ),
         subtitle: Text(
           bodyKey.tr(),
-          style: textTheme.bodySmall?.copyWith(
-            color: KineticTokens.zincGray,
-          ),
+          style: textTheme.bodySmall?.copyWith(color: KineticTokens.zincGray),
         ),
         trailing: const Icon(
           Icons.chevron_right,

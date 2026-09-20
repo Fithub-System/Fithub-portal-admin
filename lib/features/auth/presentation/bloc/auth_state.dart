@@ -16,13 +16,29 @@ final class AuthLoading extends AuthState {
 }
 
 final class AuthAuthenticated extends AuthState {
-  const AuthAuthenticated(this.profile, {this.restoredFromCache = false});
+  const AuthAuthenticated(
+    this.profile, {
+    this.restoredFromCache = false,
+    this.deferOnboarding = false,
+  });
 
   final EmployeeProfile profile;
   final bool restoredFromCache;
+  final bool deferOnboarding;
+
+  bool get showOnboardingWizard => profile.needsOnboarding && !deferOnboarding;
 
   @override
-  List<Object?> get props => [profile, restoredFromCache];
+  List<Object?> get props => [profile, restoredFromCache, deferOnboarding];
+}
+
+final class AuthAwaitingEmailConfirmation extends AuthState {
+  const AuthAwaitingEmailConfirmation(this.email);
+
+  final String email;
+
+  @override
+  List<Object?> get props => [email];
 }
 
 final class AuthUnauthenticated extends AuthState {

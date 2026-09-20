@@ -30,7 +30,8 @@
       "wrong_app_role": "Access denied — Admin Portal is for Admin and Receptionist only. Coach accounts use the Coach app.",
       "not_configured": "Supabase is not configured for this build.",
       "unknown": "Authentication failed.",
-      "no_session": "No active session."
+      "no_session": "No active session.",
+      "email_taken": "This email is already registered. Sign in instead."
     }
   },
   "home": {
@@ -91,6 +92,10 @@
         "freeze": {
           "title": "Freeze policy",
           "body": "Default and max freeze days — general and per plan."
+        },
+        "profile": {
+          "title": "Gym Profile",
+          "body": "Brand, branches, amenities, and marketplace readiness."
         }
       }
     }
@@ -825,6 +830,87 @@
       "txn_id": "Settlement txn id",
       "note": "Note (optional)",
       "success_toggle": "Settlement succeeded"
+    }
+  },
+  "onboarding": {
+    "finish_later": "Finish later",
+    "resume_banner": "Complete gym setup to publish on the marketplace",
+    "back": "Back",
+    "next_branches": "Continue to branches",
+    "next_staff": "Continue to staff",
+    "next_plans": "Continue to plans",
+    "next_review": "Continue to publish",
+    "register": {
+      "title": "Register your gym",
+      "subtitle": "Gym Founder / Admin only. Staff join by invite.",
+      "from_login": "Register your gym",
+      "trading": "Trading name",
+      "email": "Email",
+      "password": "Password",
+      "confirm": "Confirm password",
+      "cta": "Create gym account",
+      "have_account": "Already have an account? Sign in",
+      "required": "Required",
+      "password_short": "Password must be at least 8 characters",
+      "mismatch": "Passwords do not match",
+      "check_email": "Check your email to confirm the account",
+      "back_login": "Back to login"
+    },
+    "step1": {
+      "title": "Brand & legal",
+      "brand": "Gym name",
+      "trading": "Trading name",
+      "tax": "Tax / CR (optional)",
+      "contact": "Contact name",
+      "phone": "Contact phone"
+    },
+    "step2": {
+      "title": "Branch & facilities",
+      "name": "Branch name",
+      "address": "Address",
+      "capacity": "Capacity ceiling",
+      "photo_hint": "A placeholder branch photo is attached automatically in this sandbox."
+    },
+    "step3": {
+      "title": "Staff roster",
+      "honesty": "Optional. Receptionist and Coach stay invite-only. No Studio in this step.",
+      "email": "Staff email",
+      "name": "Staff name",
+      "invite_desk": "Invite receptionist",
+      "sent": "Invite sent"
+    },
+    "step4": {
+      "title": "Membership plan",
+      "name": "Plan name",
+      "days": "Duration (days)",
+      "price": "Price (EGP)",
+      "roaming": "Roaming pass (all branches)"
+    },
+    "step5": {
+      "title": "Readiness & publish"
+    },
+    "check": {
+      "branch": "Complete branch (name, address, hours, capacity, amenity, photo)",
+      "hours_capacity": "Hours and capacity set",
+      "plan": "At least one active membership plan"
+    },
+    "publish": {
+      "cta": "Publish to marketplace",
+      "ok": "Gym published. Marketplace is on."
+    },
+    "staff": {
+      "sent": "Staff invite sent"
+    },
+    "error": {
+      "load": "Could not load gym profile",
+      "save": "Could not save. Try again.",
+      "brand_name": "Gym name is required",
+      "branch": "Branch name and address are required",
+      "plan": "Plan name is required",
+      "score": "Score must be 100% before publishing",
+      "publish": "Could not publish. Complete all checks.",
+      "invite": "Could not invite staff",
+      "unknown": "Onboarding failed"
     }
   }
 }

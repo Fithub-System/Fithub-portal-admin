@@ -8,6 +8,7 @@ class EmployeeProfile extends Equatable {
     required this.userId,
     required this.name,
     required this.role,
+    this.onboardingStatus = 'active',
   });
 
   final String id;
@@ -15,6 +16,12 @@ class EmployeeProfile extends Equatable {
   final String userId;
   final String name;
   final String role;
+
+  /// FEAT-96 `gyms.onboarding_status`. Existing tenants default active.
+  final String onboardingStatus;
+
+  bool get needsOnboarding =>
+      role == 'Admin' && onboardingStatus == 'draft';
 
   bool get isPortalRole => role == 'Admin' || role == 'Receptionist';
 
@@ -52,5 +59,6 @@ class EmployeeProfile extends Equatable {
   bool get canFulfillPayouts => role == 'Admin';
 
   @override
-  List<Object?> get props => [id, tenantId, userId, name, role];
+  List<Object?> get props =>
+      [id, tenantId, userId, name, role, onboardingStatus];
 }
