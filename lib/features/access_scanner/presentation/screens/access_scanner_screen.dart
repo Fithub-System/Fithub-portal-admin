@@ -3,12 +3,16 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../../config/theme/kinetic_tokens.dart';
+import '../../../gym_operations/presentation/scanner_input_cubit.dart';
 import '../cubit/access_scanner_cubit.dart';
 import '../cubit/access_scanner_state.dart';
+import '../hid_burst_buffer.dart';
+import '../widgets/desk_gun_ready_banner.dart';
 import '../widgets/scan_success_banner.dart';
 import '../widgets/scanner_target_overlay.dart';
 
@@ -50,11 +54,16 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
       TextEditingController();
   bool _useManualEntry = false;
   bool _cameraFallbackScheduled = false;
+  late final HidBurstBuffer _hid;
+  var _hidAttached = false;
 
   @override
   void initState() {
     super.initState();
+    _hid = HidBurstBuffer(onBurst: _onHidBurst);
     _controller.addListener(_onControllerStateChanged);
+    HardwareKeyboard.instance.addHandler(_onHidKey);
+    _hidAttached = true;
     // Sync after first frame — never from build / MobileScanner listeners.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -63,8 +72,32 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
     });
   }
 
+  bool _onHidKey(KeyEvent event) {
+    if (!mounted) return false;
+    ScannerInputCubit? mode;
+    try {
+      mode = context.read<ScannerInputCubit>();
+    } catch (_) {
+      return false;
+    }
+    if (!mode.state.hidMounted) return false;
+    return _hid.handle(event);
+  }
+
+  void _onHidBurst(String payload) {
+    if (!mounted) return;
+    SystemSound.play(SystemSoundType.click);
+    context.read<AccessScannerCubit>().onQrDetected(payload);
+    try {
+      context.read<ScannerInputCubit>().pauseCameraAfterGunBurst();
+    } catch (_) {}
+  }
+
   @override
   void dispose() {
+    if (_hidAttached) {
+      HardwareKeyboard.instance.removeHandler(_onHidKey);
+    }
     _controller.removeListener(_onControllerStateChanged);
     // AC-B1: stop tracks on leave, then dispose (honest — cannot revoke
     // browser origin permission).
@@ -165,13 +198,36 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
       builder: (context, state) {
         final showManualCta =
             state.showManualEntryCta || _useManualEntry || kDebugMode;
+        var cameraMounted = true;
+        var showUseCamera = false;
+        try {
+          final input = context.watch<ScannerInputCubit>().state;
+          cameraMounted = input.cameraMounted;
+          showUseCamera =
+              input.mode == ScannerInputMode.hybrid &&
+              input.gunSessionPausedCamera;
+        } catch (_) {}
+        if (!cameraMounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            unawaited(_controller.stop());
+          });
+        }
 
         return Stack(
           children: [
             Positioned.fill(
               child: ColoredBox(
                 color: KineticTokens.deepCharcoal,
-                child: _useManualEntry
+                child: !cameraMounted
+                    ? DeskGunReadyBanner(
+                        errorVisible: state.errorKey != null,
+                        onUseCamera: showUseCamera
+                            ? () => context
+                                  .read<ScannerInputCubit>()
+                                  .resumeCamera()
+                            : null,
+                      )
+                    : _useManualEntry
                     ? _ManualEntryPane(
                         controller: _manualPayloadController,
                         onSubmit: () => _submitManual(context),
@@ -187,7 +243,8 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                       ),
               ),
             ),
-            const Positioned.fill(child: ScannerTargetOverlay()),
+            if (cameraMounted)
+              const Positioned.fill(child: ScannerTargetOverlay()),
             Positioned.fill(
               child: IgnorePointer(
                 child: DecoratedBox(
