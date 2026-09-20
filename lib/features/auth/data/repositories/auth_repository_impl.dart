@@ -74,11 +74,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final response = await _supabase.auth.signUp(
         email: email.trim(),
         password: password,
-        data: {
-          'trading_name': tradingName.trim(),
-          'gym_founder': true,
-        },
-        emailRedirectTo: 'https://fitness-hub.app',
+        data: {'trading_name': tradingName.trim(), 'gym_founder': true},
+        emailRedirectTo: SupabaseConfig.emailRedirectTo,
       );
       if (response.user == null) {
         throw const AuthUnknownFailure();
@@ -105,10 +102,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> _bootstrapFounder(String tradingName) async {
     await _supabase.rpc(
       'bootstrap_gym_founder',
-      params: {
-        'p_trading_name': tradingName,
-        'p_contact_name': tradingName,
-      },
+      params: {'p_trading_name': tradingName, 'p_contact_name': tradingName},
     );
   }
 
@@ -207,8 +201,9 @@ class AuthRepositoryImpl implements AuthRepository {
     final userId = await _secureStorage.read(key: '${_cachePrefix}user_id');
     final name = await _secureStorage.read(key: '${_cachePrefix}name');
     final role = await _secureStorage.read(key: '${_cachePrefix}role');
-    final onboarding =
-        await _secureStorage.read(key: '${_cachePrefix}onboarding_status');
+    final onboarding = await _secureStorage.read(
+      key: '${_cachePrefix}onboarding_status',
+    );
     if (id == null ||
         tenantId == null ||
         userId == null ||
