@@ -218,7 +218,7 @@ class _ExpiringRowTile extends StatelessWidget {
                   height: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF262626),
+                    color: KineticTokens.zincBorder,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -272,7 +272,7 @@ class _ExpiringRowTile extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF262626),
+                  color: KineticTokens.zincBorder,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -281,7 +281,7 @@ class _ExpiringRowTile extends StatelessWidget {
                   style: textTheme.labelSmall?.copyWith(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFFD4D4D4),
+                    color: KineticTokens.zincMuted,
                   ),
                 ),
               ),

@@ -87,7 +87,10 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
   void _onHidBurst(String payload) {
     if (!mounted) return;
     SystemSound.play(SystemSoundType.click);
-    context.read<AccessScannerCubit>().onQrDetected(payload);
+    context.read<AccessScannerCubit>().onQrDetected(
+      payload,
+      scannedVia: 'hardware_gun',
+    );
     try {
       context.read<ScannerInputCubit>().pauseCameraAfterGunBurst();
     } catch (_) {}
@@ -365,10 +368,14 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                 ),
               ),
             if (state.isProcessing)
-              const Positioned.fill(
+              Positioned.fill(
                 child: ColoredBox(
-                  color: Color(0x66000000),
-                  child: Center(child: CircularProgressIndicator()),
+                  color: KineticTokens.deepCharcoal.withValues(alpha: 0.72),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: KineticTokens.electricLime,
+                    ),
+                  ),
                 ),
               ),
             if (state.success != null)
@@ -391,7 +398,7 @@ class _AccessScannerScreenState extends State<AccessScannerScreen> {
                 left: 16,
                 right: 16,
                 child: Material(
-                  color: const Color(0xFFB71C1C),
+                  color: KineticTokens.peakCoral,
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: const EdgeInsets.all(12),

@@ -58,8 +58,8 @@ class MembersStatsBento extends StatelessWidget {
             labelKey: 'members.stats.system_health',
             value: 'members.stats.system_health_value'.tr(),
             fill: KineticTokens.secondaryContainer,
-            labelColor: const Color(0xFF00285B),
-            valueColor: const Color(0xFF00285B),
+            labelColor: KineticTokens.deepCharcoal,
+            valueColor: KineticTokens.deepCharcoal,
           ),
         ];
 
@@ -94,7 +94,7 @@ class _StatTile extends StatelessWidget {
     required this.value,
     this.accentBorder = false,
     this.fill = KineticTokens.surfaceContainerLow,
-    this.labelColor = const Color(0xFFC4C9AC),
+    this.labelColor = KineticTokens.zincGray,
     this.valueColor = KineticTokens.pureWhite,
   });
 

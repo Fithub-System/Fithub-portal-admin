@@ -30,7 +30,7 @@ class MembersRosterPagination extends StatelessWidget {
         color: KineticTokens.surfaceContainerLow.withValues(alpha: 0.3),
         border: Border(
           top: BorderSide(
-            color: const Color(0xFF444933).withValues(alpha: 0.1),
+            color: KineticTokens.zincBorder.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -40,7 +40,7 @@ class MembersRosterPagination extends StatelessWidget {
             child: Text.rich(
               TextSpan(
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: const Color(0xFFC4C9AC),
+                  color: KineticTokens.zincGray,
                   letterSpacing: 2,
                   fontSize: 11,
                 ),
@@ -118,11 +118,11 @@ class _PageChrome extends StatelessWidget {
         border: active
             ? null
             : Border.all(
-                color: const Color(0xFF444933).withValues(alpha: 0.2),
+                color: KineticTokens.zincBorder.withValues(alpha: 0.2),
               ),
       ),
       child: icon != null
-          ? Icon(icon, size: 16, color: const Color(0xFFC4C9AC))
+          ? Icon(icon, size: 16, color: KineticTokens.zincGray)
           : Text(
               label ?? '',
               style: TextStyle(
@@ -169,7 +169,7 @@ class MembersSyncFooter extends StatelessWidget {
             Text(
               'members.footer.copyright'.tr(),
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: const Color(0xFFC4C9AC),
+                color: KineticTokens.zincGray,
                 fontSize: 10,
                 letterSpacing: 2,
               ),

@@ -212,7 +212,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                             const VerticalDivider(
                               width: 1,
                               thickness: 1,
-                              color: Color(0xFF262626),
+                              color: KineticTokens.zincBorder,
                             ),
                             Expanded(child: content),
                           ],
@@ -354,7 +354,7 @@ class _PortalShellHeader extends StatelessWidget {
           height: 64,
           padding: const EdgeInsetsDirectional.symmetric(horizontal: 32),
           decoration: const BoxDecoration(
-            border: Border(bottom: BorderSide(color: Color(0xFF262626))),
+            border: Border(bottom: BorderSide(color: KineticTokens.zincBorder)),
           ),
           child: Row(
             children: [
@@ -386,7 +386,7 @@ class _PortalShellHeader extends StatelessWidget {
                         color: KineticTokens.zincGray,
                       ),
                       filled: true,
-                      fillColor: const Color(0xFF171717),
+                      fillColor: KineticTokens.deepCharcoal,
                       contentPadding: const EdgeInsets.symmetric(vertical: 8),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6),
@@ -402,7 +402,7 @@ class _PortalShellHeader extends StatelessWidget {
                 onPressed: null,
                 icon: const Icon(
                   Icons.notifications_outlined,
-                  color: Color(0xFFD4D4D4),
+                  color: KineticTokens.zincMuted,
                 ),
               ),
               IconButton(
@@ -411,7 +411,7 @@ class _PortalShellHeader extends StatelessWidget {
                 onPressed: onOpenScanner,
                 icon: const Icon(
                   Icons.qr_code_scanner,
-                  color: Color(0xFFD4D4D4),
+                  color: KineticTokens.zincMuted,
                 ),
               ),
               PopupMenuButton<_ShellMenuAction>(
@@ -460,7 +460,7 @@ class _PortalShellHeader extends StatelessWidget {
                     children: [
                       const Icon(
                         Icons.account_circle,
-                        color: Color(0xFFD4D4D4),
+                        color: KineticTokens.zincMuted,
                       ),
                       const SizedBox(width: 8),
                       ConstrainedBox(
@@ -472,7 +472,7 @@ class _PortalShellHeader extends StatelessWidget {
                           style: textTheme.labelSmall?.copyWith(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFFD4D4D4),
+                            color: KineticTokens.zincMuted,
                           ),
                         ),
                       ),
@@ -549,7 +549,7 @@ class _PortalNavigationRail extends StatelessWidget {
                   color: KineticTokens.electricLime,
                 ),
                 unselectedIconTheme: const IconThemeData(
-                  color: Color(0xFFA3A3A3),
+                  color: KineticTokens.zincGray,
                 ),
                 selectedLabelTextStyle: const TextStyle(
                   color: KineticTokens.electricLime,
@@ -558,7 +558,7 @@ class _PortalNavigationRail extends StatelessWidget {
                   letterSpacing: 0.4,
                 ),
                 unselectedLabelTextStyle: const TextStyle(
-                  color: Color(0xFFA3A3A3),
+                  color: KineticTokens.zincGray,
                   fontSize: 12,
                   letterSpacing: 0.4,
                 ),

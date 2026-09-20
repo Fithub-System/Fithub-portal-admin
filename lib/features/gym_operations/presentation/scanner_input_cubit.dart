@@ -29,6 +29,7 @@ class ScannerInputState extends Equatable {
     this.saving = false,
     this.gunSessionPausedCamera = false,
     this.canWrite = true,
+    this.saveError,
   });
 
   final ScannerInputMode mode;
@@ -36,6 +37,7 @@ class ScannerInputState extends Equatable {
   final bool saving;
   final bool gunSessionPausedCamera;
   final bool canWrite;
+  final String? saveError;
 
   bool get cameraMounted => switch (mode) {
     ScannerInputMode.hardwareGun => false,
@@ -55,6 +57,8 @@ class ScannerInputState extends Equatable {
     bool? saving,
     bool? gunSessionPausedCamera,
     bool? canWrite,
+    String? saveError,
+    bool clearSaveError = false,
   }) {
     return ScannerInputState(
       mode: mode ?? this.mode,
@@ -63,6 +67,7 @@ class ScannerInputState extends Equatable {
       gunSessionPausedCamera:
           gunSessionPausedCamera ?? this.gunSessionPausedCamera,
       canWrite: canWrite ?? this.canWrite,
+      saveError: clearSaveError ? null : (saveError ?? this.saveError),
     );
   }
 
@@ -73,6 +78,7 @@ class ScannerInputState extends Equatable {
     saving,
     gunSessionPausedCamera,
     canWrite,
+    saveError,
   ];
 }
 
@@ -96,21 +102,24 @@ class ScannerInputCubit extends Cubit<ScannerInputState> {
     try {
       final prefs = _prefs ?? await SharedPreferences.getInstance();
       mode = ScannerInputModeCodec.parse(prefs.getString(prefsKey));
-    } catch (_) {}
+    } catch (_) {
+      // Prefs miss is offline-safe; RPC is source of truth when reachable.
+    }
     try {
       final client = _client ?? Supabase.instance.client;
       final raw = await client.rpc('get_scanner_input_mode');
-      if (raw is String) mode = ScannerInputModeCodec.parse(raw);
-      if (raw is Map && raw['scanner_input_mode'] != null) {
-        mode = ScannerInputModeCodec.parse('${raw['scanner_input_mode']}');
-      }
-    } catch (_) {}
+      final parsed = _parseMode(raw);
+      if (parsed != null) mode = parsed;
+    } catch (_) {
+      // Offline: keep SharedPreferences / default hybrid (AC-E2).
+    }
     emit(
       state.copyWith(
         mode: mode,
         draft: mode,
         canWrite: canWrite,
         gunSessionPausedCamera: false,
+        clearSaveError: true,
       ),
     );
   }
@@ -122,19 +131,46 @@ class ScannerInputCubit extends Cubit<ScannerInputState> {
 
   Future<void> save() async {
     if (!state.canWrite) return;
-    emit(state.copyWith(saving: true));
+    emit(state.copyWith(saving: true, clearSaveError: true));
     final mode = state.draft;
-    try {
-      final prefs = _prefs ?? await SharedPreferences.getInstance();
-      await prefs.setString(prefsKey, mode.wire);
-    } catch (_) {}
     try {
       final client = _client ?? Supabase.instance.client;
       await client.rpc('set_scanner_input_mode', params: {'p_mode': mode.wire});
-    } catch (_) {}
+    } on Object catch (error) {
+      emit(state.copyWith(saving: false, saveError: _saveErrorMessage(error)));
+      return;
+    }
+    try {
+      final prefs = _prefs ?? await SharedPreferences.getInstance();
+      await prefs.setString(prefsKey, mode.wire);
+    } catch (_) {
+      // RPC already persisted; local cache is best-effort.
+    }
     emit(
-      state.copyWith(mode: mode, saving: false, gunSessionPausedCamera: false),
+      state.copyWith(
+        mode: mode,
+        saving: false,
+        gunSessionPausedCamera: false,
+        clearSaveError: true,
+      ),
     );
+  }
+
+  static ScannerInputMode? _parseMode(dynamic raw) {
+    if (raw is String) return ScannerInputModeCodec.parse(raw);
+    if (raw is Map) {
+      final mode = raw['mode'] ?? raw['scanner_input_mode'];
+      if (mode != null) return ScannerInputModeCodec.parse('$mode');
+    }
+    return null;
+  }
+
+  static String _saveErrorMessage(Object error) {
+    final hay = error.toString().toLowerCase();
+    if (hay.contains('feat97_admin_only') || hay.contains('42501')) {
+      return 'settings.operations.save_denied';
+    }
+    return 'settings.operations.save_failed';
   }
 
   void pauseCameraAfterGunBurst() {

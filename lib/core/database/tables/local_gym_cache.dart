@@ -7,6 +7,8 @@ class LocalGymCache extends Table {
   TextColumn get name => text().withLength(min: 1, max: 255)();
   IntColumn get currentOccupancy => integer().withDefault(const Constant(0))();
   IntColumn get capacityLimit => integer()();
+  TextColumn get scannerInputMode =>
+      text().withDefault(const Constant('hybrid'))();
 
   @override
   Set<Column<Object>> get primaryKey => {tenantId};

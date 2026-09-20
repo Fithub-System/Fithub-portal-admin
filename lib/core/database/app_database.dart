@@ -12,7 +12,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -34,6 +34,12 @@ class AppDatabase extends _$AppDatabase {
           localAttendanceQueue,
           localAttendanceQueue.checkedOutAt,
         );
+      }
+      if (from < 5) {
+        await m.addColumn(localMembers, localMembers.publicCode);
+        await m.addColumn(localMembers, localMembers.assignedCoachId);
+        await m.addColumn(localGymCache, localGymCache.scannerInputMode);
+        await m.addColumn(localAttendanceQueue, localAttendanceQueue.scannedVia);
       }
     },
   );

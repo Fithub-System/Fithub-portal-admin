@@ -30,12 +30,14 @@ class ProcessQrScanUseCase {
     required String tenantId,
     required String rawPayload,
     bool online = false,
+    String scannedVia = 'webcam',
   }) async {
     try {
       return await _run(
         tenantId: tenantId,
         rawPayload: rawPayload,
         online: online,
+        scannedVia: scannedVia,
       );
     } catch (_) {
       return const ScanProcessResult.rejected('Scan failed. Try again.');
@@ -46,6 +48,7 @@ class ProcessQrScanUseCase {
     required String tenantId,
     required String rawPayload,
     required bool online,
+    required String scannedVia,
   }) async {
     if (online) {
       final toggle = _toggleAttendance;
@@ -54,6 +57,7 @@ class ProcessQrScanUseCase {
           tenantId: tenantId,
           rawPayload: rawPayload,
           toggle: toggle,
+          scannedVia: scannedVia,
         );
         if (rpcResult != null) return rpcResult;
       }
@@ -62,6 +66,7 @@ class ProcessQrScanUseCase {
     final result = await _scanRepository.processOfflineScan(
       tenantId: tenantId,
       rawPayload: rawPayload,
+      scannedVia: scannedVia,
     );
 
     if (!result.isApproved || !online) {
@@ -88,6 +93,7 @@ class ProcessQrScanUseCase {
     required String tenantId,
     required String rawPayload,
     required ToggleGymAttendanceRemoteDataSource toggle,
+    required String scannedVia,
   }) async {
     final resolved = await _resolveSignedMember(
       tenantId: tenantId,
@@ -98,12 +104,13 @@ class ProcessQrScanUseCase {
     if (member == null) return null;
 
     try {
-      final rpc = await toggle.toggle(member.id);
+      final rpc = await toggle.toggle(member.id, scannedVia: scannedVia);
       return _scanRepository.mirrorCloudToggle(
         tenantId: tenantId,
         member: member,
         rpc: rpc,
         at: DateTime.now().toUtc(),
+        scannedVia: scannedVia,
       );
     } on GymAttendanceToggleFailure catch (e) {
       switch (e.code) {
