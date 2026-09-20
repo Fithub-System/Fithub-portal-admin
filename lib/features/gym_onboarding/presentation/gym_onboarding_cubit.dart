@@ -22,16 +22,22 @@ class GymOnboardingState extends Equatable {
     this.contactRole = 'Owner',
     this.branchName = '',
     this.branchAddress = '',
-    this.lat = 30.0444,
-    this.lng = 31.2357,
-    this.capacity = 80,
-    this.amenityTags = const ['parking', 'ac'],
-    this.staffSize = 5,
+    this.lat,
+    this.lng,
+    this.capacity,
+    this.amenityTags = const [],
+    this.hoursOpen = '',
+    this.hoursClose = '',
+    this.photoUrl = '',
+    this.staffSize,
     this.planName = '',
-    this.planDays = 30,
-    this.planPriceEgp = 1500,
+    this.planDays,
+    this.planPriceEgp,
     this.passRoaming = false,
+    this.savedPlans = const [],
   });
+
+  static const Object _absent = Object();
 
   final int step;
   final bool loading;
@@ -46,15 +52,19 @@ class GymOnboardingState extends Equatable {
   final String contactRole;
   final String branchName;
   final String branchAddress;
-  final double lat;
-  final double lng;
-  final int capacity;
+  final double? lat;
+  final double? lng;
+  final int? capacity;
   final List<String> amenityTags;
-  final int staffSize;
+  final String hoursOpen;
+  final String hoursClose;
+  final String photoUrl;
+  final int? staffSize;
   final String planName;
-  final int planDays;
-  final int planPriceEgp;
+  final int? planDays;
+  final int? planPriceEgp;
   final bool passRoaming;
+  final List<MembershipPlan> savedPlans;
 
   int get score => snapshot?.score ?? 0;
   bool get canPublish => snapshot?.canPublish ?? false;
@@ -74,15 +84,19 @@ class GymOnboardingState extends Equatable {
     String? contactRole,
     String? branchName,
     String? branchAddress,
-    double? lat,
-    double? lng,
-    int? capacity,
+    Object? lat = _absent,
+    Object? lng = _absent,
+    Object? capacity = _absent,
     List<String>? amenityTags,
-    int? staffSize,
+    String? hoursOpen,
+    String? hoursClose,
+    String? photoUrl,
+    Object? staffSize = _absent,
     String? planName,
-    int? planDays,
-    int? planPriceEgp,
+    Object? planDays = _absent,
+    Object? planPriceEgp = _absent,
     bool? passRoaming,
+    List<MembershipPlan>? savedPlans,
   }) {
     return GymOnboardingState(
       step: step ?? this.step,
@@ -98,15 +112,23 @@ class GymOnboardingState extends Equatable {
       contactRole: contactRole ?? this.contactRole,
       branchName: branchName ?? this.branchName,
       branchAddress: branchAddress ?? this.branchAddress,
-      lat: lat ?? this.lat,
-      lng: lng ?? this.lng,
-      capacity: capacity ?? this.capacity,
+      lat: identical(lat, _absent) ? this.lat : lat as double?,
+      lng: identical(lng, _absent) ? this.lng : lng as double?,
+      capacity: identical(capacity, _absent) ? this.capacity : capacity as int?,
       amenityTags: amenityTags ?? this.amenityTags,
-      staffSize: staffSize ?? this.staffSize,
+      hoursOpen: hoursOpen ?? this.hoursOpen,
+      hoursClose: hoursClose ?? this.hoursClose,
+      photoUrl: photoUrl ?? this.photoUrl,
+      staffSize: identical(staffSize, _absent)
+          ? this.staffSize
+          : staffSize as int?,
       planName: planName ?? this.planName,
-      planDays: planDays ?? this.planDays,
-      planPriceEgp: planPriceEgp ?? this.planPriceEgp,
+      planDays: identical(planDays, _absent) ? this.planDays : planDays as int?,
+      planPriceEgp: identical(planPriceEgp, _absent)
+          ? this.planPriceEgp
+          : planPriceEgp as int?,
       passRoaming: passRoaming ?? this.passRoaming,
+      savedPlans: savedPlans ?? this.savedPlans,
     );
   }
 
@@ -129,11 +151,15 @@ class GymOnboardingState extends Equatable {
     lng,
     capacity,
     amenityTags,
+    hoursOpen,
+    hoursClose,
+    photoUrl,
     staffSize,
     planName,
     planDays,
     planPriceEgp,
     passRoaming,
+    savedPlans,
   ];
 }
 
@@ -144,23 +170,65 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
 
   final GymOnboardingRemote _remote;
 
-  static Map<String, dynamic> defaultHours() {
-    const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
+  static const _weekDays = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
+
+  /// Hours the Admin typed — empty map when they have not set open/close.
+  static Map<String, dynamic> hoursFrom({
+    required String open,
+    required String close,
+  }) {
+    final o = open.trim();
+    final c = close.trim();
+    if (o.isEmpty || c.isEmpty) return {};
     return {
-      for (final d in days)
-        d: {'open': '06:00', 'close': '23:00', 'closed': false},
+      for (final d in _weekDays) d: {'open': o, 'close': c, 'closed': false},
     };
   }
 
-  Future<void> load() async {
-    emit(state.copyWith(loading: true, clearMessage: true));
+  static bool isLivePhoto(String url) {
+    final trimmed = url.trim();
+    if (trimmed.isEmpty) return false;
+    if (trimmed == GymOnboardingRemote.placeholderPhoto) return false;
+    return !trimmed.contains('placehold.co');
+  }
+
+  static ({String open, String close}) hoursFromSnapshot(Map? branch) {
+    final raw = branch?['hours'];
+    if (raw is! Map) return (open: '', close: '');
+    for (final value in raw.values) {
+      if (value is! Map) continue;
+      if (value['closed'] == true) continue;
+      final open = value['open']?.toString().trim() ?? '';
+      final close = value['close']?.toString().trim() ?? '';
+      if (open.isEmpty || close.isEmpty) continue;
+      return (open: open, close: close);
+    }
+    return (open: '', close: '');
+  }
+
+  Future<void> load({bool silent = false}) async {
+    if (!silent) {
+      emit(state.copyWith(loading: true, clearMessage: true));
+    }
     try {
       final snap = await _remote.load().timeout(const Duration(seconds: 15));
+      var plans = const <MembershipPlan>[];
+      try {
+        plans = await _remote.loadPlans().timeout(const Duration(seconds: 15));
+      } catch (_) {
+        plans = const [];
+      }
       final gym = snap.gym;
       final branch = snap.branches.isNotEmpty ? snap.branches.first : null;
-      final tags = branch == null
-          ? state.amenityTags
-          : (branch['tags'] as List? ?? []).map((e) => e.toString()).toList();
+      final tags = (branch?['tags'] as List? ?? [])
+          .map((e) => e.toString())
+          .where((e) => e.isNotEmpty)
+          .toList();
+      final photos = (branch?['photo_urls'] as List? ?? [])
+          .map((e) => e.toString())
+          .where(isLivePhoto)
+          .toList();
+      final hours = hoursFromSnapshot(branch);
       emit(
         state.copyWith(
           loading: false,
@@ -171,13 +239,17 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
           contactName: gym['contact_name']?.toString() ?? '',
           contactPhone: gym['contact_phone_e164']?.toString() ?? '',
           contactRole: gym['contact_role']?.toString() ?? 'Owner',
-          staffSize: (gym['estimated_staff_size'] as num?)?.toInt() ?? 5,
+          staffSize: (gym['estimated_staff_size'] as num?)?.toInt(),
           branchName: branch?['name']?.toString() ?? '',
           branchAddress: branch?['address']?.toString() ?? '',
-          lat: (branch?['lat'] as num?)?.toDouble() ?? 30.0444,
-          lng: (branch?['lng'] as num?)?.toDouble() ?? 31.2357,
-          capacity: (branch?['capacity_ceiling'] as num?)?.toInt() ?? 80,
-          amenityTags: tags.isEmpty ? const ['parking', 'ac'] : tags,
+          lat: (branch?['lat'] as num?)?.toDouble(),
+          lng: (branch?['lng'] as num?)?.toDouble(),
+          capacity: (branch?['capacity_ceiling'] as num?)?.toInt(),
+          amenityTags: tags,
+          hoursOpen: hours.open,
+          hoursClose: hours.close,
+          photoUrl: photos.isEmpty ? '' : photos.first,
+          savedPlans: plans.where((plan) => plan.isActive).toList(),
         ),
       );
     } catch (_) {
@@ -219,20 +291,26 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
       emit(state.copyWith(messageKey: 'onboarding.error.branch'));
       return false;
     }
+    final capacity = state.capacity;
+    if (capacity == null || capacity <= 0) {
+      emit(state.copyWith(messageKey: 'onboarding.error.branch'));
+      return false;
+    }
     emit(state.copyWith(saving: true, clearMessage: true));
     try {
       final existingId = state.snapshot?.branches.isNotEmpty == true
           ? state.snapshot!.branches.first['id']?.toString()
           : null;
+      final photo = state.photoUrl.trim();
       final id = await _remote.saveBranch(
         id: existingId,
         name: state.branchName.trim(),
         address: state.branchAddress.trim(),
         lat: state.lat,
         lng: state.lng,
-        hours: defaultHours(),
-        capacity: state.capacity,
-        photoUrls: const [GymOnboardingRemote.placeholderPhoto],
+        hours: hoursFrom(open: state.hoursOpen, close: state.hoursClose),
+        capacity: capacity,
+        photoUrls: isLivePhoto(photo) ? [photo] : const [],
       );
       await _remote.setFacilities(id, state.amenityTags);
       await load();
@@ -270,8 +348,14 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
     }
   }
 
-  Future<bool> savePlan() async {
-    if (state.planName.trim().isEmpty) {
+  Future<bool> savePlan({bool advance = false}) async {
+    final days = state.planDays;
+    final price = state.planPriceEgp;
+    if (state.planName.trim().isEmpty ||
+        days == null ||
+        days <= 0 ||
+        price == null ||
+        price <= 0) {
       emit(state.copyWith(messageKey: 'onboarding.error.plan'));
       return false;
     }
@@ -279,19 +363,46 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
     try {
       await _remote.addPlan(
         name: state.planName.trim(),
-        durationDays: state.planDays,
-        priceCents: (state.planPriceEgp * 100).round(),
+        durationDays: days,
+        priceCents: (price * 100).round(),
         passKind: state.passRoaming
             ? MembershipPassKind.roaming
             : MembershipPassKind.singleBranch,
       );
-      await load();
-      emit(state.copyWith(saving: false, step: 4));
+      await load(silent: true);
+      emit(
+        state.copyWith(
+          saving: false,
+          step: advance ? 4 : 3,
+          planName: '',
+          planDays: null,
+          planPriceEgp: null,
+          passRoaming: false,
+          messageKey: 'onboarding.step4.added',
+        ),
+      );
       return true;
     } catch (_) {
       emit(state.copyWith(saving: false, messageKey: 'onboarding.error.save'));
       return false;
     }
+  }
+
+  bool get _hasPlanDraft =>
+      state.planName.trim().isNotEmpty ||
+      state.planDays != null ||
+      state.planPriceEgp != null;
+
+  Future<bool> continueToReview() async {
+    if (_hasPlanDraft) {
+      return savePlan(advance: true);
+    }
+    if (state.savedPlans.isEmpty) {
+      emit(state.copyWith(messageKey: 'onboarding.error.plan'));
+      return false;
+    }
+    emit(state.copyWith(step: 4, clearMessage: true));
+    return true;
   }
 
   Future<bool> publish() async {

@@ -30,11 +30,14 @@ class GymOnboardingRemote {
   GymOnboardingRemote({
     required this.createPlan,
     required this.inviteStaff,
+    ListMembershipPlansUseCase? listPlans,
     SupabaseClient? client,
-  }) : _client = client;
+  }) : _listPlans = listPlans,
+       _client = client;
 
   final CreateMembershipPlanUseCase createPlan;
   final InviteStaffUseCase inviteStaff;
+  final ListMembershipPlansUseCase? _listPlans;
   final SupabaseClient? _client;
 
   static const placeholderPhoto =
@@ -105,8 +108,8 @@ class GymOnboardingRemote {
     String? id,
     required String name,
     required String address,
-    required double lat,
-    required double lng,
+    double? lat,
+    double? lng,
     required Map<String, dynamic> hours,
     required int capacity,
     required List<String> photoUrls,
@@ -132,6 +135,14 @@ class GymOnboardingRemote {
       'set_branch_facilities',
       params: {'p_branch_id': branchId, 'p_tags': tags},
     );
+  }
+
+  Future<List<MembershipPlan>> loadPlans() {
+    final useCase = _listPlans;
+    if (useCase == null) {
+      return Future<List<MembershipPlan>>.value(const []);
+    }
+    return useCase(activeOnly: true);
   }
 
   Future<void> addPlan({

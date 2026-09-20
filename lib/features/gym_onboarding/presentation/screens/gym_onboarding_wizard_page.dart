@@ -125,7 +125,10 @@ class _WizardBody extends StatelessWidget {
             ],
           ),
         ),
-        _Stepper(step: state.step),
+        _Stepper(
+          step: state.step,
+          onStepTap: (i) => context.read<GymOnboardingCubit>().setStep(i),
+        ),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -144,47 +147,63 @@ class _WizardBody extends StatelessWidget {
 }
 
 class _Stepper extends StatelessWidget {
-  const _Stepper({required this.step});
+  const _Stepper({required this.step, required this.onStepTap});
   final int step;
+  final ValueChanged<int> onStepTap;
 
   @override
   Widget build(BuildContext context) {
-    const labels = ['Brand', 'Branches', 'Staff', 'Plans', 'Publish'];
+    const keys = [
+      'onboarding.steps.brand',
+      'onboarding.steps.branches',
+      'onboarding.steps.staff',
+      'onboarding.steps.plans',
+      'onboarding.steps.publish',
+    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          for (var i = 0; i < labels.length; i++)
+          for (var i = 0; i < keys.length; i++)
             Expanded(
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 14,
-                    backgroundColor: i <= step
-                        ? KineticTokens.electricLime
-                        : KineticTokens.surfaceContainerHigh,
-                    child: Text(
-                      '${i + 1}',
-                      style: TextStyle(
-                        color: i <= step
-                            ? KineticTokens.deepCharcoal
-                            : KineticTokens.zincGray,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 12,
+              child: InkWell(
+                key: Key('gym-profile-step-$i'),
+                onTap: () => onStepTap(i),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 14,
+                        backgroundColor: i <= step
+                            ? KineticTokens.electricLime
+                            : KineticTokens.surfaceContainerHigh,
+                        child: Text(
+                          '${i + 1}',
+                          style: TextStyle(
+                            color: i <= step
+                                ? KineticTokens.deepCharcoal
+                                : KineticTokens.zincGray,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 4),
+                      Text(
+                        keys[i].tr(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: i == step
+                              ? KineticTokens.electricLime
+                              : KineticTokens.zincGray,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    labels[i],
-                    style: TextStyle(
-                      color: i == step
-                          ? KineticTokens.electricLime
-                          : KineticTokens.zincGray,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
         ],
@@ -193,9 +212,11 @@ class _Stepper extends StatelessWidget {
   }
 }
 
-InputDecoration _dec(String label) => InputDecoration(
+InputDecoration _dec(String label, {String? hint}) => InputDecoration(
   labelText: label,
+  hintText: hint,
   labelStyle: const TextStyle(color: KineticTokens.zincGray),
+  hintStyle: const TextStyle(color: KineticTokens.zincGray),
   enabledBorder: const UnderlineInputBorder(
     borderSide: BorderSide(color: KineticTokens.surfaceContainerHigh),
   ),
@@ -226,11 +247,13 @@ class _BrandStep extends StatelessWidget {
         _BoundField(
           value: s.brandName,
           label: 'onboarding.step1.brand'.tr(),
+          hint: 'onboarding.register.trading_hint'.tr(),
           onChanged: (v) => cubit.patch(s.copyWith(brandName: v)),
         ),
         _BoundField(
           value: s.tradingName,
           label: 'onboarding.step1.trading'.tr(),
+          hint: 'onboarding.register.trading_hint'.tr(),
           onChanged: (v) => cubit.patch(s.copyWith(tradingName: v)),
         ),
         _BoundField(
@@ -289,22 +312,69 @@ class _BranchStep extends StatelessWidget {
           onChanged: (v) => cubit.patch(s.copyWith(branchAddress: v)),
         ),
         _BoundField(
-          value: '${s.capacity}',
+          value: s.lat == null ? '' : '${s.lat}',
+          label: 'onboarding.step2.lat'.tr(),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          onChanged: (v) => cubit.patch(
+            s.copyWith(lat: v.trim().isEmpty ? null : double.tryParse(v)),
+          ),
+        ),
+        _BoundField(
+          value: s.lng == null ? '' : '${s.lng}',
+          label: 'onboarding.step2.lng'.tr(),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          onChanged: (v) => cubit.patch(
+            s.copyWith(lng: v.trim().isEmpty ? null : double.tryParse(v)),
+          ),
+        ),
+        _BoundField(
+          value: s.hoursOpen,
+          label: 'onboarding.step2.open'.tr(),
+          onChanged: (v) => cubit.patch(s.copyWith(hoursOpen: v)),
+        ),
+        _BoundField(
+          value: s.hoursClose,
+          label: 'onboarding.step2.close'.tr(),
+          onChanged: (v) => cubit.patch(s.copyWith(hoursClose: v)),
+        ),
+        _BoundField(
+          value: s.capacity == null ? '' : '${s.capacity}',
           label: 'onboarding.step2.capacity'.tr(),
           keyboardType: TextInputType.number,
-          onChanged: (v) =>
-              cubit.patch(s.copyWith(capacity: int.tryParse(v) ?? s.capacity)),
+          onChanged: (v) => cubit.patch(
+            s.copyWith(capacity: v.trim().isEmpty ? null : int.tryParse(v)),
+          ),
+        ),
+        _BoundField(
+          value: s.photoUrl,
+          label: 'onboarding.step2.photo_url'.tr(),
+          onChanged: (v) => cubit.patch(s.copyWith(photoUrl: v)),
         ),
         const SizedBox(height: 12),
+        Text(
+          'onboarding.step2.facilities'.tr(),
+          style: const TextStyle(
+            color: KineticTokens.pureWhite,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
             for (final tag in GymOnboardingRemote.amenityTags)
               FilterChip(
-                label: Text(tag),
+                key: Key('amenity-$tag'),
+                label: Text('onboarding.step2.amenities.$tag'.tr()),
                 selected: s.amenityTags.contains(tag),
                 selectedColor: KineticTokens.electricLime,
+                checkmarkColor: KineticTokens.deepCharcoal,
+                labelStyle: TextStyle(
+                  color: s.amenityTags.contains(tag)
+                      ? KineticTokens.deepCharcoal
+                      : KineticTokens.pureWhite,
+                ),
                 onSelected: (on) {
                   final next = [...s.amenityTags];
                   if (on) {
@@ -430,24 +500,53 @@ class _PlanStep extends StatelessWidget {
             fontWeight: FontWeight.w900,
           ),
         ),
+        if (s.savedPlans.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(
+            'onboarding.step4.saved'.tr(),
+            style: const TextStyle(
+              color: KineticTokens.zincGray,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          for (final plan in s.savedPlans)
+            ListTile(
+              key: Key('saved-plan-${plan.id}'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                plan.name,
+                style: const TextStyle(color: KineticTokens.pureWhite),
+              ),
+              subtitle: Text(
+                'onboarding.step4.saved_meta'.tr(
+                  namedArgs: {
+                    'days': '${plan.durationDays}',
+                    'price': '${plan.priceCents ~/ 100}',
+                  },
+                ),
+                style: const TextStyle(color: KineticTokens.zincGray),
+              ),
+            ),
+        ],
         _BoundField(
           value: s.planName,
           label: 'onboarding.step4.name'.tr(),
           onChanged: (v) => cubit.patch(s.copyWith(planName: v)),
         ),
         _BoundField(
-          value: '${s.planDays}',
+          value: s.planDays == null ? '' : '${s.planDays}',
           label: 'onboarding.step4.days'.tr(),
           keyboardType: TextInputType.number,
-          onChanged: (v) =>
-              cubit.patch(s.copyWith(planDays: int.tryParse(v) ?? s.planDays)),
+          onChanged: (v) => cubit.patch(
+            s.copyWith(planDays: v.trim().isEmpty ? null : int.tryParse(v)),
+          ),
         ),
         _BoundField(
-          value: '${s.planPriceEgp}',
+          value: s.planPriceEgp == null ? '' : '${s.planPriceEgp}',
           label: 'onboarding.step4.price'.tr(),
           keyboardType: TextInputType.number,
           onChanged: (v) => cubit.patch(
-            s.copyWith(planPriceEgp: int.tryParse(v) ?? s.planPriceEgp),
+            s.copyWith(planPriceEgp: v.trim().isEmpty ? null : int.tryParse(v)),
           ),
         ),
         SwitchListTile(
@@ -460,6 +559,12 @@ class _PlanStep extends StatelessWidget {
           onChanged: (v) => cubit.patch(s.copyWith(passRoaming: v)),
         ),
         const SizedBox(height: 12),
+        OutlinedButton(
+          key: const Key('onboarding-add-plan'),
+          onPressed: s.saving ? null : () => cubit.savePlan(),
+          child: Text('onboarding.step4.add_another'.tr()),
+        ),
+        const SizedBox(height: 12),
         TextButton(
           onPressed: () => cubit.setStep(2),
           child: Text('onboarding.back'.tr()),
@@ -468,7 +573,7 @@ class _PlanStep extends StatelessWidget {
         _LimeButton(
           label: 'onboarding.next_review'.tr(),
           busy: s.saving,
-          onTap: () => cubit.savePlan(),
+          onTap: () => cubit.continueToReview(),
         ),
       ],
     );
@@ -580,11 +685,13 @@ class _BoundField extends StatefulWidget {
     required this.value,
     required this.label,
     required this.onChanged,
+    this.hint,
     this.keyboardType,
   });
 
   final String value;
   final String label;
+  final String? hint;
   final ValueChanged<String> onChanged;
   final TextInputType? keyboardType;
 
@@ -624,7 +731,7 @@ class _BoundFieldState extends State<_BoundField> {
       controller: _controller,
       keyboardType: widget.keyboardType,
       style: const TextStyle(color: KineticTokens.pureWhite),
-      decoration: _dec(widget.label),
+      decoration: _dec(widget.label, hint: widget.hint),
       onChanged: widget.onChanged,
     );
   }

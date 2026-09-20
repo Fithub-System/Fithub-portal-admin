@@ -11,6 +11,7 @@ void registerGymOnboardingDependencies(GetIt getIt) {
       () => GymOnboardingRemote(
         createPlan: getIt<CreateMembershipPlanUseCase>(),
         inviteStaff: getIt<InviteStaffUseCase>(),
+        listPlans: getIt<ListMembershipPlansUseCase>(),
       ),
     );
   }
