@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fithub_portal_admin/core/network/postgrest_row.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/core/storage/secure_storage_service.dart';
@@ -71,22 +73,28 @@ class AuthRepositoryImpl implements AuthRepository {
     required String tradingName,
   }) async {
     try {
-      final response = await _supabase.auth.signUp(
-        email: email.trim(),
-        password: password,
-        data: {'trading_name': tradingName.trim(), 'gym_founder': true},
-        emailRedirectTo: SupabaseConfig.emailRedirectTo,
-      );
+      final response = await _supabase.auth
+          .signUp(
+            email: email.trim(),
+            password: password,
+            data: {'trading_name': tradingName.trim(), 'gym_founder': true},
+            emailRedirectTo: SupabaseConfig.emailRedirectTo,
+          )
+          .timeout(const Duration(seconds: 20));
       if (response.user == null) {
         throw const AuthUnknownFailure();
       }
       if (response.session == null) {
         return null;
       }
-      await _bootstrapFounder(tradingName.trim());
-      return resolveEmployeeProfile();
+      await _bootstrapFounder(
+        tradingName.trim(),
+      ).timeout(const Duration(seconds: 15));
+      return resolveEmployeeProfile().timeout(const Duration(seconds: 15));
     } on AuthFailure {
       rethrow;
+    } on TimeoutException {
+      throw const AuthUnknownFailure('onboarding.register.timeout');
     } on AuthException catch (e) {
       final msg = e.message.toLowerCase();
       if (msg.contains('already') || msg.contains('registered')) {

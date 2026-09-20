@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -153,7 +155,7 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
   Future<void> load() async {
     emit(state.copyWith(loading: true, clearMessage: true));
     try {
-      final snap = await _remote.load();
+      final snap = await _remote.load().timeout(const Duration(seconds: 15));
       final gym = snap.gym;
       final branch = snap.branches.isNotEmpty ? snap.branches.first : null;
       final tags = branch == null

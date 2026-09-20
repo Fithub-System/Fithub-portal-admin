@@ -30,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _obscure = true;
+  bool _showRegister = false;
 
   @override
   void dispose() {
@@ -57,6 +58,15 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_showRegister) {
+      return GymRegisterPage(
+        onBackToLogin: () {
+          context.read<AuthBloc>().add(const AuthLoginRequested());
+          setState(() => _showRegister = false);
+        },
+      );
+    }
+
     final textTheme = Theme.of(context).textTheme;
 
     return BlocListener<AuthBloc, AuthState>(
@@ -132,6 +142,12 @@ class _LoginPageState extends State<LoginPage> {
                             onToggleObscure: () =>
                                 setState(() => _obscure = !_obscure),
                             onSubmit: _submit,
+                            onRegister: () {
+                              context.read<AuthBloc>().add(
+                                const AuthRegisterRequested(),
+                              );
+                              setState(() => _showRegister = true);
+                            },
                           ),
                           const SizedBox(height: 48),
                           const _FooterLinks(),
@@ -251,6 +267,7 @@ class _LoginCard extends StatelessWidget {
     required this.passwordController,
     required this.onToggleObscure,
     required this.onSubmit,
+    required this.onRegister,
   });
 
   final bool obscure;
@@ -258,6 +275,7 @@ class _LoginCard extends StatelessWidget {
   final TextEditingController passwordController;
   final VoidCallback onToggleObscure;
   final VoidCallback onSubmit;
+  final VoidCallback onRegister;
 
   @override
   Widget build(BuildContext context) {
@@ -479,15 +497,7 @@ class _LoginCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 TextButton(
                   key: const Key('login-cta-register'),
-                  onPressed: loading
-                      ? null
-                      : () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const GymRegisterPage(),
-                            ),
-                          );
-                        },
+                  onPressed: loading ? null : onRegister,
                   child: Text(
                     'onboarding.register.from_login'.tr(),
                     style: textTheme.labelLarge?.copyWith(

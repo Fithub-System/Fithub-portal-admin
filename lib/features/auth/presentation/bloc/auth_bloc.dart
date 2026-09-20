@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fithub_portal_admin/features/auth/domain/auth_failure.dart';
@@ -14,6 +16,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthStarted>(_onStarted);
     on<AuthSignInSubmitted>(_onSignIn);
     on<AuthRegisterSubmitted>(_onRegister);
+    on<AuthRegisterRequested>(_onShowRegister);
+    on<AuthLoginRequested>(_onShowLogin);
     on<AuthOnboardingDeferred>(_onDeferred);
     on<AuthOnboardingResumeRequested>(_onResume);
     on<AuthProfileRefreshRequested>(_onRefresh);
@@ -27,7 +31,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final session = _authRepository.currentSession;
     if (session != null) {
       try {
-        final profile = await _authRepository.resolveEmployeeProfile();
+        final profile = await _authRepository.resolveEmployeeProfile().timeout(
+          const Duration(seconds: 20),
+        );
         emit(AuthAuthenticated(profile));
         return;
       } on AuthFailure catch (e) {
@@ -77,26 +83,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  Future<void> _onShowRegister(
+    AuthRegisterRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthRegisterForm());
+  }
+
+  Future<void> _onShowLogin(
+    AuthLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthUnauthenticated());
+  }
+
   Future<void> _onRegister(
     AuthRegisterSubmitted event,
     Emitter<AuthState> emit,
   ) async {
-    // Stay on the current unauth surface (Register is a pushed route).
+    emit(const AuthRegisterForm(submitting: true));
     try {
-      final profile = await _authRepository.signUpGymFounder(
-        email: event.email,
-        password: event.password,
-        tradingName: event.tradingName,
-      );
+      final profile = await _authRepository
+          .signUpGymFounder(
+            email: event.email,
+            password: event.password,
+            tradingName: event.tradingName,
+          )
+          .timeout(const Duration(seconds: 25));
       if (profile == null) {
         emit(AuthAwaitingEmailConfirmation(event.email));
         return;
       }
       emit(AuthAuthenticated(profile));
+    } on TimeoutException {
+      emit(const AuthRegisterForm(message: 'onboarding.register.timeout'));
     } on AuthFailure catch (e) {
-      emit(AuthUnauthenticated(message: e.message));
+      emit(AuthRegisterForm(message: e.message));
     } catch (_) {
-      emit(const AuthUnauthenticated(message: 'auth.error.unknown'));
+      emit(const AuthRegisterForm(message: 'auth.error.unknown'));
     }
   }
 

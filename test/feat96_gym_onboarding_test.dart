@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fithub_portal_admin/config/router/app_router.dart';
 import 'package:fithub_portal_admin/core/network/supabase_config.dart';
 import 'package:fithub_portal_admin/features/auth/domain/auth_failure.dart';
 import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profile.dart';
@@ -112,7 +113,10 @@ void main() {
       );
       await expectLater(
         bloc.stream,
-        emits(const AuthAuthenticated(draftAdmin)),
+        emitsInOrder([
+          const AuthRegisterForm(submitting: true),
+          const AuthAuthenticated(draftAdmin),
+        ]),
       );
       expect(const AuthAuthenticated(draftAdmin).showOnboardingWizard, isTrue);
       await bloc.close();
@@ -138,7 +142,10 @@ void main() {
     );
     await expectLater(
       bloc.stream,
-      emits(const AuthAwaitingEmailConfirmation('owner@gym.com')),
+      emitsInOrder([
+        const AuthRegisterForm(submitting: true),
+        const AuthAwaitingEmailConfirmation('owner@gym.com'),
+      ]),
     );
     await bloc.close();
   });
@@ -162,7 +169,10 @@ void main() {
     );
     await expectLater(
       bloc.stream,
-      emits(const AuthUnauthenticated(message: 'auth.error.email_taken')),
+      emitsInOrder([
+        const AuthRegisterForm(submitting: true),
+        const AuthRegisterForm(message: 'auth.error.email_taken'),
+      ]),
     );
     await bloc.close();
   });
@@ -202,6 +212,18 @@ void main() {
     await bloc.close();
   });
 
+  test(
+    'Register CTA opens AuthRegisterForm without AuthLoading splash',
+    () async {
+      final bloc = AuthBloc(authRepository: repository);
+      bloc.add(const AuthRegisterRequested());
+      await expectLater(bloc.stream, emits(const AuthRegisterForm()));
+      bloc.add(const AuthLoginRequested());
+      await expectLater(bloc.stream, emits(const AuthUnauthenticated()));
+      await bloc.close();
+    },
+  );
+
   testWidgets('login Register CTA is present and is not Coming soon', (
     tester,
   ) async {
@@ -219,5 +241,29 @@ void main() {
     expect(find.byKey(const Key('login-cta-register')), findsOneWidget);
     expect(find.text('Register your gym'), findsOneWidget);
     expect(find.textContaining('Coming soon'), findsNothing);
+  });
+
+  testWidgets('cold start is login; register appears only after CTA tap', (
+    tester,
+  ) async {
+    await pumpLocalizedApp(
+      tester,
+      BlocProvider(
+        create: (_) =>
+            AuthBloc(authRepository: repository)..add(const AuthStarted()),
+        child: AppRouter.authGate(),
+      ),
+      waitFor: find.byKey(const Key('login-cta-register')),
+    );
+
+    expect(find.byKey(const Key('login-cta-initialize')), findsOneWidget);
+    expect(find.text('Create gym account'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('login-cta-register')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Create gym account'), findsOneWidget);
+    expect(find.byKey(const Key('login-cta-initialize')), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }

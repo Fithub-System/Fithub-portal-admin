@@ -835,6 +835,8 @@
   "onboarding": {
     "finish_later": "Finish later",
     "resume_banner": "Complete gym setup to publish on the marketplace",
+    "loading": "Loading gym setup…",
+    "retry": "Retry",
     "back": "Back",
     "next_branches": "Continue to branches",
     "next_staff": "Continue to staff",
@@ -854,7 +856,8 @@
       "password_short": "Password must be at least 8 characters",
       "mismatch": "Passwords do not match",
       "check_email": "Check your email to confirm the account",
-      "back_login": "Back to login"
+      "back_login": "Back to login",
+      "timeout": "Sign-up timed out. Check your connection and try again."
     },
     "step1": {
       "title": "Brand & legal",
