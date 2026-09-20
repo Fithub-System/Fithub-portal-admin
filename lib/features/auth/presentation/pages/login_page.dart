@@ -8,7 +8,6 @@ import 'package:fithub_portal_admin/core/i18n/app_locales.dart';
 import 'package:fithub_portal_admin/core/network/supabase_locale_headers.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/widgets/stitch_auth_snackbar.dart';
-import 'package:fithub_portal_admin/features/gym_onboarding/presentation/screens/gym_register_page.dart';
 
 /// Stitch screen `Web Admin Login Portal`
 /// (`projects/.../screens/c12b687f1538452ebaf8d0adb89a9489`).
@@ -481,13 +480,9 @@ class _LoginCard extends StatelessWidget {
                   key: const Key('login-cta-register'),
                   onPressed: loading
                       ? null
-                      : () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const GymRegisterPage(),
-                            ),
-                          );
-                        },
+                      : () => context.read<AuthBloc>().add(
+                          const AuthRegisterRequested(),
+                        ),
                   child: Text(
                     'onboarding.register.from_login'.tr(),
                     style: textTheme.labelLarge?.copyWith(

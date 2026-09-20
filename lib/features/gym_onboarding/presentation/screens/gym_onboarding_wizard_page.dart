@@ -59,8 +59,40 @@ class _WizardBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<GymOnboardingCubit>().state;
     if (state.loading) {
-      return const Center(
-        child: CircularProgressIndicator(color: KineticTokens.electricLime),
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(color: KineticTokens.electricLime),
+            const SizedBox(height: 16),
+            Text(
+              'onboarding.loading'.tr(),
+              style: const TextStyle(color: KineticTokens.zincGray),
+            ),
+          ],
+        ),
+      );
+    }
+    if (state.snapshot == null && state.messageKey == 'onboarding.error.load') {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'onboarding.error.load'.tr(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: KineticTokens.pureWhite),
+              ),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => context.read<GymOnboardingCubit>().load(),
+                child: Text('onboarding.retry'.tr()),
+              ),
+            ],
+          ),
+        ),
       );
     }
 

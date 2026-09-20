@@ -41,6 +41,16 @@ final class AuthAwaitingEmailConfirmation extends AuthState {
   List<Object?> get props => [email];
 }
 
+final class AuthRegisterForm extends AuthState {
+  const AuthRegisterForm({this.message, this.submitting = false});
+
+  final String? message;
+  final bool submitting;
+
+  @override
+  List<Object?> get props => [message, submitting];
+}
+
 final class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated({this.message});
 

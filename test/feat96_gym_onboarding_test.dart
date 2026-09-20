@@ -112,7 +112,10 @@ void main() {
       );
       await expectLater(
         bloc.stream,
-        emits(const AuthAuthenticated(draftAdmin)),
+        emitsInOrder([
+          const AuthRegisterForm(submitting: true),
+          const AuthAuthenticated(draftAdmin),
+        ]),
       );
       expect(const AuthAuthenticated(draftAdmin).showOnboardingWizard, isTrue);
       await bloc.close();
@@ -138,7 +141,10 @@ void main() {
     );
     await expectLater(
       bloc.stream,
-      emits(const AuthAwaitingEmailConfirmation('owner@gym.com')),
+      emitsInOrder([
+        const AuthRegisterForm(submitting: true),
+        const AuthAwaitingEmailConfirmation('owner@gym.com'),
+      ]),
     );
     await bloc.close();
   });
@@ -162,7 +168,10 @@ void main() {
     );
     await expectLater(
       bloc.stream,
-      emits(const AuthUnauthenticated(message: 'auth.error.email_taken')),
+      emitsInOrder([
+        const AuthRegisterForm(submitting: true),
+        const AuthRegisterForm(message: 'auth.error.email_taken'),
+      ]),
     );
     await bloc.close();
   });
@@ -202,6 +211,18 @@ void main() {
     await bloc.close();
   });
 
+  test(
+    'Register CTA opens AuthRegisterForm without AuthLoading splash',
+    () async {
+      final bloc = AuthBloc(authRepository: repository);
+      bloc.add(const AuthRegisterRequested());
+      await expectLater(bloc.stream, emits(const AuthRegisterForm()));
+      bloc.add(const AuthLoginRequested());
+      await expectLater(bloc.stream, emits(const AuthUnauthenticated()));
+      await bloc.close();
+    },
+  );
+
   testWidgets('login Register CTA is present and is not Coming soon', (
     tester,
   ) async {
@@ -219,5 +240,31 @@ void main() {
     expect(find.byKey(const Key('login-cta-register')), findsOneWidget);
     expect(find.text('Register your gym'), findsOneWidget);
     expect(find.textContaining('Coming soon'), findsNothing);
+  });
+
+  testWidgets('Register CTA opens gym register form, not a splash spinner', (
+    tester,
+  ) async {
+    await pumpLocalizedApp(
+      tester,
+      BlocProvider(
+        create: (_) =>
+            AuthBloc(authRepository: repository)..add(const AuthStarted()),
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) => switch (state) {
+            AuthRegisterForm() => const GymRegisterPage(),
+            AuthUnauthenticated() => const LoginPage(),
+            _ => const SizedBox.shrink(),
+          },
+        ),
+      ),
+      waitFor: find.byKey(const Key('login-cta-register')),
+    );
+
+    await tester.tap(find.byKey(const Key('login-cta-register')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Create gym account'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }

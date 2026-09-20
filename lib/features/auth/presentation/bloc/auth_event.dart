@@ -48,6 +48,14 @@ final class AuthOnboardingResumeRequested extends AuthEvent {
   const AuthOnboardingResumeRequested();
 }
 
+final class AuthRegisterRequested extends AuthEvent {
+  const AuthRegisterRequested();
+}
+
+final class AuthLoginRequested extends AuthEvent {
+  const AuthLoginRequested();
+}
+
 final class AuthProfileRefreshRequested extends AuthEvent {
   const AuthProfileRefreshRequested();
 }

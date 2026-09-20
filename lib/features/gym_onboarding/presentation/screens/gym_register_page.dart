@@ -24,7 +24,6 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
   final _password = TextEditingController();
   final _confirm = TextEditingController();
   final _trading = TextEditingController();
-  var _busy = false;
 
   @override
   void dispose() {
@@ -37,7 +36,6 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _busy = true);
     context.read<AuthBloc>().add(
       AuthRegisterSubmitted(
         email: _email.text,
@@ -49,114 +47,125 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthUnauthenticated && state.message != null) {
-          if (_busy) setState(() => _busy = false);
-          final raw = state.message!;
-          StitchAuthSnackbar.show(
-            context,
-            raw.startsWith('auth.') || raw.startsWith('onboarding.')
-                ? raw.tr()
-                : raw,
-          );
-        }
+        final raw = switch (state) {
+          AuthRegisterForm(:final message, submitting: false) => message,
+          AuthUnauthenticated(:final message) => message,
+          _ => null,
+        };
+        if (raw == null) return;
+        StitchAuthSnackbar.show(
+          context,
+          raw.startsWith('auth.') || raw.startsWith('onboarding.')
+              ? raw.tr()
+              : raw,
+        );
       },
-      child: Scaffold(
-        backgroundColor: KineticTokens.deepCharcoal,
-        body: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    Text(
-                      'onboarding.register.title'.tr(),
-                      style: const TextStyle(
-                        color: KineticTokens.pureWhite,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w900,
+      builder: (context, state) {
+        final busy = state is AuthRegisterForm && state.submitting;
+        return Scaffold(
+          backgroundColor: KineticTokens.deepCharcoal,
+          body: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      Text(
+                        'onboarding.register.title'.tr(),
+                        style: const TextStyle(
+                          color: KineticTokens.pureWhite,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'onboarding.register.subtitle'.tr(),
-                      style: const TextStyle(color: KineticTokens.zincGray),
-                    ),
-                    TextFormField(
-                      controller: _trading,
-                      style: const TextStyle(color: KineticTokens.pureWhite),
-                      decoration: InputDecoration(
-                        labelText: 'onboarding.register.trading'.tr(),
+                      const SizedBox(height: 8),
+                      Text(
+                        'onboarding.register.subtitle'.tr(),
+                        style: const TextStyle(color: KineticTokens.zincGray),
                       ),
-                      validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'onboarding.register.required'.tr()
-                          : null,
-                    ),
-                    TextFormField(
-                      controller: _email,
-                      keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(color: KineticTokens.pureWhite),
-                      decoration: InputDecoration(
-                        labelText: 'onboarding.register.email'.tr(),
+                      TextFormField(
+                        controller: _trading,
+                        style: const TextStyle(color: KineticTokens.pureWhite),
+                        decoration: InputDecoration(
+                          labelText: 'onboarding.register.trading'.tr(),
+                        ),
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'onboarding.register.required'.tr()
+                            : null,
                       ),
-                      validator: (v) => (v == null || !v.contains('@'))
-                          ? 'onboarding.register.required'.tr()
-                          : null,
-                    ),
-                    TextFormField(
-                      controller: _password,
-                      obscureText: true,
-                      style: const TextStyle(color: KineticTokens.pureWhite),
-                      decoration: InputDecoration(
-                        labelText: 'onboarding.register.password'.tr(),
+                      TextFormField(
+                        controller: _email,
+                        keyboardType: TextInputType.emailAddress,
+                        style: const TextStyle(color: KineticTokens.pureWhite),
+                        decoration: InputDecoration(
+                          labelText: 'onboarding.register.email'.tr(),
+                        ),
+                        validator: (v) => (v == null || !v.contains('@'))
+                            ? 'onboarding.register.required'.tr()
+                            : null,
                       ),
-                      validator: (v) => (v == null || v.length < 8)
-                          ? 'onboarding.register.password_short'.tr()
-                          : null,
-                    ),
-                    TextFormField(
-                      controller: _confirm,
-                      obscureText: true,
-                      style: const TextStyle(color: KineticTokens.pureWhite),
-                      decoration: InputDecoration(
-                        labelText: 'onboarding.register.confirm'.tr(),
+                      TextFormField(
+                        controller: _password,
+                        obscureText: true,
+                        style: const TextStyle(color: KineticTokens.pureWhite),
+                        decoration: InputDecoration(
+                          labelText: 'onboarding.register.password'.tr(),
+                        ),
+                        validator: (v) => (v == null || v.length < 8)
+                            ? 'onboarding.register.password_short'.tr()
+                            : null,
                       ),
-                      validator: (v) => v != _password.text
-                          ? 'onboarding.register.mismatch'.tr()
-                          : null,
-                    ),
-                    const SizedBox(height: 24),
-                    FilledButton(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: KineticTokens.electricLime,
-                        foregroundColor: KineticTokens.deepCharcoal,
-                        minimumSize: const Size.fromHeight(52),
+                      TextFormField(
+                        controller: _confirm,
+                        obscureText: true,
+                        style: const TextStyle(color: KineticTokens.pureWhite),
+                        decoration: InputDecoration(
+                          labelText: 'onboarding.register.confirm'.tr(),
+                        ),
+                        validator: (v) => v != _password.text
+                            ? 'onboarding.register.mismatch'.tr()
+                            : null,
                       ),
-                      onPressed: _busy ? null : _submit,
-                      child: _busy
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text('onboarding.register.cta'.tr()),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).maybePop(),
-                      child: Text('onboarding.register.have_account'.tr()),
-                    ),
-                  ],
+                      const SizedBox(height: 24),
+                      FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: KineticTokens.electricLime,
+                          foregroundColor: KineticTokens.deepCharcoal,
+                          minimumSize: const Size.fromHeight(52),
+                        ),
+                        onPressed: busy ? null : _submit,
+                        child: busy
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text('onboarding.register.cta'.tr()),
+                      ),
+                      TextButton(
+                        onPressed: busy
+                            ? null
+                            : () => context.read<AuthBloc>().add(
+                                const AuthLoginRequested(),
+                              ),
+                        child: Text('onboarding.register.have_account'.tr()),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

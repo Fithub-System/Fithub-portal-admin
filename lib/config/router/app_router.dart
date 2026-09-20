@@ -36,18 +36,18 @@ class AppRouter {
       },
       builder: (context, state) {
         return switch (state) {
-          AuthAuthenticated() when state.showOnboardingWizard =>
-            BlocProvider(
-              create: (_) =>
-                  InjectionContainer.createGymOnboardingCubit()..load(),
-              child: const GymOnboardingWizardPage(),
-            ),
+          AuthAuthenticated() when state.showOnboardingWizard => BlocProvider(
+            create: (_) =>
+                InjectionContainer.createGymOnboardingCubit()..load(),
+            child: const GymOnboardingWizardPage(),
+          ),
           AuthAuthenticated(:final profile) => _AuthenticatedShell(
             profile: profile,
           ),
           AuthAwaitingEmailConfirmation(:final email) => GymCheckEmailPage(
             email: email,
           ),
+          AuthRegisterForm() => const GymRegisterPage(),
           AuthInitial() || AuthLoading() => const _SplashScaffold(),
           _ => const LoginPage(),
         };
