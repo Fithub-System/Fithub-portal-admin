@@ -31,6 +31,9 @@ import 'package:fithub_portal_admin/features/members/inject_members.dart'
     as members_di;
 import 'package:fithub_portal_admin/features/add_member/inject_add_member.dart'
     as add_member_di;
+import 'package:fithub_portal_admin/features/gym_onboarding/inject_gym_onboarding.dart'
+    as gym_onboarding_di;
+import 'package:fithub_portal_admin/features/gym_onboarding/presentation/gym_onboarding_cubit.dart';
 import 'package:fithub_portal_admin/features/gym_sku_settings/inject_gym_sku_settings.dart'
     as gym_sku_settings_di;
 import 'package:fithub_portal_admin/features/class_sessions/inject_class_sessions.dart'
@@ -69,6 +72,7 @@ class InjectionContainer {
     members_di.registerMembersDependencies(getIt);
     add_member_di.registerAddMemberDependencies(getIt);
     gym_sku_settings_di.registerGymSkuSettingsDependencies(getIt);
+    gym_onboarding_di.registerGymOnboardingDependencies(getIt);
     class_sessions_di.registerClassSessionsDependencies(getIt);
     admin_payout_queue_di.registerAdminPayoutQueueDependencies(getIt);
 
@@ -91,6 +95,9 @@ class InjectionContainer {
 
   static GymSkuSettingsBloc createGymSkuSettingsBloc() =>
       getIt<GymSkuSettingsBloc>();
+
+  static GymOnboardingCubit createGymOnboardingCubit() =>
+      getIt<GymOnboardingCubit>();
 
   static ClassSessionsCubit createClassSessionsCubit() =>
       getIt<ClassSessionsCubit>();

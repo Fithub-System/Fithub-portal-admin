@@ -103,6 +103,8 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
     final tenantId = authState is AuthAuthenticated
         ? authState.profile.tenantId
         : '';
+    final needsOnboarding =
+        authState is AuthAuthenticated && authState.profile.needsOnboarding;
 
     return BlocBuilder<ConnectivityCubit, ConnectivityState>(
       builder: (context, connectivity) {
@@ -196,6 +198,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
                 body: Column(
                   children: [
                     SafeModeBanner(visible: connectivity.isOffline),
+                    if (needsOnboarding) const _OnboardingResumeBanner(),
                     Expanded(
                       child: Row(
                         children: [
@@ -222,6 +225,7 @@ class _PortalHomeShellState extends State<PortalHomeShell> {
               body: Column(
                 children: [
                   SafeModeBanner(visible: connectivity.isOffline),
+                  if (needsOnboarding) const _OnboardingResumeBanner(),
                   Expanded(child: content),
                 ],
               ),
@@ -346,9 +350,7 @@ class _PortalShellHeader extends StatelessWidget {
           height: 64,
           padding: const EdgeInsetsDirectional.symmetric(horizontal: 32),
           decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Color(0xFF262626)),
-            ),
+            border: Border(bottom: BorderSide(color: Color(0xFF262626))),
           ),
           child: Row(
             children: [
@@ -664,8 +666,9 @@ class _DashboardDestination extends StatelessWidget {
                 statusMessageKey: statusKey,
                 lastScanApproved: approved,
                 lastScanMemberName: dashboard.lastScanMemberName,
-                lastScanRejectReason:
-                    rejected ? dashboard.lastScanRejectReason : null,
+                lastScanRejectReason: rejected
+                    ? dashboard.lastScanRejectReason
+                    : null,
                 liveMetricsBound: true,
                 metricsLoading: loading,
                 revenueAmountLabel: metrics.revenueAmountLabel,
@@ -700,6 +703,41 @@ class _StaffDestination extends StatelessWidget {
     return BlocProvider(
       create: (_) => InjectionContainer.createStaffInviteBloc(),
       child: StaffManagementScreen(canInvite: canInvite),
+    );
+  }
+}
+
+class _OnboardingResumeBanner extends StatelessWidget {
+  const _OnboardingResumeBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: KineticTokens.electricLime,
+      child: InkWell(
+        onTap: () =>
+            context.read<AuthBloc>().add(const AuthOnboardingResumeRequested()),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'onboarding.resume_banner'.tr(),
+                  style: const TextStyle(
+                    color: KineticTokens.deepCharcoal,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              const Icon(
+                Icons.arrow_forward,
+                color: KineticTokens.deepCharcoal,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

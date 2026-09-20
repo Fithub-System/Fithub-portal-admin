@@ -10,6 +10,8 @@ import 'package:fithub_portal_admin/features/connectivity/presentation/cubit/con
 import 'package:fithub_portal_admin/features/dashboard/injection_container.dart'
     as dashboard_di;
 import 'package:fithub_portal_admin/features/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'package:fithub_portal_admin/features/gym_onboarding/presentation/screens/gym_onboarding_wizard_page.dart';
+import 'package:fithub_portal_admin/features/gym_onboarding/presentation/screens/gym_register_page.dart';
 import 'package:fithub_portal_admin/features/home/presentation/pages/portal_home_shell.dart';
 import 'package:fithub_portal_admin/features/offline_sync/presentation/cubit/offline_sync_cubit.dart';
 import 'package:fithub_portal_admin/injection_container.dart';
@@ -23,12 +25,28 @@ class AppRouter {
 
   static Widget authGate() {
     return BlocBuilder<AuthBloc, AuthState>(
-      buildWhen: (previous, current) =>
-          previous.runtimeType != current.runtimeType,
+      buildWhen: (previous, current) {
+        if (previous.runtimeType != current.runtimeType) return true;
+        if (previous is AuthAuthenticated && current is AuthAuthenticated) {
+          return previous.showOnboardingWizard !=
+                  current.showOnboardingWizard ||
+              previous.profile != current.profile;
+        }
+        return false;
+      },
       builder: (context, state) {
         return switch (state) {
+          AuthAuthenticated() when state.showOnboardingWizard =>
+            BlocProvider(
+              create: (_) =>
+                  InjectionContainer.createGymOnboardingCubit()..load(),
+              child: const GymOnboardingWizardPage(),
+            ),
           AuthAuthenticated(:final profile) => _AuthenticatedShell(
             profile: profile,
+          ),
+          AuthAwaitingEmailConfirmation(:final email) => GymCheckEmailPage(
+            email: email,
           ),
           AuthInitial() || AuthLoading() => const _SplashScaffold(),
           _ => const LoginPage(),
@@ -77,13 +95,11 @@ class _AuthenticatedShell extends StatelessWidget {
           },
         ),
         BlocProvider(
-          create: (_) => dashboard_di
-              .createOverviewMetricsCubit(
-                getIt: InjectionContainer.locator,
-                tenantId: profile.tenantId,
-                isOnline: () => connectivity.isOnline,
-              )
-            ..start(),
+          create: (_) => dashboard_di.createOverviewMetricsCubit(
+            getIt: InjectionContainer.locator,
+            tenantId: profile.tenantId,
+            isOnline: () => connectivity.isOnline,
+          )..start(),
         ),
         BlocProvider(
           create: (context) {

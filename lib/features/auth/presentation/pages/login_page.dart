@@ -8,6 +8,7 @@ import 'package:fithub_portal_admin/core/i18n/app_locales.dart';
 import 'package:fithub_portal_admin/core/network/supabase_locale_headers.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/widgets/stitch_auth_snackbar.dart';
+import 'package:fithub_portal_admin/features/gym_onboarding/presentation/screens/gym_register_page.dart';
 
 /// Stitch screen `Web Admin Login Portal`
 /// (`projects/.../screens/c12b687f1538452ebaf8d0adb89a9489`).
@@ -15,12 +16,10 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   /// EN DESKTOP artboard — FEAT-16 VF7 primary.
-  static const String stitchScreenIdEn =
-      'c12b687f1538452ebaf8d0adb89a9489';
+  static const String stitchScreenIdEn = 'c12b687f1538452ebaf8d0adb89a9489';
 
   /// AR RTL twin from `list_screens`.
-  static const String stitchScreenIdAr =
-      '0f33f7463ca543c7b85bcb8637249f65';
+  static const String stitchScreenIdAr = '0f33f7463ca543c7b85bcb8637249f65';
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -228,7 +227,7 @@ class _AmbientGlow extends StatelessWidget {
       child: Center(
         child: Opacity(
           opacity: 0.30,
-            child: ImageFiltered(
+          child: ImageFiltered(
             imageFilter: ui.ImageFilter.blur(sigmaX: 75, sigmaY: 75),
             child: Container(
               width: 800,
@@ -437,12 +436,12 @@ class _LoginCard extends StatelessWidget {
                                               .tr(),
                                           style: textTheme.titleMedium
                                               ?.copyWith(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.2,
-                                            color:
-                                                AppColors.onPrimaryContainer,
-                                          ),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 1.2,
+                                                color: AppColors
+                                                    .onPrimaryContainer,
+                                              ),
                                         ),
                                         const SizedBox(width: 8),
                                         Transform.flip(
@@ -450,8 +449,7 @@ class _LoginCard extends StatelessWidget {
                                           child: const Icon(
                                             Icons.arrow_forward,
                                             size: 18,
-                                            color:
-                                                AppColors.onPrimaryContainer,
+                                            color: AppColors.onPrimaryContainer,
                                           ),
                                         ),
                                       ],
@@ -478,7 +476,29 @@ class _LoginCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 16),
+                TextButton(
+                  key: const Key('login-cta-register'),
+                  onPressed: loading
+                      ? null
+                      : () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const GymRegisterPage(),
+                            ),
+                          );
+                        },
+                  child: Text(
+                    'onboarding.register.from_login'.tr(),
+                    style: textTheme.labelLarge?.copyWith(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4,
+                      color: AppColors.secondary,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
                 Row(
                   children: [
                     const Expanded(
