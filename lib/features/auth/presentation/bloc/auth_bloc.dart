@@ -13,6 +13,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       super(const AuthInitial()) {
     on<AuthStarted>(_onStarted);
     on<AuthSignInSubmitted>(_onSignIn);
+    on<AuthRegisterSubmitted>(_onRegister);
+    on<AuthOnboardingDeferred>(_onDeferred);
+    on<AuthOnboardingResumeRequested>(_onResume);
+    on<AuthProfileRefreshRequested>(_onRefresh);
     on<AuthSignOutRequested>(_onSignOut);
   }
 
@@ -70,6 +74,72 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthUnauthenticated(message: e.message));
     } catch (_) {
       emit(const AuthUnauthenticated(message: 'auth.error.unknown'));
+    }
+  }
+
+  Future<void> _onRegister(
+    AuthRegisterSubmitted event,
+    Emitter<AuthState> emit,
+  ) async {
+    // Stay on the current unauth surface (Register is a pushed route).
+    try {
+      final profile = await _authRepository.signUpGymFounder(
+        email: event.email,
+        password: event.password,
+        tradingName: event.tradingName,
+      );
+      if (profile == null) {
+        emit(AuthAwaitingEmailConfirmation(event.email));
+        return;
+      }
+      emit(AuthAuthenticated(profile));
+    } on AuthFailure catch (e) {
+      emit(AuthUnauthenticated(message: e.message));
+    } catch (_) {
+      emit(const AuthUnauthenticated(message: 'auth.error.unknown'));
+    }
+  }
+
+  Future<void> _onDeferred(
+    AuthOnboardingDeferred event,
+    Emitter<AuthState> emit,
+  ) async {
+    final current = state;
+    if (current is AuthAuthenticated) {
+      emit(
+        AuthAuthenticated(
+          current.profile,
+          restoredFromCache: current.restoredFromCache,
+          deferOnboarding: true,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onResume(
+    AuthOnboardingResumeRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    final current = state;
+    if (current is AuthAuthenticated) {
+      emit(
+        AuthAuthenticated(
+          current.profile,
+          restoredFromCache: current.restoredFromCache,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onRefresh(
+    AuthProfileRefreshRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    try {
+      final profile = await _authRepository.resolveEmployeeProfile();
+      emit(AuthAuthenticated(profile));
+    } on AuthFailure catch (e) {
+      emit(AuthUnauthenticated(message: e.message));
     }
   }
 

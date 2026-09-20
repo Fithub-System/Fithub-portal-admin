@@ -9,6 +9,13 @@ abstract class AuthRepository {
     required String password,
   });
 
+  /// FEAT-96 founder register. Returns null when email confirmation is required.
+  Future<EmployeeProfile?> signUpGymFounder({
+    required String email,
+    required String password,
+    required String tradingName,
+  });
+
   Future<EmployeeProfile> resolveEmployeeProfile();
 
   Future<void> signOut();
