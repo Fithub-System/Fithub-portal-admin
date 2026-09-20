@@ -8,6 +8,8 @@ import 'package:fithub_portal_admin/features/auth/domain/entities/employee_profi
 import 'package:fithub_portal_admin/features/auth/domain/repositories/auth_repository.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:fithub_portal_admin/features/auth/presentation/pages/login_page.dart';
+import 'package:fithub_portal_admin/features/gym_onboarding/data/gym_onboarding_remote.dart';
+import 'package:fithub_portal_admin/features/gym_onboarding/presentation/gym_onboarding_cubit.dart';
 import 'package:fithub_portal_admin/features/gym_onboarding/presentation/screens/gym_onboarding_wizard_page.dart';
 import 'package:fithub_portal_admin/features/gym_onboarding/presentation/screens/gym_register_page.dart';
 import 'package:mocktail/mocktail.dart';
@@ -266,4 +268,67 @@ void main() {
     expect(find.byKey(const Key('login-cta-initialize')), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
+
+  test('new gym branch form has no static sandbox defaults', () {
+    const empty = GymOnboardingState(loading: false);
+    expect(empty.lat, isNull);
+    expect(empty.lng, isNull);
+    expect(empty.capacity, isNull);
+    expect(empty.amenityTags, isEmpty);
+    expect(empty.hoursOpen, isEmpty);
+    expect(empty.hoursClose, isEmpty);
+    expect(empty.photoUrl, isEmpty);
+    expect(empty.planName, isEmpty);
+    expect(empty.planDays, isNull);
+    expect(empty.planPriceEgp, isNull);
+    expect(GymOnboardingCubit.hoursFrom(open: '', close: ''), isEmpty);
+    expect(
+      GymOnboardingCubit.isLivePhoto(GymOnboardingRemote.placeholderPhoto),
+      isFalse,
+    );
+  });
+
+  testWidgets('Gym Profile stepper is tappable so Admin can edit each step', (
+    tester,
+  ) async {
+    await pumpLocalizedApp(
+      tester,
+      BlocProvider(
+        create: (_) =>
+            GymOnboardingCubit(remote: _FakeOnboardingRemote())..load(),
+        child: GymOnboardingWizardPage(onClose: () {}),
+      ),
+      waitFor: find.text('Brand & legal'),
+    );
+
+    expect(find.text('Pulse Maadi'), findsWidgets);
+    expect(find.text('Create gym account'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('gym-profile-step-1')));
+    await tester.pumpAndSettle();
+    expect(find.text('Branch & facilities'), findsOneWidget);
+    expect(find.text('Latitude'), findsOneWidget);
+    expect(find.text('30.0444'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('gym-profile-step-4')));
+    await tester.pumpAndSettle();
+    expect(find.text('Readiness & publish'), findsOneWidget);
+  });
+}
+
+class _FakeOnboardingRemote extends Fake implements GymOnboardingRemote {
+  @override
+  Future<GymOnboardingSnapshot> load() async {
+    return GymOnboardingSnapshot(
+      gym: <String, dynamic>{
+        'name': 'Pulse Maadi',
+        'trading_name': 'Pulse Maadi',
+        'contact_name': 'Founder',
+      },
+      branches: const [],
+      score: 0,
+      canPublish: false,
+      checks: const [],
+    );
+  }
 }

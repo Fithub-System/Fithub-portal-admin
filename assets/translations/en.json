@@ -871,8 +871,13 @@
       "title": "Branch & facilities",
       "name": "Branch name",
       "address": "Address",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "open": "Opens",
+      "close": "Closes",
       "capacity": "Capacity ceiling",
-      "photo_hint": "A placeholder branch photo is attached automatically in this sandbox."
+      "photo_url": "Branch photo URL",
+      "photo_hint": "Paste a real photo URL. Publish needs at least one photo, hours, coordinates, and an amenity."
     },
     "step3": {
       "title": "Staff roster",
