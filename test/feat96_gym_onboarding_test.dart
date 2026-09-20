@@ -261,12 +261,12 @@ void main() {
     );
 
     expect(find.byKey(const Key('login-cta-initialize')), findsOneWidget);
-    expect(find.text('Create gym account'), findsNothing);
+    expect(find.text('Create your gym account'), findsNothing);
 
     await tester.tap(find.byKey(const Key('login-cta-register')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Create gym account'), findsOneWidget);
+    expect(find.text('Create your gym account'), findsOneWidget);
     expect(find.byKey(const Key('login-cta-initialize')), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
@@ -304,7 +304,7 @@ void main() {
     );
 
     expect(find.text('Pulse Maadi'), findsWidgets);
-    expect(find.text('Create gym account'), findsNothing);
+    expect(find.text('Create your gym account'), findsNothing);
 
     await tester.tap(find.byKey(const Key('gym-profile-step-1')));
     await tester.pumpAndSettle();
@@ -363,7 +363,7 @@ void main() {
     expect(find.text('ladies_only'), findsNothing);
   });
 
-  testWidgets('register form is pre-filled so founder can edit', (
+  testWidgets('register form uses Stitch hints, not pre-filled values', (
     tester,
   ) async {
     await pumpLocalizedApp(
@@ -372,11 +372,18 @@ void main() {
         create: (_) => AuthBloc(authRepository: repository),
         child: const GymRegisterPage(),
       ),
-      waitFor: find.text('Create gym account'),
+      waitFor: find.text('Create your gym account'),
     );
 
-    expect(find.text('Pulse Maadi'), findsWidgets);
-    expect(find.text('founder@yourgym.com'), findsWidgets);
+    expect(find.byKey(const Key('gym-register-trading')), findsOneWidget);
+    expect(find.byKey(const Key('gym-register-email')), findsOneWidget);
+    final tradingField = tester.widget<TextFormField>(
+      find.descendant(
+        of: find.byKey(const Key('gym-register-trading')),
+        matching: find.byType(TextFormField),
+      ),
+    );
+    expect(tradingField.controller?.text ?? '', isEmpty);
   });
 
   test('savePlan can add more than one plan and stay on Plans', () async {

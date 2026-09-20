@@ -7,6 +7,7 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../staff_invite/domain/entities/staff_role.dart';
 import '../../data/gym_onboarding_remote.dart';
 import '../gym_onboarding_cubit.dart';
+import '../widgets/stitch_kinetic_chrome.dart';
 
 /// FEAT-96 onboarding wizard — Stitch step ids in FSD §3.
 class GymOnboardingWizardPage extends StatelessWidget {
@@ -21,7 +22,7 @@ class GymOnboardingWizardPage extends StatelessWidget {
   static const String stitchStep4En = 'f3635eacecce40c385c0b335c371a0bb';
   static const String stitchStep5En = 'a5827af544e540b7a7890da089327b2a';
   static const String stitchProfileEn = '28a6e5e325164b70a9a139f4599832c4';
-  static const double formMaxWidth = 720;
+  static const double formMaxWidth = StitchKineticChrome.formMaxWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +38,7 @@ class GymOnboardingWizardPage extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: KineticTokens.deepCharcoal,
-        body: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: formMaxWidth),
-              child: _WizardBody(onClose: onClose),
-            ),
-          ),
-        ),
+        body: SafeArea(child: _WizardBody(onClose: onClose)),
       ),
     );
   }
@@ -98,47 +92,54 @@ class _WizardBody extends StatelessWidget {
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
-          child: Row(
-            children: [
-              Text(
-                'PULSE',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: KineticTokens.electricLime,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 2,
-                ),
+        StitchPulseTopBar(
+          trailing: TextButton(
+            onPressed: () {
+              final close = onClose;
+              if (close != null) {
+                close();
+                return;
+              }
+              context.read<AuthBloc>().add(const AuthOnboardingDeferred());
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: KineticTokens.electricLime,
+            ),
+            child: Text(
+              'onboarding.finish_later'.tr().toUpperCase(),
+              style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
+                fontSize: 12,
               ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {
-                  final close = onClose;
-                  if (close != null) {
-                    close();
-                    return;
-                  }
-                  context.read<AuthBloc>().add(const AuthOnboardingDeferred());
-                },
-                child: Text('onboarding.finish_later'.tr()),
-              ),
-            ],
+            ),
           ),
         ),
-        _Stepper(
+        StitchConnectedStepper(
           step: state.step,
+          labels: [
+            'onboarding.steps.brand'.tr(),
+            'onboarding.steps.branches'.tr(),
+            'onboarding.steps.staff'.tr(),
+            'onboarding.steps.plans'.tr(),
+            'onboarding.steps.publish'.tr(),
+          ],
           onStepTap: (i) => context.read<GymOnboardingCubit>().setStep(i),
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: switch (state.step) {
-              0 => const _BrandStep(),
-              1 => const _BranchStep(),
-              2 => const _StaffStep(),
-              3 => const _PlanStep(),
-              _ => const _ReviewStep(),
-            },
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+            child: Center(
+              child: StitchKineticCard(
+                child: switch (state.step) {
+                  0 => const _BrandStep(),
+                  1 => const _BranchStep(),
+                  2 => const _StaffStep(),
+                  3 => const _PlanStep(),
+                  _ => const _ReviewStep(),
+                },
+              ),
+            ),
           ),
         ),
       ],
@@ -146,84 +147,26 @@ class _WizardBody extends StatelessWidget {
   }
 }
 
-class _Stepper extends StatelessWidget {
-  const _Stepper({required this.step, required this.onStepTap});
-  final int step;
-  final ValueChanged<int> onStepTap;
-
-  @override
-  Widget build(BuildContext context) {
-    const keys = [
-      'onboarding.steps.brand',
-      'onboarding.steps.branches',
-      'onboarding.steps.staff',
-      'onboarding.steps.plans',
-      'onboarding.steps.publish',
-    ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          for (var i = 0; i < keys.length; i++)
-            Expanded(
-              child: InkWell(
-                key: Key('gym-profile-step-$i'),
-                onTap: () => onStepTap(i),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 14,
-                        backgroundColor: i <= step
-                            ? KineticTokens.electricLime
-                            : KineticTokens.surfaceContainerHigh,
-                        child: Text(
-                          '${i + 1}',
-                          style: TextStyle(
-                            color: i <= step
-                                ? KineticTokens.deepCharcoal
-                                : KineticTokens.zincGray,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        keys[i].tr(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: i == step
-                              ? KineticTokens.electricLime
-                              : KineticTokens.zincGray,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-        ],
+Widget _stepHeader({required String stage, required String title}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      StitchStageBadge(label: stage),
+      const SizedBox(height: 10),
+      Text(
+        title,
+        style: const TextStyle(
+          color: KineticTokens.pureWhite,
+          fontSize: 28,
+          fontWeight: FontWeight.w900,
+          height: 1.1,
+          letterSpacing: -0.4,
+        ),
       ),
-    );
-  }
+      const SizedBox(height: 16),
+    ],
+  );
 }
-
-InputDecoration _dec(String label, {String? hint}) => InputDecoration(
-  labelText: label,
-  hintText: hint,
-  labelStyle: const TextStyle(color: KineticTokens.zincGray),
-  hintStyle: const TextStyle(color: KineticTokens.zincGray),
-  enabledBorder: const UnderlineInputBorder(
-    borderSide: BorderSide(color: KineticTokens.surfaceContainerHigh),
-  ),
-  focusedBorder: const UnderlineInputBorder(
-    borderSide: BorderSide(color: KineticTokens.electricLime),
-  ),
-);
 
 class _BrandStep extends StatelessWidget {
   const _BrandStep();
@@ -235,15 +178,24 @@ class _BrandStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'onboarding.step1.title'.tr(),
-          style: const TextStyle(
-            color: KineticTokens.pureWhite,
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-          ),
+        _stepHeader(
+          stage: 'onboarding.step1.stage'.tr(),
+          title: 'onboarding.step1.title'.tr(),
         ),
-        const SizedBox(height: 16),
+        StitchSectionLabel(label: 'onboarding.step1.media'.tr()),
+        Row(
+          children: [
+            const Expanded(
+              child: StitchDashedUpload(label: 'Logo', compact: true),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 2,
+              child: StitchDashedUpload(label: 'onboarding.step1.banner'.tr()),
+            ),
+          ],
+        ),
+        StitchSectionLabel(label: 'onboarding.step1.entity'.tr()),
         _BoundField(
           value: s.brandName,
           label: 'onboarding.step1.brand'.tr(),
@@ -272,11 +224,14 @@ class _BrandStep extends StatelessWidget {
           keyboardType: TextInputType.phone,
           onChanged: (v) => cubit.patch(s.copyWith(contactPhone: v)),
         ),
-        const SizedBox(height: 24),
-        _LimeButton(
-          label: 'onboarding.next_branches'.tr(),
-          busy: s.saving,
-          onTap: () => cubit.saveBrand(),
+        const SizedBox(height: 8),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: _LimeButton(
+            label: 'onboarding.next_branches'.tr(),
+            busy: s.saving,
+            onTap: () => cubit.saveBrand(),
+          ),
         ),
       ],
     );
@@ -293,13 +248,9 @@ class _BranchStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'onboarding.step2.title'.tr(),
-          style: const TextStyle(
-            color: KineticTokens.pureWhite,
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-          ),
+        _stepHeader(
+          stage: 'onboarding.step2.stage'.tr(),
+          title: 'onboarding.step2.title'.tr(),
         ),
         _BoundField(
           value: s.branchName,
@@ -351,6 +302,8 @@ class _BranchStep extends StatelessWidget {
           onChanged: (v) => cubit.patch(s.copyWith(photoUrl: v)),
         ),
         const SizedBox(height: 12),
+        StitchDashedUpload(label: 'onboarding.step2.photo_url'.tr()),
+        const SizedBox(height: 12),
         Text(
           'onboarding.step2.facilities'.tr(),
           style: const TextStyle(
@@ -393,15 +346,19 @@ class _BranchStep extends StatelessWidget {
           style: const TextStyle(color: KineticTokens.zincGray, fontSize: 12),
         ),
         const SizedBox(height: 12),
-        TextButton(
-          onPressed: () => cubit.setStep(0),
-          child: Text('onboarding.back'.tr()),
-        ),
-        const SizedBox(height: 12),
-        _LimeButton(
-          label: 'onboarding.next_staff'.tr(),
-          busy: s.saving,
-          onTap: () => cubit.saveBranch(),
+        Row(
+          children: [
+            StitchGhostButton(
+              label: 'onboarding.back'.tr(),
+              onTap: () => cubit.setStep(0),
+            ),
+            const Spacer(),
+            _LimeButton(
+              label: 'onboarding.next_staff'.tr(),
+              busy: s.saving,
+              onTap: () => cubit.saveBranch(),
+            ),
+          ],
         ),
       ],
     );
@@ -433,29 +390,24 @@ class _StaffStepState extends State<_StaffStep> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'onboarding.step3.title'.tr(),
-          style: const TextStyle(
-            color: KineticTokens.pureWhite,
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-          ),
+        _stepHeader(
+          stage: 'onboarding.step3.stage'.tr(),
+          title: 'onboarding.step3.title'.tr(),
         ),
         Text(
           'onboarding.step3.honesty'.tr(),
           style: const TextStyle(color: KineticTokens.zincGray),
         ),
-        TextField(
-          controller: email,
-          style: const TextStyle(color: KineticTokens.pureWhite),
-          decoration: _dec('onboarding.step3.email'.tr()),
-        ),
-        TextField(
-          controller: name,
-          style: const TextStyle(color: KineticTokens.pureWhite),
-          decoration: _dec('onboarding.step3.name'.tr()),
-        ),
         const SizedBox(height: 12),
+        StitchFilledField(
+          controller: email,
+          label: 'onboarding.step3.email'.tr(),
+        ),
+        StitchFilledField(
+          controller: name,
+          label: 'onboarding.step3.name'.tr(),
+        ),
+        const SizedBox(height: 4),
         OutlinedButton(
           onPressed: s.saving
               ? null
@@ -464,18 +416,26 @@ class _StaffStepState extends State<_StaffStep> {
                   name: name.text,
                   role: StaffRole.receptionist,
                 ),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: KineticTokens.electricLime,
+            side: const BorderSide(color: KineticTokens.electricLime),
+          ),
           child: Text('onboarding.step3.invite_desk'.tr()),
         ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: () => cubit.setStep(1),
-          child: Text('onboarding.back'.tr()),
-        ),
-        const SizedBox(height: 12),
-        _LimeButton(
-          label: 'onboarding.next_plans'.tr(),
-          busy: s.saving,
-          onTap: cubit.skipStaff,
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            StitchGhostButton(
+              label: 'onboarding.back'.tr(),
+              onTap: () => cubit.setStep(1),
+            ),
+            const Spacer(),
+            _LimeButton(
+              label: 'onboarding.next_plans'.tr(),
+              busy: s.saving,
+              onTap: cubit.skipStaff,
+            ),
+          ],
         ),
       ],
     );
@@ -492,13 +452,9 @@ class _PlanStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'onboarding.step4.title'.tr(),
-          style: const TextStyle(
-            color: KineticTokens.pureWhite,
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-          ),
+        _stepHeader(
+          stage: 'onboarding.step4.stage'.tr(),
+          title: 'onboarding.step4.title'.tr(),
         ),
         if (s.savedPlans.isNotEmpty) ...[
           const SizedBox(height: 16),
@@ -562,18 +518,26 @@ class _PlanStep extends StatelessWidget {
         OutlinedButton(
           key: const Key('onboarding-add-plan'),
           onPressed: s.saving ? null : () => cubit.savePlan(),
-          child: Text('onboarding.step4.add_another'.tr()),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: KineticTokens.electricLime,
+            side: const BorderSide(color: KineticTokens.electricLime),
+          ),
+          child: Text('onboarding.step4.add_another'.tr().toUpperCase()),
         ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: () => cubit.setStep(2),
-          child: Text('onboarding.back'.tr()),
-        ),
-        const SizedBox(height: 12),
-        _LimeButton(
-          label: 'onboarding.next_review'.tr(),
-          busy: s.saving,
-          onTap: () => cubit.continueToReview(),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            StitchGhostButton(
+              label: 'onboarding.back'.tr(),
+              onTap: () => cubit.setStep(2),
+            ),
+            const Spacer(),
+            _LimeButton(
+              label: 'onboarding.next_review'.tr(),
+              busy: s.saving,
+              onTap: () => cubit.continueToReview(),
+            ),
+          ],
         ),
       ],
     );
@@ -590,15 +554,11 @@ class _ReviewStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'onboarding.step5.title'.tr(),
-          style: const TextStyle(
-            color: KineticTokens.pureWhite,
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-          ),
+        _stepHeader(
+          stage: 'onboarding.step5.stage'.tr(),
+          title: 'onboarding.step5.title'.tr(),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         CircleAvatar(
           radius: 48,
           backgroundColor: KineticTokens.gunmetalCard,
@@ -625,22 +585,28 @@ class _ReviewStep extends StatelessWidget {
               style: const TextStyle(color: KineticTokens.pureWhite),
             ),
           ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: () => cubit.setStep(3),
-          child: Text('onboarding.back'.tr()),
-        ),
-        const SizedBox(height: 12),
-        _LimeButton(
-          label: 'onboarding.publish.cta'.tr(),
-          busy: s.saving,
-          enabled: s.canPublish,
-          onTap: () async {
-            final ok = await cubit.publish();
-            if (ok && context.mounted) {
-              context.read<AuthBloc>().add(const AuthProfileRefreshRequested());
-            }
-          },
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            StitchGhostButton(
+              label: 'onboarding.back'.tr(),
+              onTap: () => cubit.setStep(3),
+            ),
+            const Spacer(),
+            _LimeButton(
+              label: 'onboarding.publish.cta'.tr(),
+              busy: s.saving,
+              enabled: s.canPublish,
+              onTap: () async {
+                final ok = await cubit.publish();
+                if (ok && context.mounted) {
+                  context.read<AuthBloc>().add(
+                    const AuthProfileRefreshRequested(),
+                  );
+                }
+              },
+            ),
+          ],
         ),
       ],
     );
@@ -662,20 +628,11 @@ class _LimeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton(
-      style: FilledButton.styleFrom(
-        backgroundColor: KineticTokens.electricLime,
-        foregroundColor: KineticTokens.deepCharcoal,
-        minimumSize: const Size.fromHeight(52),
-      ),
-      onPressed: (!enabled || busy) ? null : onTap,
-      child: busy
-          ? const SizedBox(
-              width: 22,
-              height: 22,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : Text(label, style: const TextStyle(fontWeight: FontWeight.w800)),
+    return StitchLimeCta(
+      label: label,
+      onTap: onTap,
+      busy: busy,
+      enabled: enabled,
     );
   }
 }
@@ -727,12 +684,32 @@ class _BoundFieldState extends State<_BoundField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: _controller,
-      keyboardType: widget.keyboardType,
-      style: const TextStyle(color: KineticTokens.pureWhite),
-      decoration: _dec(widget.label, hint: widget.hint),
-      onChanged: widget.onChanged,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.label,
+            style: const TextStyle(
+              color: KineticTokens.onSurface,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 6),
+          TextField(
+            controller: _controller,
+            keyboardType: widget.keyboardType,
+            style: const TextStyle(
+              color: KineticTokens.pureWhite,
+              fontSize: 14,
+            ),
+            decoration: stitchFilledDecoration(hint: widget.hint),
+            onChanged: widget.onChanged,
+          ),
+        ],
+      ),
     );
   }
 }
