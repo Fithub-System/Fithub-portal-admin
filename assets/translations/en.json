@@ -842,12 +842,21 @@
     "next_staff": "Continue to staff",
     "next_plans": "Continue to plans",
     "next_review": "Continue to publish",
+    "steps": {
+      "brand": "Brand",
+      "branches": "Branches",
+      "staff": "Staff",
+      "plans": "Plans",
+      "publish": "Publish"
+    },
     "register": {
       "title": "Register your gym",
       "subtitle": "Gym Founder / Admin only. Staff join by invite.",
       "from_login": "Register your gym",
       "trading": "Trading name",
+      "trading_hint": "Pulse Maadi",
       "email": "Email",
+      "email_hint": "founder@yourgym.com",
       "password": "Password",
       "confirm": "Confirm password",
       "cta": "Create gym account",
@@ -877,7 +886,18 @@
       "close": "Closes",
       "capacity": "Capacity ceiling",
       "photo_url": "Branch photo URL",
-      "photo_hint": "Paste a real photo URL. Publish needs at least one photo, hours, coordinates, and an amenity."
+      "photo_hint": "Paste a real photo URL. Publish needs at least one photo, hours, coordinates, and an amenity.",
+      "facilities": "Facilities",
+      "amenities": {
+        "parking": "Parking",
+        "ac": "Air conditioning",
+        "ladies_only": "Ladies only",
+        "spa": "Spa",
+        "sauna": "Sauna",
+        "crossfit": "CrossFit",
+        "locker_rooms": "Locker rooms",
+        "nutrition_bar": "Nutrition bar"
+      }
     },
     "step3": {
       "title": "Staff roster",
@@ -892,7 +912,11 @@
       "name": "Plan name",
       "days": "Duration (days)",
       "price": "Price (EGP)",
-      "roaming": "Roaming pass (all branches)"
+      "roaming": "Roaming pass (all branches)",
+      "saved": "Saved plans",
+      "saved_meta": "{days} days · {price} EGP",
+      "add_another": "Add another plan",
+      "added": "Plan added. You can add another or continue."
     },
     "step5": {
       "title": "Readiness & publish"

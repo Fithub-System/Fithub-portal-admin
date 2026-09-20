@@ -27,6 +27,20 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
   final _password = TextEditingController();
   final _confirm = TextEditingController();
   final _trading = TextEditingController();
+  var _sampleFilled = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_sampleFilled) return;
+    _sampleFilled = true;
+    if (_trading.text.isEmpty) {
+      _trading.text = 'onboarding.register.trading_hint'.tr();
+    }
+    if (_email.text.isEmpty) {
+      _email.text = 'onboarding.register.email_hint'.tr();
+    }
+  }
 
   @override
   void dispose() {
@@ -97,6 +111,7 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                         style: const TextStyle(color: KineticTokens.pureWhite),
                         decoration: InputDecoration(
                           labelText: 'onboarding.register.trading'.tr(),
+                          hintText: 'onboarding.register.trading_hint'.tr(),
                         ),
                         validator: (v) => (v == null || v.trim().isEmpty)
                             ? 'onboarding.register.required'.tr()
@@ -108,6 +123,7 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                         style: const TextStyle(color: KineticTokens.pureWhite),
                         decoration: InputDecoration(
                           labelText: 'onboarding.register.email'.tr(),
+                          hintText: 'onboarding.register.email_hint'.tr(),
                         ),
                         validator: (v) => (v == null || !v.contains('@'))
                             ? 'onboarding.register.required'.tr()

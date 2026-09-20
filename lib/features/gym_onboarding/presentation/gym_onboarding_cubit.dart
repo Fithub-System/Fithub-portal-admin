@@ -34,6 +34,7 @@ class GymOnboardingState extends Equatable {
     this.planDays,
     this.planPriceEgp,
     this.passRoaming = false,
+    this.savedPlans = const [],
   });
 
   static const Object _absent = Object();
@@ -63,6 +64,7 @@ class GymOnboardingState extends Equatable {
   final int? planDays;
   final int? planPriceEgp;
   final bool passRoaming;
+  final List<MembershipPlan> savedPlans;
 
   int get score => snapshot?.score ?? 0;
   bool get canPublish => snapshot?.canPublish ?? false;
@@ -94,6 +96,7 @@ class GymOnboardingState extends Equatable {
     Object? planDays = _absent,
     Object? planPriceEgp = _absent,
     bool? passRoaming,
+    List<MembershipPlan>? savedPlans,
   }) {
     return GymOnboardingState(
       step: step ?? this.step,
@@ -125,6 +128,7 @@ class GymOnboardingState extends Equatable {
           ? this.planPriceEgp
           : planPriceEgp as int?,
       passRoaming: passRoaming ?? this.passRoaming,
+      savedPlans: savedPlans ?? this.savedPlans,
     );
   }
 
@@ -155,6 +159,7 @@ class GymOnboardingState extends Equatable {
     planDays,
     planPriceEgp,
     passRoaming,
+    savedPlans,
   ];
 }
 
@@ -201,10 +206,18 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
     return (open: '', close: '');
   }
 
-  Future<void> load() async {
-    emit(state.copyWith(loading: true, clearMessage: true));
+  Future<void> load({bool silent = false}) async {
+    if (!silent) {
+      emit(state.copyWith(loading: true, clearMessage: true));
+    }
     try {
       final snap = await _remote.load().timeout(const Duration(seconds: 15));
+      var plans = const <MembershipPlan>[];
+      try {
+        plans = await _remote.loadPlans().timeout(const Duration(seconds: 15));
+      } catch (_) {
+        plans = const [];
+      }
       final gym = snap.gym;
       final branch = snap.branches.isNotEmpty ? snap.branches.first : null;
       final tags = (branch?['tags'] as List? ?? [])
@@ -236,6 +249,7 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
           hoursOpen: hours.open,
           hoursClose: hours.close,
           photoUrl: photos.isEmpty ? '' : photos.first,
+          savedPlans: plans.where((plan) => plan.isActive).toList(),
         ),
       );
     } catch (_) {
@@ -334,7 +348,7 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
     }
   }
 
-  Future<bool> savePlan() async {
+  Future<bool> savePlan({bool advance = false}) async {
     final days = state.planDays;
     final price = state.planPriceEgp;
     if (state.planName.trim().isEmpty ||
@@ -355,13 +369,40 @@ class GymOnboardingCubit extends Cubit<GymOnboardingState> {
             ? MembershipPassKind.roaming
             : MembershipPassKind.singleBranch,
       );
-      await load();
-      emit(state.copyWith(saving: false, step: 4));
+      await load(silent: true);
+      emit(
+        state.copyWith(
+          saving: false,
+          step: advance ? 4 : 3,
+          planName: '',
+          planDays: null,
+          planPriceEgp: null,
+          passRoaming: false,
+          messageKey: 'onboarding.step4.added',
+        ),
+      );
       return true;
     } catch (_) {
       emit(state.copyWith(saving: false, messageKey: 'onboarding.error.save'));
       return false;
     }
+  }
+
+  bool get _hasPlanDraft =>
+      state.planName.trim().isNotEmpty ||
+      state.planDays != null ||
+      state.planPriceEgp != null;
+
+  Future<bool> continueToReview() async {
+    if (_hasPlanDraft) {
+      return savePlan(advance: true);
+    }
+    if (state.savedPlans.isEmpty) {
+      emit(state.copyWith(messageKey: 'onboarding.error.plan'));
+      return false;
+    }
+    emit(state.copyWith(step: 4, clearMessage: true));
+    return true;
   }
 
   Future<bool> publish() async {

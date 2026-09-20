@@ -153,12 +153,18 @@ class _Stepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const labels = ['Brand', 'Branches', 'Staff', 'Plans', 'Publish'];
+    const keys = [
+      'onboarding.steps.brand',
+      'onboarding.steps.branches',
+      'onboarding.steps.staff',
+      'onboarding.steps.plans',
+      'onboarding.steps.publish',
+    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          for (var i = 0; i < labels.length; i++)
+          for (var i = 0; i < keys.length; i++)
             Expanded(
               child: InkWell(
                 key: Key('gym-profile-step-$i'),
@@ -185,7 +191,9 @@ class _Stepper extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        labels[i],
+                        keys[i].tr(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: i == step
                               ? KineticTokens.electricLime
@@ -204,9 +212,11 @@ class _Stepper extends StatelessWidget {
   }
 }
 
-InputDecoration _dec(String label) => InputDecoration(
+InputDecoration _dec(String label, {String? hint}) => InputDecoration(
   labelText: label,
+  hintText: hint,
   labelStyle: const TextStyle(color: KineticTokens.zincGray),
+  hintStyle: const TextStyle(color: KineticTokens.zincGray),
   enabledBorder: const UnderlineInputBorder(
     borderSide: BorderSide(color: KineticTokens.surfaceContainerHigh),
   ),
@@ -237,11 +247,13 @@ class _BrandStep extends StatelessWidget {
         _BoundField(
           value: s.brandName,
           label: 'onboarding.step1.brand'.tr(),
+          hint: 'onboarding.register.trading_hint'.tr(),
           onChanged: (v) => cubit.patch(s.copyWith(brandName: v)),
         ),
         _BoundField(
           value: s.tradingName,
           label: 'onboarding.step1.trading'.tr(),
+          hint: 'onboarding.register.trading_hint'.tr(),
           onChanged: (v) => cubit.patch(s.copyWith(tradingName: v)),
         ),
         _BoundField(
@@ -339,15 +351,30 @@ class _BranchStep extends StatelessWidget {
           onChanged: (v) => cubit.patch(s.copyWith(photoUrl: v)),
         ),
         const SizedBox(height: 12),
+        Text(
+          'onboarding.step2.facilities'.tr(),
+          style: const TextStyle(
+            color: KineticTokens.pureWhite,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
             for (final tag in GymOnboardingRemote.amenityTags)
               FilterChip(
-                label: Text(tag),
+                key: Key('amenity-$tag'),
+                label: Text('onboarding.step2.amenities.$tag'.tr()),
                 selected: s.amenityTags.contains(tag),
                 selectedColor: KineticTokens.electricLime,
+                checkmarkColor: KineticTokens.deepCharcoal,
+                labelStyle: TextStyle(
+                  color: s.amenityTags.contains(tag)
+                      ? KineticTokens.deepCharcoal
+                      : KineticTokens.pureWhite,
+                ),
                 onSelected: (on) {
                   final next = [...s.amenityTags];
                   if (on) {
@@ -473,6 +500,34 @@ class _PlanStep extends StatelessWidget {
             fontWeight: FontWeight.w900,
           ),
         ),
+        if (s.savedPlans.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(
+            'onboarding.step4.saved'.tr(),
+            style: const TextStyle(
+              color: KineticTokens.zincGray,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          for (final plan in s.savedPlans)
+            ListTile(
+              key: Key('saved-plan-${plan.id}'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                plan.name,
+                style: const TextStyle(color: KineticTokens.pureWhite),
+              ),
+              subtitle: Text(
+                'onboarding.step4.saved_meta'.tr(
+                  namedArgs: {
+                    'days': '${plan.durationDays}',
+                    'price': '${plan.priceCents ~/ 100}',
+                  },
+                ),
+                style: const TextStyle(color: KineticTokens.zincGray),
+              ),
+            ),
+        ],
         _BoundField(
           value: s.planName,
           label: 'onboarding.step4.name'.tr(),
@@ -504,6 +559,12 @@ class _PlanStep extends StatelessWidget {
           onChanged: (v) => cubit.patch(s.copyWith(passRoaming: v)),
         ),
         const SizedBox(height: 12),
+        OutlinedButton(
+          key: const Key('onboarding-add-plan'),
+          onPressed: s.saving ? null : () => cubit.savePlan(),
+          child: Text('onboarding.step4.add_another'.tr()),
+        ),
+        const SizedBox(height: 12),
         TextButton(
           onPressed: () => cubit.setStep(2),
           child: Text('onboarding.back'.tr()),
@@ -512,7 +573,7 @@ class _PlanStep extends StatelessWidget {
         _LimeButton(
           label: 'onboarding.next_review'.tr(),
           busy: s.saving,
-          onTap: () => cubit.savePlan(),
+          onTap: () => cubit.continueToReview(),
         ),
       ],
     );
@@ -624,11 +685,13 @@ class _BoundField extends StatefulWidget {
     required this.value,
     required this.label,
     required this.onChanged,
+    this.hint,
     this.keyboardType,
   });
 
   final String value;
   final String label;
+  final String? hint;
   final ValueChanged<String> onChanged;
   final TextInputType? keyboardType;
 
@@ -668,7 +731,7 @@ class _BoundFieldState extends State<_BoundField> {
       controller: _controller,
       keyboardType: widget.keyboardType,
       style: const TextStyle(color: KineticTokens.pureWhite),
-      decoration: _dec(widget.label),
+      decoration: _dec(widget.label, hint: widget.hint),
       onChanged: widget.onChanged,
     );
   }
