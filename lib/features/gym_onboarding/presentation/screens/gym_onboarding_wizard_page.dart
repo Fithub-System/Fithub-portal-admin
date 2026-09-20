@@ -61,7 +61,7 @@ class _WizardBody extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'onboarding.loading'.tr(),
-              style: const TextStyle(color: KineticTokens.zincGray),
+              style: TextStyle(color: KineticTokens.zincGray),
             ),
           ],
         ),
@@ -77,7 +77,7 @@ class _WizardBody extends StatelessWidget {
               Text(
                 'onboarding.error.load'.tr(),
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: KineticTokens.pureWhite),
+                style: TextStyle(color: KineticTokens.pureWhite),
               ),
               const SizedBox(height: 16),
               FilledButton(
@@ -107,7 +107,7 @@ class _WizardBody extends StatelessWidget {
             ),
             child: Text(
               'onboarding.finish_later'.tr().toUpperCase(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.8,
                 fontSize: 12,
@@ -155,7 +155,7 @@ Widget _stepHeader({required String stage, required String title}) {
       const SizedBox(height: 10),
       Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           color: KineticTokens.pureWhite,
           fontSize: 28,
           fontWeight: FontWeight.w900,
@@ -306,7 +306,7 @@ class _BranchStep extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           'onboarding.step2.facilities'.tr(),
-          style: const TextStyle(
+          style: TextStyle(
             color: KineticTokens.pureWhite,
             fontWeight: FontWeight.w700,
           ),
@@ -343,7 +343,7 @@ class _BranchStep extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           'onboarding.step2.photo_hint'.tr(),
-          style: const TextStyle(color: KineticTokens.zincGray, fontSize: 12),
+          style: TextStyle(color: KineticTokens.zincGray, fontSize: 12),
         ),
         const SizedBox(height: 12),
         Row(
@@ -396,7 +396,7 @@ class _StaffStepState extends State<_StaffStep> {
         ),
         Text(
           'onboarding.step3.honesty'.tr(),
-          style: const TextStyle(color: KineticTokens.zincGray),
+          style: TextStyle(color: KineticTokens.zincGray),
         ),
         const SizedBox(height: 12),
         StitchFilledField(
@@ -460,7 +460,7 @@ class _PlanStep extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'onboarding.step4.saved'.tr(),
-            style: const TextStyle(
+            style: TextStyle(
               color: KineticTokens.zincGray,
               fontWeight: FontWeight.w700,
             ),
@@ -471,7 +471,7 @@ class _PlanStep extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               title: Text(
                 plan.name,
-                style: const TextStyle(color: KineticTokens.pureWhite),
+                style: TextStyle(color: KineticTokens.pureWhite),
               ),
               subtitle: Text(
                 'onboarding.step4.saved_meta'.tr(
@@ -480,7 +480,7 @@ class _PlanStep extends StatelessWidget {
                     'price': '${plan.priceCents ~/ 100}',
                   },
                 ),
-                style: const TextStyle(color: KineticTokens.zincGray),
+                style: TextStyle(color: KineticTokens.zincGray),
               ),
             ),
         ],
@@ -508,7 +508,7 @@ class _PlanStep extends StatelessWidget {
         SwitchListTile(
           title: Text(
             'onboarding.step4.roaming'.tr(),
-            style: const TextStyle(color: KineticTokens.pureWhite),
+            style: TextStyle(color: KineticTokens.pureWhite),
           ),
           value: s.passRoaming,
           activeThumbColor: KineticTokens.electricLime,
@@ -564,7 +564,7 @@ class _ReviewStep extends StatelessWidget {
           backgroundColor: KineticTokens.gunmetalCard,
           child: Text(
             '${s.score}%',
-            style: const TextStyle(
+            style: TextStyle(
               color: KineticTokens.electricLime,
               fontSize: 22,
               fontWeight: FontWeight.w900,
@@ -582,7 +582,7 @@ class _ReviewStep extends StatelessWidget {
             ),
             title: Text(
               'onboarding.check.${c['id']}'.tr(),
-              style: const TextStyle(color: KineticTokens.pureWhite),
+              style: TextStyle(color: KineticTokens.pureWhite),
             ),
           ),
         const SizedBox(height: 16),
@@ -691,7 +691,7 @@ class _BoundFieldState extends State<_BoundField> {
         children: [
           Text(
             widget.label,
-            style: const TextStyle(
+            style: TextStyle(
               color: KineticTokens.onSurface,
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -701,7 +701,7 @@ class _BoundFieldState extends State<_BoundField> {
           TextField(
             controller: _controller,
             keyboardType: widget.keyboardType,
-            style: const TextStyle(
+            style: TextStyle(
               color: KineticTokens.pureWhite,
               fontSize: 14,
             ),

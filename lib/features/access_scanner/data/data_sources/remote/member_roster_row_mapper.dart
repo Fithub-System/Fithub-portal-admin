@@ -25,6 +25,8 @@ MemberRosterEntry? mapAthleteRosterRow(Object? raw) {
           ? cryptoSalt.substring(0, 255)
           : cryptoSalt,
       createdAt: parseJsonUtc(row['created_at']) ?? DateTime.now().toUtc(),
+      publicCode: jsonStringOrNull(row['public_code']),
+      assignedCoachId: jsonStringOrNull(row['assigned_coach_id']),
     );
   } catch (_) {
     return null;

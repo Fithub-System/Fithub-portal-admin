@@ -83,14 +83,20 @@ class MemberRosterSupabaseRemoteDataSource
         await client
             .from('gym_members')
             .select(
-              'athlete_id, athletes!inner(id, full_name, avatar_url, power_score, crypto_salt, created_at)',
+              'athlete_id, assigned_coach_id, athletes!inner(id, full_name, avatar_url, power_score, crypto_salt, created_at, public_code)',
             ),
       );
 
       final athletes = <MemberRosterEntry>[];
       for (final data in rows) {
         final mapped = mapAthleteRosterRow(embeddedAthlete(data['athletes']));
-        if (mapped != null) athletes.add(mapped);
+        if (mapped != null) {
+          athletes.add(
+            mapped.copyWith(
+              assignedCoachId: data['assigned_coach_id']?.toString(),
+            ),
+          );
+        }
       }
       // Mapped-empty with source rows means the embed did not bind — fall
       // through to `athletes` SELECT (same 200 payload the Network tab shows).
@@ -114,7 +120,7 @@ class MemberRosterSupabaseRemoteDataSource
       await client
           .from('athletes')
           .select(
-            'id, full_name, avatar_url, power_score, crypto_salt, created_at',
+            'id, full_name, avatar_url, power_score, crypto_salt, created_at, public_code',
           ),
     );
 

@@ -28,6 +28,7 @@ class ScanRepository {
     required String tenantId,
     required String rawPayload,
     DateTime? now,
+    String scannedVia = 'webcam',
   }) async {
     try {
       final validated = await validateScan(
@@ -44,6 +45,7 @@ class ScanRepository {
         tenantId: tenantId,
         member: member,
         at: now ?? DateTime.now().toUtc(),
+        scannedVia: scannedVia,
       );
     } catch (_) {
       return const ScanProcessResult.rejected(
@@ -127,6 +129,7 @@ class ScanRepository {
     required String tenantId,
     required LocalMember member,
     required DateTime at,
+    String scannedVia = 'webcam',
   }) async {
     final open = await _database.openVisit(
       tenantId: tenantId,
@@ -156,6 +159,7 @@ class ScanRepository {
         athleteId: member.id,
         checkedInAt: at,
         isSynced: const Value(false),
+        scannedVia: Value(scannedVia),
       ),
     );
 
@@ -174,6 +178,7 @@ class ScanRepository {
     required LocalMember member,
     required GymAttendanceToggleResult rpc,
     required DateTime at,
+    String scannedVia = 'webcam',
   }) async {
     try {
       if (rpc.isCheckOut) {
@@ -196,6 +201,7 @@ class ScanRepository {
               checkedInAt: at,
               checkedOutAt: Value(at),
               isSynced: const Value(true),
+              scannedVia: Value(scannedVia),
             ),
           );
         }
@@ -207,6 +213,7 @@ class ScanRepository {
             athleteId: member.id,
             checkedInAt: at,
             isSynced: const Value(true),
+            scannedVia: Value(scannedVia),
           ),
         );
       }

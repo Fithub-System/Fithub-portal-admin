@@ -146,7 +146,10 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
     }
   }
 
-  Future<void> onQrDetected(String rawPayload) async {
+  Future<void> onQrDetected(
+    String rawPayload, {
+    String scannedVia = 'webcam',
+  }) async {
     final trimmed = rawPayload.trim();
     if (trimmed.isEmpty || state.isProcessing || isClosed) return;
 
@@ -170,6 +173,7 @@ class AccessScannerCubit extends Cubit<AccessScannerState> {
         tenantId: _tenantId,
         rawPayload: trimmed,
         online: _isOnline(),
+        scannedVia: scannedVia,
       );
     } catch (error) {
       if (isClosed) return;

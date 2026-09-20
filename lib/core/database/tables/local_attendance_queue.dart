@@ -9,6 +9,7 @@ class LocalAttendanceQueue extends Table {
   DateTimeColumn get checkedInAt => dateTime()();
   DateTimeColumn get checkedOutAt => dateTime().nullable()();
   BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
+  TextColumn get scannedVia => text().withDefault(const Constant('webcam'))();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

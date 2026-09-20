@@ -103,7 +103,7 @@ class _StatTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: KineticTokens.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF171717)),
+        border: Border.all(color: KineticTokens.deepCharcoal),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

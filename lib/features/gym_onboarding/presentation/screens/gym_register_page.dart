@@ -97,7 +97,7 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                             const SizedBox(height: 12),
                             Text(
                               'onboarding.register.title'.tr(),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: KineticTokens.pureWhite,
                                 fontSize: 32,
                                 fontWeight: FontWeight.w900,
@@ -108,7 +108,7 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                             const SizedBox(height: 8),
                             Text(
                               'onboarding.register.subtitle'.tr(),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: KineticTokens.zincGray,
                                 fontSize: 13,
                                 height: 1.4,
@@ -167,7 +167,7 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                                   Expanded(
                                     child: Text(
                                       'onboarding.register.attest'.tr(),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: KineticTokens.onSurface,
                                         fontSize: 13,
                                       ),
@@ -187,8 +187,8 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                               decoration: BoxDecoration(
                                 color: KineticTokens.deepCharcoal,
                                 borderRadius: BorderRadius.circular(10),
-                                border: const Border(
-                                  left: BorderSide(
+                                border: const BorderDirectional(
+                                  start: BorderSide(
                                     color: KineticTokens.electricLime,
                                     width: 3,
                                   ),
@@ -208,7 +208,7 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                                     Expanded(
                                       child: Text(
                                         'onboarding.register.staff_note'.tr(),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: KineticTokens.zincGray,
                                           fontSize: 12,
                                           height: 1.4,
@@ -222,7 +222,7 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                             const SizedBox(height: 16),
                             Text(
                               'onboarding.register.verification'.tr(),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: KineticTokens.zincGray,
                                 fontSize: 11,
                                 height: 1.4,
@@ -246,7 +246,7 @@ class _GymRegisterPageState extends State<GymRegisterPage> {
                                       },
                                 child: Text(
                                   'onboarding.register.have_account'.tr(),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: KineticTokens.electricLime,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -289,7 +289,7 @@ class GymCheckEmailPage extends StatelessWidget {
                     Text(
                       'onboarding.register.check_email'.tr(),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: KineticTokens.pureWhite,
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
@@ -298,7 +298,7 @@ class GymCheckEmailPage extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       email,
-                      style: const TextStyle(color: KineticTokens.electricLime),
+                      style: TextStyle(color: KineticTokens.electricLime),
                     ),
                     const SizedBox(height: 24),
                     StitchGhostButton(

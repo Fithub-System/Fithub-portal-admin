@@ -118,6 +118,8 @@
       "latency": "<50ms burst",
       "helper": "Receptionist uses this mode; only Admin can change it.",
       "save": "Save",
+      "save_denied": "Only Admin can change scanner ingestion.",
+      "save_failed": "Could not save scanner mode. Try again.",
       "modes": {
         "hardware_gun": {
           "title": "Hardware scanner gun (HID)",
@@ -484,6 +486,7 @@
     },
     "column": {
       "name": "Member Name",
+      "public_code": "ID",
       "plan_type": "Plan Type",
       "xp_level": "XP Level",
       "status": "Status",

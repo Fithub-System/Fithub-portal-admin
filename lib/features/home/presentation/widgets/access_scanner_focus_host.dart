@@ -65,7 +65,7 @@ class AccessScannerFocusHost extends StatelessWidget {
                         children: [
                           Text(
                             'access_scanner.gate.brand'.tr(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
                               letterSpacing: -0.8,

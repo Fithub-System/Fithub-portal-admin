@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fithub_portal_admin/config/theme/app_colors.dart';
+import 'package:fithub_portal_admin/config/theme/kinetic_tokens.dart';
 import 'package:fithub_portal_admin/core/network/supabase_locale_headers.dart';
 
 void main() {
   test('Stitch Kinetic Monolith tokens match get_project namedColors', () {
-    expect(AppColors.background.toARGB32(), 0xFF131313);
+    expect(AppColors.background.toARGB32(), 0xFF121212);
+    expect(KineticTokens.zincBorder.toARGB32(), 0xFF27272A);
     expect(AppColors.primaryContainer.toARGB32(), 0xFFC3F400);
     expect(AppColors.primaryFixedDim.toARGB32(), 0xFFABD600);
     expect(AppColors.errorContainer.toARGB32(), 0xFF93000A);

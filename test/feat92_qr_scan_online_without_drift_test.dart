@@ -70,7 +70,9 @@ void main() {
     when(
       () => roster.syncRoster(tenantId: any(named: 'tenantId')),
     ).thenAnswer((_) async => 1);
-    when(() => toggle.toggle(athleteId)).thenAnswer(
+    when(
+      () => toggle.toggle(athleteId, scannedVia: any(named: 'scannedVia')),
+    ).thenAnswer(
       (_) async => const GymAttendanceToggleResult(
         visitId: 'visit-1',
         event: 'CHECK_IN',
@@ -99,7 +101,9 @@ void main() {
     expect(result.event, 'CHECK_IN');
     expect(result.occupancy, 4);
     expect(result.memberName, 'Sara Al-Fares');
-    verify(() => toggle.toggle(athleteId)).called(1);
+    verify(
+      () => toggle.toggle(athleteId, scannedVia: any(named: 'scannedVia')),
+    ).called(1);
   });
 
   test('online check-in succeeds when Drift wasm cache is closed', () async {
@@ -113,7 +117,9 @@ void main() {
 
     expect(result.isApproved, isTrue);
     expect(result.event, 'CHECK_IN');
-    verify(() => toggle.toggle(athleteId)).called(1);
+    verify(
+      () => toggle.toggle(athleteId, scannedVia: any(named: 'scannedVia')),
+    ).called(1);
   });
 
   test('placeholder Drift salt does not HMAC-block roster salt', () async {
@@ -136,7 +142,9 @@ void main() {
     );
 
     expect(result.isApproved, isTrue);
-    verify(() => toggle.toggle(athleteId)).called(1);
+    verify(
+      () => toggle.toggle(athleteId, scannedVia: any(named: 'scannedVia')),
+    ).called(1);
   });
 
   test('signature mismatch never calls toggle', () async {
@@ -161,11 +169,15 @@ void main() {
 
     expect(result.isApproved, isFalse);
     expect(result.reason, 'Signature mismatch.');
-    verifyNever(() => toggle.toggle(athleteId));
+    verifyNever(
+      () => toggle.toggle(athleteId, scannedVia: any(named: 'scannedVia')),
+    );
   });
 
   test('RPC not_member is surfaced instead of generic scan failed', () async {
-    when(() => toggle.toggle(athleteId)).thenThrow(
+    when(
+      () => toggle.toggle(athleteId, scannedVia: any(named: 'scannedVia')),
+    ).thenThrow(
       const GymAttendanceToggleFailure(
         'not_member',
         message: 'feat92_athlete_not_member',

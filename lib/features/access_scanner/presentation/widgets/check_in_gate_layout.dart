@@ -289,7 +289,7 @@ class _ScanViewportState extends State<_ScanViewport>
                     height: 4,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Color(0x33C3F400),
+                        color: KineticTokens.primaryContainer,
                         borderRadius: BorderRadius.all(Radius.circular(2)),
                       ),
                     ),
@@ -303,11 +303,15 @@ class _ScanViewportState extends State<_ScanViewport>
               child: Opacity(
                 opacity: 0.4,
                 child: DefaultTextStyle(
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontFamily: 'monospace',
-                    color: KineticTokens.onSurface,
-                  ),
+                  style:
+                      (Theme.of(context).textTheme.labelSmall ??
+                              const TextStyle())
+                          .copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: KineticTokens.onSurface,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -371,10 +375,10 @@ class _ConfirmCheckInButton extends StatelessWidget {
               backgroundColor: granted
                   ? KineticTokens.secondaryContainer
                   : rejected
-                  ? const Color(0xFFB71C1C)
+                  ? KineticTokens.peakCoral
                   : KineticTokens.primaryContainer,
               foregroundColor: granted
-                  ? const Color(0xFF00285B)
+                  ? KineticTokens.deepCharcoal
                   : rejected
                   ? KineticTokens.pureWhite
                   : KineticTokens.onPrimaryContainer,
@@ -655,7 +659,7 @@ class _OccupancyRingPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2 - 12;
     final track = Paint()
-      ..color = const Color(0xFF353534)
+      ..color = KineticTokens.surfaceContainerHighest
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12;
     final arc = Paint()
@@ -772,7 +776,7 @@ class _LastMemberCard extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             color: KineticTokens.onSurface,
-                          ).copyWith(color: const Color(0xFFC4C9AC)),
+                          ).copyWith(color: KineticTokens.zincGray),
                         ),
                       ],
                     ),
@@ -865,7 +869,7 @@ class _MiniMeta extends StatelessWidget {
           style: TextStyle(
             fontSize: 10,
             letterSpacing: 0.8,
-            color: const Color(0xFFC4C9AC).withValues(alpha: 0.4),
+            color: KineticTokens.zincGray.withValues(alpha: 0.4),
           ),
         ),
         const SizedBox(height: 2),
@@ -874,7 +878,7 @@ class _MiniMeta extends StatelessWidget {
           style: const TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: Color(0xFFC4C9AC),
+            color: KineticTokens.zincGray,
           ),
         ),
       ],
@@ -906,7 +910,7 @@ class _SystemLogCard extends StatelessWidget {
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
-              color: Color(0xFFC4C9AC),
+              color: KineticTokens.zincGray,
             ),
           ),
           const SizedBox(height: 12),
@@ -920,20 +924,22 @@ class _SystemLogCard extends StatelessWidget {
                   children: [
                     Text(
                       '[${line.time}]',
-                      style: const TextStyle(
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontSize: 9,
-                        fontFamily: 'monospace',
+                        fontWeight: FontWeight.w600,
                         color: KineticTokens.onSurface,
+                        fontFeatures: const [FontFeature.tabularFigures()],
                       ),
                     ),
                     Flexible(
                       child: Text(
                         line.event,
                         textAlign: TextAlign.end,
-                        style: const TextStyle(
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           fontSize: 9,
-                          fontFamily: 'monospace',
+                          fontWeight: FontWeight.w600,
                           color: KineticTokens.onSurface,
+                          fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
                     ),

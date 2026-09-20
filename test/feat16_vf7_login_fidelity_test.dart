@@ -34,7 +34,7 @@ void main() {
     });
 
     test('Kinetic login tokens match Stitch namedColors', () {
-      expect(AppColors.background.toARGB32(), 0xFF131313);
+      expect(AppColors.background.toARGB32(), 0xFF121212);
       expect(AppColors.surfaceContainerLow.toARGB32(), 0xFF1C1B1B);
       expect(AppColors.primaryContainer.toARGB32(), 0xFFC3F400);
       expect(AppColors.onPrimaryContainer.toARGB32(), 0xFF556D00);

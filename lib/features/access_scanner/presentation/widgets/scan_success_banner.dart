@@ -55,11 +55,11 @@ class ScanSuccessBanner extends StatelessWidget {
             child: Container(
               padding: const EdgeInsetsDirectional.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF1B5E20),
+                color: KineticTokens.deepCharcoal,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF4CAF50).withValues(alpha: 0.45),
+                    color: KineticTokens.electricLime.withValues(alpha: 0.45),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                   ),
@@ -100,7 +100,7 @@ class ScanSuccessBanner extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF4CAF50),
+                            color: KineticTokens.electricLime,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(

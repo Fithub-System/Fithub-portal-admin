@@ -70,7 +70,7 @@ class _HeaderRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: const Color(0xFFC4C9AC),
+      color: KineticTokens.zincGray,
       letterSpacing: 2,
       fontSize: 11,
       fontWeight: FontWeight.w500,
@@ -127,7 +127,7 @@ class _MemberRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: const Color(0xFF444933).withValues(alpha: 0.1),
+            color: KineticTokens.zincBorder.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -157,7 +157,7 @@ class _MemberRow extends StatelessWidget {
                       Text(
                         membersDisplayId(member),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFFC4C9AC),
+                          color: KineticTokens.zincGray,
                           fontSize: 12,
                         ),
                       ),
@@ -181,7 +181,7 @@ class _MemberRow extends StatelessWidget {
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
-                          const ColoredBox(color: Color(0xFF353534)),
+                          const ColoredBox(color: KineticTokens.surfaceContainerHighest),
                           FractionallySizedBox(
                             widthFactor: xp / 100,
                             alignment: AlignmentDirectional.centerStart,
@@ -238,14 +238,14 @@ class _InitialsAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color ink = switch (kind) {
       MembersPlanChipKind.named => KineticTokens.secondaryContainer,
-      MembersPlanChipKind.none => const Color(0xFFA3A3A3),
+      MembersPlanChipKind.none => KineticTokens.zincGray,
     };
     return Container(
       width: 40,
       height: 40,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: const Color(0xFF353534),
+        color: KineticTokens.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
@@ -275,9 +275,9 @@ class _PlanChip extends StatelessWidget {
         KineticTokens.secondaryContainer.withValues(alpha: 0.2),
       ),
       MembersPlanChipKind.none => (
-        const Color(0xFFA3A3A3),
-        const Color(0xFF262626),
-        const Color(0xFF404040),
+        KineticTokens.zincGray,
+        KineticTokens.zincBorder,
+        KineticTokens.surfaceContainerHigh,
       ),
     };
 
@@ -325,7 +325,7 @@ class _ActionsCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final muted = TextStyle(
-      color: const Color(0xFFC4C9AC),
+      color: KineticTokens.zincGray,
       fontSize: 11,
       fontWeight: FontWeight.w700,
       letterSpacing: 0.5,
@@ -362,7 +362,7 @@ class _ActionsCell extends StatelessWidget {
                     ? () => _confirmUnfreeze(context, member)
                     : null,
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFFC4C9AC),
+                  foregroundColor: KineticTokens.zincGray,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                 ),
                 child: Text(
@@ -376,7 +376,7 @@ class _ActionsCell extends StatelessWidget {
                     ? () => _confirmFreeze(context, member, policy)
                     : null,
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFFC4C9AC),
+                  foregroundColor: KineticTokens.zincGray,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                 ),
                 child: Text(
@@ -389,7 +389,7 @@ class _ActionsCell extends StatelessWidget {
                   ? () => _confirmRenew(context, member)
                   : null,
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFFC4C9AC),
+                foregroundColor: KineticTokens.zincGray,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
               ),
               child: Text(
@@ -399,7 +399,7 @@ class _ActionsCell extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Material(
-              color: const Color(0xFF353534),
+              color: KineticTokens.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(4),
               child: InkWell(
                 borderRadius: BorderRadius.circular(4),

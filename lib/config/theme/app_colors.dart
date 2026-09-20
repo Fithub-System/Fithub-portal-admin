@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 /// `projects/.../screens/c12b687f1538452ebaf8d0adb89a9489`).
 abstract final class AppColors {
   // Surfaces
-  static const Color background = Color(0xFF131313);
-  static const Color surface = Color(0xFF131313);
+  static const Color background = Color(0xFF121212);
+  static const Color surface = Color(0xFF121212);
   static const Color surfaceContainerLow = Color(0xFF1C1B1B);
   static const Color surfaceContainer = Color(0xFF201F1F);
   static const Color surfaceContainerHigh = Color(0xFF2A2A2A);
